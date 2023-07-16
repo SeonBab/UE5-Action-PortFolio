@@ -2,7 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Global/Enums.h"
 #include "MainCharacter.generated.h"
+
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AMainCharacter : public ACharacter
@@ -17,6 +19,7 @@ public:
 	void ZoomOut();
 	void MoveForward(float _Value);
 	void MoveRight(float _Value);
+	void RollorRun(float _Value);
 	void JumpAction();
 
 protected:
@@ -34,5 +37,7 @@ public:
 	float BaseLookUpRate;
 
 	// ¹«±â
+	UPROPERTY(BlueprintReadWrite)
 	class UWeaponAction* CurWeapon;
+	MainCharacterAnimState* AnimState;
 };

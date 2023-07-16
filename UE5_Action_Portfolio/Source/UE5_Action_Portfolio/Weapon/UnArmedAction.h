@@ -17,6 +17,7 @@ class UE5_ACTION_PORTFOLIO_API UUnArmedAction : public UWeaponAction
 public:
 	virtual void WAndSButtonAction(float _Value) override;
 	virtual void DAndAButtonAction(float _Value) override;
+	virtual void RollorRunAction(float _Value) override;
 	virtual void ShiftButtonAction() override;
 	
 protected:

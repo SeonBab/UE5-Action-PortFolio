@@ -10,11 +10,17 @@ void UUnArmedAction::BeginPlay()
 void UUnArmedAction::WAndSButtonAction(float _Value)
 {
 	Super::WAndSButtonAction(_Value);
+
 }
 
 void UUnArmedAction::DAndAButtonAction(float _Value)
 {
 	Super::DAndAButtonAction(_Value);
+}
+
+void UUnArmedAction::RollorRunAction(float _Value)
+{
+	Super::RollorRunAction(_Value);
 }
 
 void UUnArmedAction::ShiftButtonAction()

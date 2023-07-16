@@ -17,9 +17,14 @@ public:
 	UGlobalGameInstance();
 	~UGlobalGameInstance();
 
-	const struct FWeaponData* GetWeaponData(FName Name);
+	TMap<MainCharacterAnimState, UAnimMontage*> GetAllAnimations(FName Name);
+
+	struct FWeaponData* GetWeaponData(FName Name);
 
 private:
+	UPROPERTY()
+	UDataTable* AllAnimations;
+
 	UPROPERTY()
 	UDataTable* WeaponDatas;
 };

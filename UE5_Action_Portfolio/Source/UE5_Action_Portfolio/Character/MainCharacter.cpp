@@ -11,13 +11,13 @@
 AMainCharacter::AMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
 	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight));
 	MainCameraSpringArmComponent->bUsePawnControlRotation = true;
 	MainCameraSpringArmComponent->TargetArmLength = 450.f;
-	
+
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
 
@@ -25,14 +25,12 @@ AMainCharacter::AMainCharacter()
 
 	BaseTurnRate = 30.f;
 	BaseLookUpRate = 30.f;
-
-	
 }
 
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	this->bUseControllerRotationYaw = false;
 
 	CurWeapon = NewObject<UUnArmedAction>();
@@ -44,6 +42,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
+	AnimState = CurWeapon->GetAnimState();
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)
@@ -56,12 +55,14 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelDown", EKeys::MouseScrollDown));
 
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerTurn", EKeys::MouseX, 1.f));
-	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerLooKUp", EKeys::MouseY, 1.f));
+	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerLooKUp", EKeys::MouseY, -1.f));
 
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMoveForward", EKeys::W, 1.f));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMoveForward", EKeys::S, -1.f));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMoveRight", EKeys::A, -1.f));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMoveRight", EKeys::D, 1.f));
+
+	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerRollorRun", EKeys::SpaceBar, 1.f));
 
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerJump", EKeys::LeftShift));
 
@@ -74,11 +75,11 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	_PlayerInputComponent->BindAxis("PlayerMoveForward", this, &AMainCharacter::MoveForward);
 	_PlayerInputComponent->BindAxis("PlayerMoveRight", this, &AMainCharacter::MoveRight);
 
-	_PlayerInputComponent->BindAction("PlayerJump", EInputEvent::IE_Pressed, this, &AMainCharacter::JumpAction);
+	_PlayerInputComponent->BindAxis("PlayerRollorRun", this, &AMainCharacter::RollorRun);
 
-	
-	_PlayerInputComponent->BindAction("PlayerWheelUp", EInputEvent::IE_Pressed, this, &AMainCharacter::JumpAction);
+	_PlayerInputComponent->BindAction("PlayerJump", EInputEvent::IE_Pressed, this, &AMainCharacter::JumpAction);
 }
+
 
 void AMainCharacter::ZoomIn()
 {
@@ -99,30 +100,19 @@ void AMainCharacter::ZoomOut()
 void AMainCharacter::MoveForward(float _Value)
 {
 	CurWeapon->WAndSButtonAction(_Value);
-
-	//else
-	//{
-	//	if (AniState == AniPlayerState::ForwardMove || AniState == AniPlayerState::BackwardMove)
-	//	{
-	//		AniState = AniPlayerState::Idle;
-	//	}
-	//}
 }
 
 void AMainCharacter::MoveRight(float _Value)
 {
 	CurWeapon->DAndAButtonAction(_Value);
-	//else
-	//{
-	//	if (AniState == AniPlayerState::LeftMove || AniState == AniPlayerState::RightMove)
-	//	{
-	//		AniState = AniPlayerState::Idle;
-	//	}
-	//}
+}
+
+void AMainCharacter::RollorRun(float _Value)
+{
+	CurWeapon->RollorRunAction(_Value);
 }
 
 void AMainCharacter::JumpAction()
 {
 	CurWeapon->ShiftButtonAction();
-	//AniState = AniPlayerState::Jump;
 }

@@ -19,7 +19,18 @@ UGlobalGameInstance::~UGlobalGameInstance()
 {
 }
 
-const FWeaponData* UGlobalGameInstance::GetWeaponData(FName Name)
+TMap<MainCharacterAnimState, UAnimMontage*> UGlobalGameInstance::GetAllAnimations(FName Name)
+{
+	check(nullptr != AllAnimations)
+
+	FWeaponData* FindTable = AllAnimations->FindRow<FWeaponData>(Name, Name.ToString());
+
+	check(nullptr != FindTable)
+
+	return FindTable->AllAnimations;
+}
+
+FWeaponData* UGlobalGameInstance::GetWeaponData(FName Name)
 {
 	check(nullptr != WeaponDatas)
 

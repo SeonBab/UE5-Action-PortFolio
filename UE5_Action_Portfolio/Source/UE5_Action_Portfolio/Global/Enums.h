@@ -6,7 +6,7 @@ UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	None,
-	Unarm,
+	UnArmed,
 	Bow,
 	Sword,
 };
@@ -21,4 +21,5 @@ enum class MainCharacterAnimState : uint8
 	WalkJump,
 	Run,
 	RunJump,
+	Roll,
 };
