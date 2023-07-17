@@ -22,6 +22,9 @@ public:
 
 	void IsRollMoveToFalse();
 	void ChangeWeapon(FName _Weapon);
+	void ChangeSetUnArmed();
+	void ChangeSetBow();
+	void ChangeSetSwordAndSheiled();
 
 	// Tick
 	// virtual void Tick(float _DeltaTime) override;
@@ -39,13 +42,15 @@ public:
 	// 캐릭터
 	UPROPERTY()
 	ACharacter* CurCharacter;
-	UPROPERTY()
-	TMap<MainCharacterAnimState, UAnimMontage*> AllAnimations;
 	MainCharacterAnimState AnimState = MainCharacterAnimState::Idle;
 
 	// 캐릭터 움직임 상태
 	bool IsForwardWalk;
-	bool IsLeftdWalk;
+	bool IsLeftWalk;
 	bool IsRollMove;
+	float RollMoveTime;
+	bool IsWalkJump;
+	bool IsRunJump;
 	float PressTime;
+	int RunCount;
 };

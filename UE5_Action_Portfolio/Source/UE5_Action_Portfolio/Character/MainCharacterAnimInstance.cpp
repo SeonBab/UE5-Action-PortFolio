@@ -1,7 +1,7 @@
 #include "Character/MainCharacterAnimInstance.h"
 #include "MainCharacter.h"
-#include "Global/GlobalGameInstance.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Global/GlobalGameInstance.h"
 #include "Global/WeaponData.h"
 #include "Weapon/WeaponAction.h"
 
@@ -36,21 +36,6 @@ void UMainCharacterAnimInstance::AnimNotify_RollStop()
 
 void UMainCharacterAnimInstance::NativeInitializeAnimation()
 {
-	//CurCharacter = Cast<AMainCharacter>(GetOwningActor());
-
-	//if (nullptr == CurCharacter)
-	//{
-	//	return;
-	//}
-
-	//CurCharacterMovementComponent = CurCharacter->GetMovementComponent();
-
-	//if (nullptr == CurCharacterMovementComponent)
-	//{
-	//	return;
-	//}
-
-	//CurCharSpeed = 0;
 }
 
 void UMainCharacterAnimInstance::NativeBeginPlay()
@@ -59,14 +44,14 @@ void UMainCharacterAnimInstance::NativeBeginPlay()
 
 	OnMontageBlendingOut.AddDynamic(this, &UMainCharacterAnimInstance::MontageEnd);
 
-	UGlobalGameInstance* Ins = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Ins)
+	if (nullptr == Instance)
 	{
 		return;
 	}
 
-	FWeaponData* FindWeaponData = Ins->GetWeaponData(TEXT("UnArmed"));
+	const struct FWeaponData* FindWeaponData = Instance->GetWeaponData(TEXT("UnArmed"));
 
 	if (nullptr == FindWeaponData)
 	{
@@ -74,15 +59,6 @@ void UMainCharacterAnimInstance::NativeBeginPlay()
 	}
 
 	AllAnimations = FindWeaponData->AllAnimations;
-
-	//AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
-
-	//if (nullptr == character && false == character->IsValidLowLevel())
-	//{
-	//	return;
-	//}
-
-	//AllAnimations = character->CurWeapon->AllAnimations;
 }
 
 void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)

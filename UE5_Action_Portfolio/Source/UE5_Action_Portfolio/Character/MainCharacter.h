@@ -21,6 +21,9 @@ public:
 	void MoveRight(float _Value);
 	void RollorRun(float _Value);
 	void JumpAction();
+	void ChangeUnArmed();
+	void ChangeBow();
+	void ChangeSwordAndSheiled();
 
 protected:
 	virtual void BeginPlay() override;

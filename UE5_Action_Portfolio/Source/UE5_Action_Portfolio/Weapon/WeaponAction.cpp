@@ -4,6 +4,7 @@
 #include "Global/WeaponData.h"
 #include "Weapon/WeaponAction.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Character/MainCharacterAnimInstance.h"
 
 UWeaponAction::UWeaponAction()
 {
@@ -14,9 +15,9 @@ UWeaponAction::UWeaponAction()
 
 	PressTime = 0;
 	IsForwardWalk = false;
-	IsLeftdWalk = false;
+	IsLeftWalk = false;
 	IsRollMove = false;
-
+	RunCount = 50;
 }
 
 void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
@@ -41,21 +42,38 @@ void UWeaponAction::IsRollMoveToFalse()
 
 void UWeaponAction::ChangeWeapon(FName _Weapon)
 {
-	UGlobalGameInstance* Ins = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+	UMainCharacterAnimInstance* Ptr = Cast<UMainCharacterAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
 
-	if (nullptr == Ins)
+	if (nullptr == Ptr)
 	{
 		return;
 	}
 
-	FWeaponData* FindWeaponData = Ins->GetWeaponData(_Weapon);
+	UGlobalGameInstance* Instacne = CurCharacter->GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	const struct FWeaponData* FindWeaponData = Instacne->GetWeaponData(_Weapon);
 
 	if (nullptr == FindWeaponData)
 	{
 		return;
 	}
 
-	AllAnimations = FindWeaponData->AllAnimations;
+	Ptr->AllAnimations = FindWeaponData->AllAnimations;
+}
+
+void UWeaponAction::ChangeSetUnArmed()
+{
+	ChangeWeapon(TEXT("UnArmed"));
+}
+
+void UWeaponAction::ChangeSetBow()
+{
+	ChangeWeapon(TEXT("Bow"));
+}
+
+void UWeaponAction::ChangeSetSwordAndSheiled()
+{
+	ChangeWeapon(TEXT("SwordAndShield"));
 }
 
 void UWeaponAction::BeginPlay()
@@ -87,7 +105,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		return;
 	case MainCharacterAnimState::Run:
 		// 걷는 입력이 없다면 달리기가 중지되게 해준다
-		if (0.f == _Value && false == IsLeftdWalk)
+		if (0.f == _Value && false == IsLeftWalk)
 		{
 			AnimState = MainCharacterAnimState::Idle;
 		}
@@ -113,7 +131,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	{
 		IsForwardWalk = false;
 
-		if (AnimState == MainCharacterAnimState::Walk && false == IsLeftdWalk)
+		if (AnimState == MainCharacterAnimState::Walk && false == IsLeftWalk)
 		{
 			AnimState = MainCharacterAnimState::Idle;
 		}
@@ -142,7 +160,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	// 걷는다.
 	if (nullptr != CurCharacter->Controller && _Value != 0.0f)
 	{
-		IsLeftdWalk = true;
+		IsLeftWalk = true;
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
@@ -153,7 +171,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	}
 	else
 	{
-		IsLeftdWalk = false;
+		IsLeftWalk = false;
 
 		if (AnimState == MainCharacterAnimState::Walk && false == IsForwardWalk)
 		{
@@ -171,7 +189,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 			AnimState = MainCharacterAnimState::Idle;
 		}
 
-		if (0 != PressTime && PressTime <= 30)
+		if (0 != PressTime && PressTime <= RunCount)
 		{
 			// 구르면 안되는 상태
 			switch (AnimState)
@@ -197,6 +215,12 @@ void UWeaponAction::RollorRunAction(float _Value)
 
 	++PressTime;
 
+	// 걷는 입력이 없으면 달리기 초기화
+	if (false == IsForwardWalk && false == IsLeftWalk)
+	{
+		PressTime = 0;
+	}
+
 	// 달리면 안되는 상태
 	switch (AnimState)
 	{
@@ -208,7 +232,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		break;
 	}
 
-	if (PressTime >= 30)
+	if (PressTime >= RunCount)
 	{
 		// 달린다
 		// 달리는 애니메이션이 빨리 재생된다???
