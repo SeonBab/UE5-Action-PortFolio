@@ -2,12 +2,15 @@
 
 
 #include "Weapon/WeaponAction.h"
-#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UWeaponAction::UWeaponAction()
 {
 	//CurCharacter = CreateDefaultSubobject<ACharacter>(TEXT("Weapon"));
 	
+	PressTime = 0;
+	IsForwardWalk = false;
+	IsLeftdWalk = false;
 }
 
 void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
@@ -40,7 +43,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	case MainCharacterAnimState::WalkJump:
 	case MainCharacterAnimState::Run:
 		// 걷는 입력이 없다면 달리기가 중지되게 해준다
-		if (0.f == _Value)
+		if (0.f == _Value && false == IsLeftdWalk)
 		{
 			AnimState = MainCharacterAnimState::Idle;
 		}
@@ -53,6 +56,8 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	// 걷는다.
 	if (nullptr != CurCharacter->Controller && _Value != 0.0f)
 	{
+		IsForwardWalk = true;
+
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
 		const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
@@ -62,7 +67,9 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	}
 	else
 	{
-		if (AnimState == MainCharacterAnimState::Walk)
+		IsForwardWalk = false;
+
+		if (AnimState == MainCharacterAnimState::Walk && false == IsLeftdWalk)
 		{
 			AnimState = MainCharacterAnimState::Idle;
 		}
@@ -77,7 +84,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	case MainCharacterAnimState::WalkJump:
 	case MainCharacterAnimState::Run:
 		// 걷는 입력이 없다면 달리기가 중지되게 해준다
-		if (0.f == _Value)
+		if (0.f == _Value && false == IsForwardWalk)
 		{
 			AnimState = MainCharacterAnimState::Idle;
 		}
@@ -90,6 +97,8 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	// 걷는다.
 	if (nullptr != CurCharacter->Controller && _Value != 0.0f)
 	{
+		IsLeftdWalk = true;
+
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
 		const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
@@ -97,7 +106,15 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		AnimState = MainCharacterAnimState::Walk;
 		CurCharacter->AddMovementInput(Direction, _Value);
 	}
-	// WAndSButtonAction()보다 늦게 호출되어 AnimState = MainCharacterAnimState::Idle을 안해줘도 다음 tick에 Idle로 변환됨
+	else
+	{
+		IsLeftdWalk = false;
+
+		if (AnimState == MainCharacterAnimState::Walk && false == IsForwardWalk)
+		{
+			AnimState = MainCharacterAnimState::Idle;
+		}
+	}
 }
 
 void UWeaponAction::RollorRunAction(float _Value)
@@ -147,8 +164,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 	if (PressTime >= 30)
 	{
 		// 달린다
-		// 달리는 애니메이션이 계속 재생된다??
-		// 좌우 움직임에서 입력값이 없으니 포워드에서 Idle로 바꾸게 만든다.
+		// 달리는 애니메이션이 빨리 재생된다???
 		AnimState = MainCharacterAnimState::Run;
 	}
 }

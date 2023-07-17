@@ -34,5 +34,7 @@ private:
 	UPROPERTY()
 	MainCharacterAnimState AnimState = MainCharacterAnimState::Idle;
 
+	bool IsForwardWalk;
+	bool IsLeftdWalk;
 	float PressTime;
 };
