@@ -14,6 +14,8 @@ class UE5_ACTION_PORTFOLIO_API UMainCharacterAnimInstance : public UAnimInstance
 public:
 	UFUNCTION()
 	void MontageEnd(UAnimMontage* Anim, bool Inter);
+	UFUNCTION()
+	void AnimNotify_RollStop();
 
 protected:
 	void NativeInitializeAnimation() override;
@@ -25,7 +27,6 @@ public:
 	MainCharacterAnimState Animstate = MainCharacterAnimState::Idle;
 	UPROPERTY()
 	TMap<MainCharacterAnimState, UAnimMontage*> AllAnimations;
-
 private:
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Char, Meta = (AllowPrivateAccess = true))
 	//AMainCharacter* CurCharacter;

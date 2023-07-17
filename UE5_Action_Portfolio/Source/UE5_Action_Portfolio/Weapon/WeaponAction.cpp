@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Global/GlobalGameInstance.h"
+#include "Global/WeaponData.h"
 #include "Weapon/WeaponAction.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -8,9 +9,14 @@ UWeaponAction::UWeaponAction()
 {
 	//CurCharacter = CreateDefaultSubobject<ACharacter>(TEXT("Weapon"));
 	
+	// 틱 사용 어떻게 하지?
+	//PrimaryActorTick.bCanEverTick = true;
+
 	PressTime = 0;
 	IsForwardWalk = false;
 	IsLeftdWalk = false;
+	IsRollMove = false;
+
 }
 
 void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
@@ -28,12 +34,49 @@ void UWeaponAction::SetAnimState(MainCharacterAnimState _State)
 	AnimState = _State;
 }
 
+void UWeaponAction::IsRollMoveToFalse()
+{
+	IsRollMove = false;
+}
+
+void UWeaponAction::ChangeWeapon(FName _Weapon)
+{
+	UGlobalGameInstance* Ins = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Ins)
+	{
+		return;
+	}
+
+	FWeaponData* FindWeaponData = Ins->GetWeaponData(_Weapon);
+
+	if (nullptr == FindWeaponData)
+	{
+		return;
+	}
+
+	AllAnimations = FindWeaponData->AllAnimations;
+}
+
 void UWeaponAction::BeginPlay()
 {
 	
 }
 
-
+//void UWeaponAction::Tick(float _DeltaTime)
+//{
+//	// 틱 안들어오는데 어떻게 사용하지?
+//	
+//	// 굴렀을 때 움직이기
+//	if (true == IsRollMove)
+//	{
+//		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
+//
+//		DeltaLocation.X = 1000 * CurCharacter->GetWorld()->GetDeltaSeconds();
+//
+//		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
+//	}
+//}
 
 void UWeaponAction::WAndSButtonAction(float _Value)
 {
@@ -41,6 +84,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	switch (AnimState)
 	{
 	case MainCharacterAnimState::WalkJump:
+		return;
 	case MainCharacterAnimState::Run:
 		// 걷는 입력이 없다면 달리기가 중지되게 해준다
 		if (0.f == _Value && false == IsLeftdWalk)
@@ -82,6 +126,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	switch (AnimState)
 	{
 	case MainCharacterAnimState::WalkJump:
+		return;
 	case MainCharacterAnimState::Run:
 		// 걷는 입력이 없다면 달리기가 중지되게 해준다
 		if (0.f == _Value && false == IsForwardWalk)
@@ -140,6 +185,8 @@ void UWeaponAction::RollorRunAction(float _Value)
 			// 구른다
 			if (nullptr != CurCharacter->Controller)
 			{
+				IsRollMove = true;
+
 				AnimState = MainCharacterAnimState::Roll;
 			}
 		}

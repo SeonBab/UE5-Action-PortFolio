@@ -13,28 +13,39 @@ class UE5_ACTION_PORTFOLIO_API UWeaponAction : public UObject
 	
 public:
 	UWeaponAction();
+	
 
 	void SetCurCharacter(ACharacter* _CurChar);
 
 	MainCharacterAnimState* GetAnimState();
 	void SetAnimState(MainCharacterAnimState _State);
 
-public:
+	void IsRollMoveToFalse();
+	void ChangeWeapon(FName _Weapon);
+
+	// Tick
+	// virtual void Tick(float _DeltaTime) override;
+
 	virtual void WAndSButtonAction(float _Value);
 	virtual void DAndAButtonAction(float _Value);
 	virtual void RollorRunAction(float _Value);
 	virtual void ShiftButtonAction();
 
-protected:
 	virtual void BeginPlay();
 
-private:
+public:
+	//Tick
+
+	// 캐릭터
 	UPROPERTY()
 	ACharacter* CurCharacter;
 	UPROPERTY()
+	TMap<MainCharacterAnimState, UAnimMontage*> AllAnimations;
 	MainCharacterAnimState AnimState = MainCharacterAnimState::Idle;
 
+	// 캐릭터 움직임 상태
 	bool IsForwardWalk;
 	bool IsLeftdWalk;
+	bool IsRollMove;
 	float PressTime;
 };

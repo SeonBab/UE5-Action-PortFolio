@@ -29,6 +29,7 @@ protected:
 
 public:
 	// Ä«¸Þ¶ó
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USpringArmComponent* MainCameraSpringArmComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

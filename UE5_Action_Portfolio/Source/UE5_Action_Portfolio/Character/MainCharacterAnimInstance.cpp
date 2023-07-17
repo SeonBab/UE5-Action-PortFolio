@@ -22,6 +22,18 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 	}
 }
 
+void UMainCharacterAnimInstance::AnimNotify_RollStop()
+{
+	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	character->CurWeapon->IsRollMoveToFalse();
+}
+
 void UMainCharacterAnimInstance::NativeInitializeAnimation()
 {
 	//CurCharacter = Cast<AMainCharacter>(GetOwningActor());
@@ -62,6 +74,15 @@ void UMainCharacterAnimInstance::NativeBeginPlay()
 	}
 
 	AllAnimations = FindWeaponData->AllAnimations;
+
+	//AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+
+	//if (nullptr == character && false == character->IsValidLowLevel())
+	//{
+	//	return;
+	//}
+
+	//AllAnimations = character->CurWeapon->AllAnimations;
 }
 
 void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
