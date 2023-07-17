@@ -96,6 +96,7 @@ void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	if (false == Montage_IsPlaying(montage))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
 		Montage_Play(montage, 1.0f);
 	}
 }

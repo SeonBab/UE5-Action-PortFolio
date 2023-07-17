@@ -13,7 +13,6 @@ UWeaponAction::UWeaponAction()
 void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
 {
 	CurCharacter = _CurChar;
-	UE_LOG(LogTemp, Log, TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 }
 
 MainCharacterAnimState* UWeaponAction::GetAnimState()
@@ -40,6 +39,11 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	{
 	case MainCharacterAnimState::WalkJump:
 	case MainCharacterAnimState::Run:
+		// 걷는 입력이 없다면 달리기가 중지되게 해준다
+		if (0.f == _Value)
+		{
+			AnimState = MainCharacterAnimState::Idle;
+		}
 	case MainCharacterAnimState::RunJump:
 	case MainCharacterAnimState::Roll:
 		return;
@@ -72,6 +76,11 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	{
 	case MainCharacterAnimState::WalkJump:
 	case MainCharacterAnimState::Run:
+		// 걷는 입력이 없다면 달리기가 중지되게 해준다
+		if (0.f == _Value)
+		{
+			AnimState = MainCharacterAnimState::Idle;
+		}
 	case MainCharacterAnimState::RunJump:
 	case MainCharacterAnimState::Roll:
 		return;
@@ -139,6 +148,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 	{
 		// 달린다
 		// 달리는 애니메이션이 계속 재생된다??
+		// 좌우 움직임에서 입력값이 없으니 포워드에서 Idle로 바꾸게 만든다.
 		AnimState = MainCharacterAnimState::Run;
 	}
 }
