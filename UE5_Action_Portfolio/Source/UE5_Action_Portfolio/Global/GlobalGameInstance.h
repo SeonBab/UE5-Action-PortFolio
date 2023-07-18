@@ -17,9 +17,9 @@ public:
 	UGlobalGameInstance();
 	~UGlobalGameInstance();
 
-	TMap<MainCharacterAnimState, UAnimMontage*> GetAllAnimations(FName Name);
+	//TMap<CharacterAnimState, UAnimMontage*> GetAllAnimations(FName Name);
 
-	struct FWeaponData* GetWeaponData(FName Name);
+	struct FAnimaitionData* GetAnimaitionData(FName Name);
 
 private:
 	UPROPERTY()

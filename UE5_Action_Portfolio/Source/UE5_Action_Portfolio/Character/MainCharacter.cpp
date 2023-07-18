@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/UnArmedAction.h"
 #include "Global/GlobalGameInstance.h"
-#include "Global/WeaponData.h"
+#include "Global/AnimaitionData.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -35,14 +35,14 @@ AMainCharacter::AMainCharacter()
 	//	return;
 	//}
 
-	//FWeaponData* FindWeaponData = Ins->GetWeaponData(TEXT("UnArmed"));
+	//FAnimaitionData* FindAnimaitionData = Ins->GetAnimaitionData(TEXT("UnArmed"));
 
-	//if (nullptr == FindWeaponData)
+	//if (nullptr == FindAnimaitionData)
 	//{
 	//	return;
 	//}
 
-	//AllAnimations = FindWeaponData->AllAnimations;
+	//AllAnimations = FindAnimaitionData->AllAnimations;
 }
 
 void AMainCharacter::BeginPlay()

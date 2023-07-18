@@ -2,16 +2,22 @@
 
 
 #include "GlobalGameInstance.h"
-#include "WeaponData.h"
+#include "AnimaitionData.h"
 
 UGlobalGameInstance::UGlobalGameInstance()
 {
-	FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_WeaponData.DT_WeaponData'");
-	ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
-
-	if (DataTable.Succeeded())
 	{
-		WeaponDatas = DataTable.Object;
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_AnimaitionData.DT_AnimaitionData'");
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			AllAnimations = DataTable.Object;
+		}
+	}
+
+	{
+		// 무기 데이터
 	}
 }
 
@@ -19,22 +25,22 @@ UGlobalGameInstance::~UGlobalGameInstance()
 {
 }
 
-TMap<MainCharacterAnimState, UAnimMontage*> UGlobalGameInstance::GetAllAnimations(FName Name)
+//TMap<CharacterAnimState, UAnimMontage*> UGlobalGameInstance::GetAllAnimations(FName Name)
+//{
+//	check(nullptr != AllAnimations)
+//
+//	FAnimaitionData* FindTable = AllAnimations->FindRow<FAnimaitionData>(Name, Name.ToString());
+//
+//	check(nullptr != FindTable)
+//
+//	return FindTable->AllAnimations;
+//}
+
+FAnimaitionData* UGlobalGameInstance::GetAnimaitionData(FName Name)
 {
 	check(nullptr != AllAnimations)
 
-	FWeaponData* FindTable = AllAnimations->FindRow<FWeaponData>(Name, Name.ToString());
-
-	check(nullptr != FindTable)
-
-	return FindTable->AllAnimations;
-}
-
-FWeaponData* UGlobalGameInstance::GetWeaponData(FName Name)
-{
-	check(nullptr != WeaponDatas)
-
-	FWeaponData* FindTable = WeaponDatas->FindRow<FWeaponData>(Name, Name.ToString());
+	FAnimaitionData* FindTable = AllAnimations->FindRow<FAnimaitionData>(Name, Name.ToString());
 
 	check(nullptr != FindTable)
 

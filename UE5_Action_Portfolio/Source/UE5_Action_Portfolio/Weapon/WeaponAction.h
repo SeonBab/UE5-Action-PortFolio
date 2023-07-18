@@ -18,8 +18,8 @@ public:
 	void SetCurCharacter(ACharacter* _CurChar);
 	void SetCharacterAirControl(float _Value);
 
-	MainCharacterAnimState* GetAnimState();
-	void SetAnimState(MainCharacterAnimState _State);
+	CharacterAnimState* GetAnimState();
+	void SetAnimState(CharacterAnimState _State);
 
 	void IsRollMoveToFalse();
 	void ChangeWeapon(FName _Weapon);
@@ -39,7 +39,7 @@ public:
 	// 캐릭터
 	UPROPERTY()
 	ACharacter* CurCharacter;
-	MainCharacterAnimState AnimState = MainCharacterAnimState::Idle;
+	CharacterAnimState AnimState = CharacterAnimState::Idle;
 
 	// 캐릭터 움직임 상태
 	bool IsForwardWalk;

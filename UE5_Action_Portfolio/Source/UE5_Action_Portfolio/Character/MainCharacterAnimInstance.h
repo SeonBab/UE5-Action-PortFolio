@@ -26,7 +26,7 @@ protected:
 
 public:
 	UPROPERTY()
-	MainCharacterAnimState Animstate = MainCharacterAnimState::Idle;
+	CharacterAnimState Animstate = CharacterAnimState::Idle;
 	UPROPERTY()
-	TMap<MainCharacterAnimState, UAnimMontage*> AllAnimations;
+	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;
 };

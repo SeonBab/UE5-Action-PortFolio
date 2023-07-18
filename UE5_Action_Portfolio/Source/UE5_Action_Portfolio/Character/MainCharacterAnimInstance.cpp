@@ -2,7 +2,7 @@
 #include "MainCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Global/GlobalGameInstance.h"
-#include "Global/WeaponData.h"
+#include "Global/AnimaitionData.h"
 #include "Weapon/WeaponAction.h"
 
 void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
@@ -14,12 +14,12 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 		return;
 	}
 
-	if (AllAnimations[MainCharacterAnimState::WalkJump] == Anim || AllAnimations[MainCharacterAnimState::RunJump] == Anim || AllAnimations[MainCharacterAnimState::Roll] == Anim)
+	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || AllAnimations[CharacterAnimState::Roll] == Anim)
 	{
-		Animstate = MainCharacterAnimState::Idle;
+		Animstate = CharacterAnimState::Idle;
 		character->CurWeapon->SetAnimState(Animstate);
 		character->CurWeapon->SetCharacterAirControl(1.f);
-		Montage_Play(AllAnimations[MainCharacterAnimState::Idle], 1.0f);
+		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
 	}
 }
 
@@ -64,14 +64,14 @@ void UMainCharacterAnimInstance::NativeBeginPlay()
 		return;
 	}
 
-	const struct FWeaponData* FindWeaponData = Instance->GetWeaponData(TEXT("UnArmed"));
+	struct FAnimaitionData* FindAnimaitionData = Instance->GetAnimaitionData(TEXT("UnArmed"));
 
-	if (nullptr == FindWeaponData)
+	if (nullptr == FindAnimaitionData)
 	{
 		return;
 	}
 
-	AllAnimations = FindWeaponData->AllAnimations;
+	AllAnimations = FindAnimaitionData->AllAnimations;
 }
 
 void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)

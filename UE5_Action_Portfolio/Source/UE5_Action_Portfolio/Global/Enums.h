@@ -13,7 +13,7 @@ enum class EWeaponType : uint8
 
 
 UENUM(BlueprintType)
-enum class MainCharacterAnimState : uint8
+enum class CharacterAnimState : uint8
 {
 	None,
 	Idle,
@@ -22,4 +22,17 @@ enum class MainCharacterAnimState : uint8
 	Run,
 	RunJump,
 	Roll,
+	EquipArmBow,
+	EquipArmSwordAndShield,
+	DisArmBow,
+	DisArmSwordAndShield,
+	LockOnBackward,
+	LockOnLeft,
+	LockOnLeftRun,
+	LockOnRight,
+	LockOnRightRun,
+	Attack,
+	AimOrBlock,
+	ShieldBlockIdle,
+	Parry,
 };
