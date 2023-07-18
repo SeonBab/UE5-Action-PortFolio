@@ -18,6 +18,7 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 	{
 		Animstate = MainCharacterAnimState::Idle;
 		character->CurWeapon->SetAnimState(Animstate);
+		character->CurWeapon->SetCharacterAirControl(1.f);
 		Montage_Play(AllAnimations[MainCharacterAnimState::Idle], 1.0f);
 	}
 }
@@ -32,6 +33,18 @@ void UMainCharacterAnimInstance::AnimNotify_RollStop()
 	}
 
 	character->CurWeapon->IsRollMoveToFalse();
+}
+
+void UMainCharacterAnimInstance::AnimNotify_JumpStart()
+{
+	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	character->Jump();
 }
 
 void UMainCharacterAnimInstance::NativeInitializeAnimation()

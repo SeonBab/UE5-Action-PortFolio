@@ -28,6 +28,11 @@ void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
 	CurCharacter = _CurChar;
 }
 
+void UWeaponAction::SetCharacterAirControl(float _Value)
+{
+	CurCharacter->GetCharacterMovement()->AirControl = _Value;
+}
+
 MainCharacterAnimState* UWeaponAction::GetAnimState()
 {
 	return &AnimState;
@@ -108,9 +113,8 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
-	case MainCharacterAnimState::WalkJump:
-	case MainCharacterAnimState::RunJump:
 	case MainCharacterAnimState::Roll:
+	case MainCharacterAnimState::WalkJump:
 		return;
 		break;
 	}
@@ -123,12 +127,20 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		{
 			IsForwardWalk = true;
 
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 600;
+
 			AnimState = MainCharacterAnimState::Walk;
 		}
 		// 달린다
 		else if (AnimState == MainCharacterAnimState::Run)
 		{
 
+		}
+
+		// 점프 하며 공중에 있는게 아니라면 이동 불가능
+		if (false == CurCharacter->GetCharacterMovement()->IsFalling() && (MainCharacterAnimState::WalkJump == AnimState || MainCharacterAnimState::RunJump == AnimState))
+		{
+			return;
 		}
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
@@ -158,9 +170,8 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
-	case MainCharacterAnimState::WalkJump:
-	case MainCharacterAnimState::RunJump:
 	case MainCharacterAnimState::Roll:
+	case MainCharacterAnimState::WalkJump:
 		return;
 		break;
 	}
@@ -173,12 +184,20 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		{
 			IsLeftWalk = true;
 
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 600;
+
 			AnimState = MainCharacterAnimState::Walk;
 		}
 		// 달린다
 		else if (AnimState == MainCharacterAnimState::Run)
 		{
 
+		}
+
+		// 점프 하며 공중에 있는게 아니라면 이동 불가능
+		if (false == CurCharacter->GetCharacterMovement()->IsFalling() && MainCharacterAnimState::RunJump == AnimState)
+		{
+			return;
 		}
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
@@ -210,11 +229,6 @@ void UWeaponAction::RollorRunAction(float _Value)
 		{
 			AnimState = MainCharacterAnimState::Idle;
 		}
-		// 걷는 입력이 없으면 달리기 초기화, 중지
-		if (false == IsForwardWalk && false == IsLeftWalk)
-		{
-			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 600;
-		}
 
 		// 짧게 입력이 들어왔는지 확인
 		if (nullptr != CurCharacter->Controller && (0 != PressSpacebarTime && PressSpacebarTime <= RunCount))
@@ -224,14 +238,18 @@ void UWeaponAction::RollorRunAction(float _Value)
 			{
 			case MainCharacterAnimState::WalkJump:
 			case MainCharacterAnimState::RunJump:
-			case MainCharacterAnimState::Roll:
 				return;
-				break;
+			case MainCharacterAnimState::Roll:
+				PressSpacebarTime = 0;
+				PressSpacebar = false;
+				return;
 			}
 			// 구른다
-			IsRollMove = true;
-
-			AnimState = MainCharacterAnimState::Roll;
+			if (nullptr != CurCharacter->Controller)
+			{
+				IsRollMove = true;
+				AnimState = MainCharacterAnimState::Roll;
+			}
 		}
 
 		// 입력이 멈추면 누른 시간 0
@@ -242,7 +260,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 
 	// 누른 시간 체크 시작
 	PressSpacebar = true;
-	//PressSpacebarTime++;
+	PressSpacebarTime++;
 
 	// 달리면 안되는 상태
 	switch (AnimState)
@@ -267,8 +285,6 @@ void UWeaponAction::RollorRunAction(float _Value)
 
 void UWeaponAction::ShiftButtonAction()
 {
-
-
 	// 점프하면 안되는 상태
 	switch (AnimState)
 	{
@@ -279,17 +295,17 @@ void UWeaponAction::ShiftButtonAction()
 		break;
 	}
 
+	// 달릴 때 점프
 	if (MainCharacterAnimState::Run == AnimState)
 	{
 		AnimState = MainCharacterAnimState::RunJump;
 		CurCharacter->Jump();
 	}
-
-	// 걷기 점프한다
-	else if (MainCharacterAnimState::Walk == AnimState)
+	// 걸을 때, 가만히 있을 때 점프
+	else if (MainCharacterAnimState::Walk == AnimState || MainCharacterAnimState::Idle == AnimState)
 	{
 		AnimState = MainCharacterAnimState::WalkJump;
-		CurCharacter->Jump();
 	}
 
+	CurCharacter->GetCharacterMovement()->AirControl = 0.3f;
 }

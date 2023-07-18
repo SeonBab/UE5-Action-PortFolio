@@ -16,6 +16,7 @@ public:
 	
 
 	void SetCurCharacter(ACharacter* _CurChar);
+	void SetCharacterAirControl(float _Value);
 
 	MainCharacterAnimState* GetAnimState();
 	void SetAnimState(MainCharacterAnimState _State);

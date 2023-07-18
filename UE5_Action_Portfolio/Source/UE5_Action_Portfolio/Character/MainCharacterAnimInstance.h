@@ -16,6 +16,8 @@ public:
 	void MontageEnd(UAnimMontage* Anim, bool Inter);
 	UFUNCTION()
 	void AnimNotify_RollStop();
+	UFUNCTION()
+	void AnimNotify_JumpStart();
 
 protected:
 	void NativeInitializeAnimation() override;
