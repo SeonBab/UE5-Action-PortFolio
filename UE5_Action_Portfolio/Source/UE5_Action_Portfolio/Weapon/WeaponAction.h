@@ -25,9 +25,7 @@ public:
 	void ChangeSetUnArmed();
 	void ChangeSetBow();
 	void ChangeSetSwordAndSheiled();
-
-	// Tick
-	// virtual void Tick(float _DeltaTime) override;
+	void PressSpaceBarCkeck(float _DeltaTime);
 
 	virtual void WAndSButtonAction(float _Value);
 	virtual void DAndAButtonAction(float _Value);
@@ -37,8 +35,6 @@ public:
 	virtual void BeginPlay();
 
 public:
-	//Tick
-
 	// Ä³¸¯ÅÍ
 	UPROPERTY()
 	ACharacter* CurCharacter;
@@ -48,9 +44,9 @@ public:
 	bool IsForwardWalk;
 	bool IsLeftWalk;
 	bool IsRollMove;
-	float RollMoveTime;
 	bool IsWalkJump;
 	bool IsRunJump;
-	float PressTime;
+	bool PressSpacebar;
+	float PressSpacebarTime;
 	int RunCount;
 };

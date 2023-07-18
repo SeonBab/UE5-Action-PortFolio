@@ -13,11 +13,14 @@ UWeaponAction::UWeaponAction()
 	// 틱 사용 어떻게 하지?
 	//PrimaryActorTick.bCanEverTick = true;
 
-	PressTime = 0;
 	IsForwardWalk = false;
 	IsLeftWalk = false;
 	IsRollMove = false;
-	RunCount = 50;
+	IsWalkJump = false;
+	IsRunJump = false;
+	PressSpacebar = false;
+	PressSpacebarTime = 0;
+	RunCount = 30;
 }
 
 void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
@@ -76,25 +79,29 @@ void UWeaponAction::ChangeSetSwordAndSheiled()
 	ChangeWeapon(TEXT("SwordAndShield"));
 }
 
+void UWeaponAction::PressSpaceBarCkeck(float _DeltaTime)
+{
+	// SpaceBar 누른 시간 체크
+	if (true == PressSpacebar)
+	{
+		PressSpacebarTime += _DeltaTime;
+	}
+
+	// 굴렀을 때 움직이기
+	if (true == IsRollMove)
+	{
+		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
+
+		DeltaLocation.X = 1000 * _DeltaTime;
+
+		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
+	}
+}
+
 void UWeaponAction::BeginPlay()
 {
 	
 }
-
-//void UWeaponAction::Tick(float _DeltaTime)
-//{
-//	// 틱 안들어오는데 어떻게 사용하지?
-//	
-//	// 굴렀을 때 움직이기
-//	if (true == IsRollMove)
-//	{
-//		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
-//
-//		DeltaLocation.X = 1000 * CurCharacter->GetWorld()->GetDeltaSeconds();
-//
-//		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
-//	}
-//}
 
 void UWeaponAction::WAndSButtonAction(float _Value)
 {
@@ -210,7 +217,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		}
 
 		// 짧게 입력이 들어왔는지 확인
-		if (nullptr != CurCharacter->Controller && (0 != PressTime && PressTime <= RunCount))
+		if (nullptr != CurCharacter->Controller && (0 != PressSpacebarTime && PressSpacebarTime <= RunCount))
 		{
 			// 구르면 안되는 상태
 			switch (AnimState)
@@ -228,13 +235,14 @@ void UWeaponAction::RollorRunAction(float _Value)
 		}
 
 		// 입력이 멈추면 누른 시간 0
-		PressTime = 0;
+		PressSpacebarTime = 0;
+		PressSpacebar = false;
 		return;
 	}
 
-	++PressTime;
-
-
+	// 누른 시간 체크 시작
+	PressSpacebar = true;
+	//PressSpacebarTime++;
 
 	// 달리면 안되는 상태
 	switch (AnimState)
@@ -247,7 +255,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		break;
 	}
 
-	if (nullptr != CurCharacter->Controller && PressTime >= RunCount)
+	if (nullptr != CurCharacter->Controller && PressSpacebarTime >= RunCount)
 	{
 		// 달린다
 		// 달리는 애니메이션이 빨리 재생된다???
@@ -259,6 +267,8 @@ void UWeaponAction::RollorRunAction(float _Value)
 
 void UWeaponAction::ShiftButtonAction()
 {
+
+
 	// 점프하면 안되는 상태
 	switch (AnimState)
 	{
@@ -269,7 +279,17 @@ void UWeaponAction::ShiftButtonAction()
 		break;
 	}
 
-	//점프한다
-	AnimState = MainCharacterAnimState::WalkJump;
-	CurCharacter->Jump();
+	if (MainCharacterAnimState::Run == AnimState)
+	{
+		AnimState = MainCharacterAnimState::RunJump;
+		CurCharacter->Jump();
+	}
+
+	// 걷기 점프한다
+	else if (MainCharacterAnimState::Walk == AnimState)
+	{
+		AnimState = MainCharacterAnimState::WalkJump;
+		CurCharacter->Jump();
+	}
+
 }
