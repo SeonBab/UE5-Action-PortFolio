@@ -206,12 +206,11 @@ void UWeaponAction::RollorRunAction(float _Value)
 		// 걷는 입력이 없으면 달리기 초기화, 중지
 		if (false == IsForwardWalk && false == IsLeftWalk)
 		{
-			PressTime = 0;
-			//AnimState = MainCharacterAnimState::Idle;
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 600;
 		}
 
 		// 짧게 입력이 들어왔는지 확인
-		if (0 != PressTime && PressTime <= RunCount)
+		if (nullptr != CurCharacter->Controller && (0 != PressTime && PressTime <= RunCount))
 		{
 			// 구르면 안되는 상태
 			switch (AnimState)
@@ -223,15 +222,13 @@ void UWeaponAction::RollorRunAction(float _Value)
 				break;
 			}
 			// 구른다
-			if (nullptr != CurCharacter->Controller)
-			{
-				IsRollMove = true;
+			IsRollMove = true;
 
-				AnimState = MainCharacterAnimState::Roll;
-			}
+			AnimState = MainCharacterAnimState::Roll;
 		}
 
-		//PressTime = 0;
+		// 입력이 멈추면 누른 시간 0
+		PressTime = 0;
 		return;
 	}
 
@@ -256,11 +253,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		// 달리는 애니메이션이 빨리 재생된다???
 		AnimState = MainCharacterAnimState::Run;
 
-		//const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
-
-		//const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
-
-		//CurCharacter->AddMovementInput(Direction, _Value);
+		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 900;
 	}
 }
 
