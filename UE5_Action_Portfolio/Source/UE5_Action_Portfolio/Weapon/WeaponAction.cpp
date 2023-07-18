@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Weapon/WeaponAction.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/WeaponData.h"
-#include "Weapon/WeaponAction.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Character/MainCharacterAnimInstance.h"
 
@@ -98,38 +98,46 @@ void UWeaponAction::BeginPlay()
 
 void UWeaponAction::WAndSButtonAction(float _Value)
 {
-	// 걸으면 안되는 상태
+	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
 	case MainCharacterAnimState::WalkJump:
-		return;
-	case MainCharacterAnimState::Run:
-		// 걷는 입력이 없다면 달리기가 중지되게 해준다
-		if (0.f == _Value && false == IsLeftWalk)
-		{
-			AnimState = MainCharacterAnimState::Idle;
-		}
 	case MainCharacterAnimState::RunJump:
 	case MainCharacterAnimState::Roll:
 		return;
 		break;
 	}
 
-	// 걷는다.
-	if (nullptr != CurCharacter->Controller && _Value != 0.0f)
+	// 이동한다
+	if (nullptr != CurCharacter->Controller && 0.f != _Value)
 	{
-		IsForwardWalk = true;
+		// 걷는다
+		if (AnimState == MainCharacterAnimState::Idle || AnimState == MainCharacterAnimState::Walk)
+		{
+			IsForwardWalk = true;
+
+			AnimState = MainCharacterAnimState::Walk;
+		}
+		// 달린다
+		else if (AnimState == MainCharacterAnimState::Run)
+		{
+
+		}
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
 		const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
 
-		AnimState = MainCharacterAnimState::Walk;
 		CurCharacter->AddMovementInput(Direction, _Value);
+
 	}
 	else
 	{
-		IsForwardWalk = false;
+		// 앞뒤 입력이 없으면 false
+		if (0.f == _Value)
+		{
+			IsForwardWalk = false;
+		}
 
 		if (AnimState == MainCharacterAnimState::Walk && false == IsLeftWalk)
 		{
@@ -140,38 +148,45 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 
 void UWeaponAction::DAndAButtonAction(float _Value)
 {
-	// 걸으면 안되는 상태
+	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
 	case MainCharacterAnimState::WalkJump:
-		return;
-	case MainCharacterAnimState::Run:
-		// 걷는 입력이 없다면 달리기가 중지되게 해준다
-		if (0.f == _Value && false == IsForwardWalk)
-		{
-			AnimState = MainCharacterAnimState::Idle;
-		}
 	case MainCharacterAnimState::RunJump:
 	case MainCharacterAnimState::Roll:
 		return;
 		break;
 	}
 
-	// 걷는다.
-	if (nullptr != CurCharacter->Controller && _Value != 0.0f)
+	// 이동한다
+	if (nullptr != CurCharacter->Controller && 0.f != _Value)
 	{
-		IsLeftWalk = true;
+		// 걷는다
+		if (AnimState == MainCharacterAnimState::Idle || AnimState == MainCharacterAnimState::Walk)
+		{
+			IsLeftWalk = true;
+
+			AnimState = MainCharacterAnimState::Walk;
+		}
+		// 달린다
+		else if (AnimState == MainCharacterAnimState::Run)
+		{
+
+		}
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
 		const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
 
-		AnimState = MainCharacterAnimState::Walk;
 		CurCharacter->AddMovementInput(Direction, _Value);
 	}
 	else
 	{
-		IsLeftWalk = false;
+		// 좌우 입력이 없으면 false
+		if (0.f == _Value)
+		{
+			IsLeftWalk = false;
+		}
 
 		if (AnimState == MainCharacterAnimState::Walk && false == IsForwardWalk)
 		{
@@ -188,7 +203,14 @@ void UWeaponAction::RollorRunAction(float _Value)
 		{
 			AnimState = MainCharacterAnimState::Idle;
 		}
+		// 걷는 입력이 없으면 달리기 초기화, 중지
+		if (false == IsForwardWalk && false == IsLeftWalk)
+		{
+			PressTime = 0;
+			//AnimState = MainCharacterAnimState::Idle;
+		}
 
+		// 짧게 입력이 들어왔는지 확인
 		if (0 != PressTime && PressTime <= RunCount)
 		{
 			// 구르면 안되는 상태
@@ -209,17 +231,13 @@ void UWeaponAction::RollorRunAction(float _Value)
 			}
 		}
 
-		PressTime = 0;
+		//PressTime = 0;
 		return;
 	}
 
 	++PressTime;
 
-	// 걷는 입력이 없으면 달리기 초기화
-	if (false == IsForwardWalk && false == IsLeftWalk)
-	{
-		PressTime = 0;
-	}
+
 
 	// 달리면 안되는 상태
 	switch (AnimState)
@@ -232,11 +250,17 @@ void UWeaponAction::RollorRunAction(float _Value)
 		break;
 	}
 
-	if (PressTime >= RunCount)
+	if (nullptr != CurCharacter->Controller && PressTime >= RunCount)
 	{
 		// 달린다
 		// 달리는 애니메이션이 빨리 재생된다???
 		AnimState = MainCharacterAnimState::Run;
+
+		//const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
+
+		//const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
+
+		//CurCharacter->AddMovementInput(Direction, _Value);
 	}
 }
 
