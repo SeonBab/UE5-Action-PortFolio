@@ -42,6 +42,6 @@ public:
 
 	// ¹«±â
 	UPROPERTY(BlueprintReadWrite)
-	class UWeaponAction* CurWeapon;
+	class UWeaponAction* CurWeaponAction;
 	CharacterAnimState* AnimState;
 };

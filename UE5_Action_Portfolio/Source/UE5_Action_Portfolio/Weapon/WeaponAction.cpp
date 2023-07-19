@@ -8,17 +8,12 @@
 
 UWeaponAction::UWeaponAction()
 {	
-	// 틱 사용 어떻게 하지?
-	//PrimaryActorTick.bCanEverTick = true;
 
-	IsForwardWalk = false;
-	IsLeftWalk = false;
-	IsRollMove = false;
-	IsWalkJump = false;
-	IsRunJump = false;
-	PressSpacebar = false;
-	PressSpacebarTime = 0;
-	RunCount = 30;
+}
+
+void UWeaponAction::Tick(float _DeltaTime)
+{
+	PressSpaceBarCkeckAndRoll(_DeltaTime);
 }
 
 void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
@@ -65,24 +60,54 @@ void UWeaponAction::ChangeWeapon(FName _Weapon)
 	}
 
 	Ptr->AllAnimations = FindAnimationData->AllAnimations;
+
 }
 
 void UWeaponAction::ChangeSetUnArmed()
 {
+	if (CharacterAnimState::Idle != AnimState)
+	{
+		return;
+	}
+	// 착용하고 있던 장비가 활일 때
+	if (true)
+	{
+		AnimState = CharacterAnimState::EquipOrDisArmBow;
+	}
+	// 착용하고 있던 장비가 칼일 때
+	else if (true)
+	{
+		AnimState = CharacterAnimState::EquipOrDisArmSwordAndShield;
+	}
+
 	ChangeWeapon(TEXT("UnArmed"));
 }
 
 void UWeaponAction::ChangeSetBow()
 {
+	if (CharacterAnimState::Idle != AnimState)
+	{
+		return;
+	}
+
+	AnimState = CharacterAnimState::EquipOrDisArmBow;
+
 	ChangeWeapon(TEXT("Bow"));
 }
 
 void UWeaponAction::ChangeSetSwordAndSheiled()
 {
+	if (CharacterAnimState::Idle != AnimState)
+	{
+		return;
+	}
+
+	AnimState = CharacterAnimState::EquipOrDisArmSwordAndShield;
+
 	ChangeWeapon(TEXT("SwordAndShield"));
 }
 
-void UWeaponAction::PressSpaceBarCkeck(float _DeltaTime)
+void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 {
 	// SpaceBar 누른 시간 체크
 	if (true == PressSpacebar)
@@ -95,7 +120,7 @@ void UWeaponAction::PressSpaceBarCkeck(float _DeltaTime)
 	{
 		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
 
-		DeltaLocation.X = 1000 * _DeltaTime;
+		DeltaLocation.X = 700 * _DeltaTime;
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
 	}
@@ -125,7 +150,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		{
 			IsForwardWalk = true;
 
-			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 600;
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 			AnimState = CharacterAnimState::Walk;
 		}
@@ -182,7 +207,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		{
 			IsLeftWalk = true;
 
-			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 600;
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 			AnimState = CharacterAnimState::Walk;
 		}
@@ -242,12 +267,10 @@ void UWeaponAction::RollorRunAction(float _Value)
 				PressSpacebar = false;
 				return;
 			}
+			
 			// 구른다
-			if (nullptr != CurCharacter->Controller)
-			{
-				IsRollMove = true;
-				AnimState = CharacterAnimState::Roll;
-			}
+			IsRollMove = true;
+			AnimState = CharacterAnimState::Roll;
 		}
 
 		// 입력이 멈추면 누른 시간 0
@@ -257,8 +280,10 @@ void UWeaponAction::RollorRunAction(float _Value)
 	}
 
 	// 누른 시간 체크 시작
-	PressSpacebar = true;
-	PressSpacebarTime++;
+	if (false == PressSpacebar)
+	{
+		PressSpacebar = true;
+	}
 
 	// 달리면 안되는 상태
 	switch (AnimState)
@@ -266,7 +291,10 @@ void UWeaponAction::RollorRunAction(float _Value)
 	case CharacterAnimState::Idle:
 	case CharacterAnimState::WalkJump:
 	case CharacterAnimState::RunJump:
+		return;
 	case CharacterAnimState::Roll:
+		PressSpacebarTime = 0;
+		PressSpacebar = false;
 		return;
 		break;
 	}
@@ -277,7 +305,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		// 달리는 애니메이션이 빨리 재생된다???
 		AnimState = CharacterAnimState::Run;
 
-		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = 900;
+		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 	}
 }
 

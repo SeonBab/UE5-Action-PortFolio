@@ -15,9 +15,11 @@ struct UE5_ACTION_PORTFOLIO_API FWeaponData : public FTableRowBase
 	EWeaponType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	FText Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int Damage;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	// 활은 스켈레톤 매쉬 검은 스태틱 매쉬
-	// 하나로 합쳐서 사용해야한다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	class USkeletalMeshComponent* WeaponMesh;
 };

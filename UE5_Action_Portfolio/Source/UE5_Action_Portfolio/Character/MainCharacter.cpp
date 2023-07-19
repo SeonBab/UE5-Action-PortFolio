@@ -51,18 +51,18 @@ void AMainCharacter::BeginPlay()
 
 	this->bUseControllerRotationYaw = false;
 
-	CurWeapon = NewObject<UUnArmedAction>();
+	CurWeaponAction = NewObject<UUnArmedAction>();
 
-	CurWeapon->SetCurCharacter(this);
+	CurWeaponAction->SetCurCharacter(this);
 }
 
 void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	CurWeapon->Tick(_DeltaTime);
+	CurWeaponAction->Tick(_DeltaTime);
 
-	AnimState = CurWeapon->GetAnimState();
+	AnimState = CurWeaponAction->GetAnimState();
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)
@@ -127,35 +127,35 @@ void AMainCharacter::ZoomOut()
 
 void AMainCharacter::MoveForward(float _Value)
 {
-	CurWeapon->WAndSButtonAction(_Value);
+	CurWeaponAction->WAndSButtonAction(_Value);
 }
 
 void AMainCharacter::MoveRight(float _Value)
 {
-	CurWeapon->DAndAButtonAction(_Value);
+	CurWeaponAction->DAndAButtonAction(_Value);
 }
 
 void AMainCharacter::RollorRun(float _Value)
 {
-	CurWeapon->RollorRunAction(_Value);
+	CurWeaponAction->RollorRunAction(_Value);
 }
 
 void AMainCharacter::JumpAction()
 {
-	CurWeapon->ShiftButtonAction();
+	CurWeaponAction->ShiftButtonAction();
 }
 
 void AMainCharacter::ChangeUnArmed()
 {
-	CurWeapon->ChangeSetUnArmed();
+	CurWeaponAction->ChangeSetUnArmed();
 }
 
 void AMainCharacter::ChangeBow()
 {
-	CurWeapon->ChangeSetBow();
+	CurWeaponAction->ChangeSetBow();
 }
 
 void AMainCharacter::ChangeSwordAndSheiled()
 {
-	CurWeapon->ChangeSetSwordAndSheiled();
+	CurWeaponAction->ChangeSetSwordAndSheiled();
 }

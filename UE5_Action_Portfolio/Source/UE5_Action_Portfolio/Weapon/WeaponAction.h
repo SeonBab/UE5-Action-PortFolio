@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "GameFramework/Character.h"
 #include "Global/Enums.h"
 #include "WeaponAction.generated.h"
 
@@ -14,7 +13,7 @@ class UE5_ACTION_PORTFOLIO_API UWeaponAction : public UObject
 public:
 	UWeaponAction();
 	
-	void Tick(float _DeltaTime) {};
+	void Tick(float _DeltaTime);
 	void SetCurCharacter(ACharacter* _CurChar);
 	void SetCharacterAirControl(float _Value);
 
@@ -26,7 +25,7 @@ public:
 	void ChangeSetUnArmed();
 	void ChangeSetBow();
 	void ChangeSetSwordAndSheiled();
-	void PressSpaceBarCkeck(float _DeltaTime);
+	void PressSpaceBarCkeckAndRoll(float _DeltaTime);
 
 	virtual void WAndSButtonAction(float _Value);
 	virtual void DAndAButtonAction(float _Value);
@@ -42,12 +41,14 @@ public:
 	CharacterAnimState AnimState = CharacterAnimState::Idle;
 
 	// 캐릭터 움직임 상태
-	bool IsForwardWalk;
-	bool IsLeftWalk;
-	bool IsRollMove;
-	bool IsWalkJump;
-	bool IsRunJump;
-	bool PressSpacebar;
-	float PressSpacebarTime;
-	int RunCount;
+	bool IsForwardWalk = false; 
+	bool IsLeftWalk = false;
+	bool IsRollMove = false;
+	bool IsWalkJump = false;
+	bool IsRunJump = false;
+	bool PressSpacebar = false;
+	float PressSpacebarTime = 0.f;
+	const float RunCount = 0.8f;
+	const float WalkSpeed = 500.f;
+	const float RunSpeed = 700.f;
 };

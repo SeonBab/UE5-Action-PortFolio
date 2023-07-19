@@ -17,8 +17,14 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || AllAnimations[CharacterAnimState::Roll] == Anim)
 	{
 		Animstate = CharacterAnimState::Idle;
-		character->CurWeapon->SetAnimState(Animstate);
-		character->CurWeapon->SetCharacterAirControl(1.f);
+		character->CurWeaponAction->SetAnimState(Animstate);
+		character->CurWeaponAction->SetCharacterAirControl(1.f);
+		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+	}
+	else if (AllAnimations[CharacterAnimState::EquipOrDisArmBow] == Anim || AllAnimations[CharacterAnimState::EquipOrDisArmSwordAndShield] == Anim)
+	{
+		Animstate = CharacterAnimState::Idle;
+		character->CurWeaponAction->SetAnimState(Animstate);
 		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
 	}
 }
@@ -32,7 +38,7 @@ void UMainCharacterAnimInstance::AnimNotify_RollStop()
 		return;
 	}
 
-	character->CurWeapon->IsRollMoveToFalse();
+	character->CurWeaponAction->IsRollMoveToFalse();
 }
 
 void UMainCharacterAnimInstance::AnimNotify_JumpStart()
