@@ -7,6 +7,7 @@
 UGlobalGameInstance::UGlobalGameInstance()
 {
 	{
+		// 에니메이션 데이터
 		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_AnimaitionData.DT_AnimaitionData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
 
@@ -18,6 +19,13 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 	{
 		// 무기 데이터
+		//FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_AnimaitionData.DT_AnimaitionData'");
+		//ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		//if (DataTable.Succeeded())
+		//{
+		//	WeaponDatas = DataTable.Object;
+		//}
 	}
 }
 

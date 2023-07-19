@@ -15,11 +15,8 @@ struct UE5_ACTION_PORTFOLIO_API FWeaponData : public FTableRowBase
 	EWeaponType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	FText Name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	class USkeletalMeshComponent* WeaponMesh;
+	USkeletalMesh* WeaponMesh;
 };

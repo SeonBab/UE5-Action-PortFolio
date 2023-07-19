@@ -5,10 +5,16 @@
 #include "Global/AnimaitionData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Character/MainCharacterAnimInstance.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/Character.h"
 
 UWeaponAction::UWeaponAction()
 {	
 
+}
+
+void UWeaponAction::BeginPlay()
+{
 }
 
 void UWeaponAction::Tick(float _DeltaTime)
@@ -60,23 +66,36 @@ void UWeaponAction::ChangeWeapon(FName _Weapon)
 	}
 
 	Ptr->AllAnimations = FindAnimationData->AllAnimations;
-
+	WeaponType = FindAnimationData->Type;
+	int a = 0;
 }
 
 void UWeaponAction::ChangeSetUnArmed()
 {
-	if (CharacterAnimState::Idle != AnimState)
+	// Idle만 무기 변경 가능, 장비를 끼고 있어야 UnArmed 가능
+	if (CharacterAnimState::Idle != AnimState || EWeaponType::UnArmed == WeaponType)
 	{
 		return;
 	}
-	// 착용하고 있던 장비가 활일 때
-	if (true)
+
+	// 역재생을 위한 AnimInstance
+	UMainCharacterAnimInstance* Ptr = Cast<UMainCharacterAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
+
+	if (nullptr == Ptr)
 	{
+		return;
+	}
+
+	// 착용하고 있던 장비가 활일 때
+	if (EWeaponType::Bow == WeaponType)
+	{
+		Ptr->AnimSpeed = -1.f;
 		AnimState = CharacterAnimState::EquipOrDisArmBow;
 	}
 	// 착용하고 있던 장비가 칼일 때
-	else if (true)
+	else if (EWeaponType::Sword == WeaponType)
 	{
+		Ptr->AnimSpeed = -1.f;
 		AnimState = CharacterAnimState::EquipOrDisArmSwordAndShield;
 	}
 
@@ -85,8 +104,14 @@ void UWeaponAction::ChangeSetUnArmed()
 
 void UWeaponAction::ChangeSetBow()
 {
+	// Idle을 제외한 상태는 리턴, 같은 무기로 변경시 장비 장착 해제
 	if (CharacterAnimState::Idle != AnimState)
 	{
+		return;
+	}
+	else if (EWeaponType::Bow == WeaponType)
+	{
+		ChangeSetUnArmed();
 		return;
 	}
 
@@ -97,8 +122,14 @@ void UWeaponAction::ChangeSetBow()
 
 void UWeaponAction::ChangeSetSwordAndSheiled()
 {
+	// Idle을 제외한 상태는 리턴, 같은 무기로 변경시 장비 장착 해제
 	if (CharacterAnimState::Idle != AnimState)
 	{
+		return;
+	}
+	else if (EWeaponType::Sword == WeaponType)
+	{
+		ChangeSetUnArmed();
 		return;
 	}
 
@@ -126,18 +157,15 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 	}
 }
 
-void UWeaponAction::BeginPlay()
-{
-	
-}
-
 void UWeaponAction::WAndSButtonAction(float _Value)
 {
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
-	case CharacterAnimState::Roll:
 	case CharacterAnimState::WalkJump:
+	case CharacterAnimState::Roll:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 		return;
 		break;
 	}
@@ -193,8 +221,10 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
-	case CharacterAnimState::Roll:
 	case CharacterAnimState::WalkJump:
+	case CharacterAnimState::Roll:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 		return;
 		break;
 	}
@@ -261,8 +291,9 @@ void UWeaponAction::RollorRunAction(float _Value)
 			{
 			case CharacterAnimState::WalkJump:
 			case CharacterAnimState::RunJump:
-				return;
 			case CharacterAnimState::Roll:
+			case CharacterAnimState::EquipOrDisArmBow:
+			case CharacterAnimState::EquipOrDisArmSwordAndShield:
 				PressSpacebarTime = 0;
 				PressSpacebar = false;
 				return;
@@ -279,24 +310,32 @@ void UWeaponAction::RollorRunAction(float _Value)
 		return;
 	}
 
-	// 누른 시간 체크 시작
-	if (false == PressSpacebar)
-	{
-		PressSpacebar = true;
-	}
-
 	// 달리면 안되는 상태
+	if (false == IsForwardWalk && false == IsLeftWalk)
+	{
+		PressSpacebarTime = 0;
+		PressSpacebar = false;
+		AnimState = CharacterAnimState::Idle;
+		return;
+	}
 	switch (AnimState)
 	{
 	case CharacterAnimState::Idle:
 	case CharacterAnimState::WalkJump:
 	case CharacterAnimState::RunJump:
-		return;
 	case CharacterAnimState::Roll:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
 		return;
 		break;
+	}
+
+	// 누른 시간 체크 시작
+	if (false == PressSpacebar)
+	{
+		PressSpacebar = true;
 	}
 
 	if (nullptr != CurCharacter->Controller && PressSpacebarTime >= RunCount)
@@ -317,6 +356,8 @@ void UWeaponAction::ShiftButtonAction()
 	case CharacterAnimState::WalkJump:
 	case CharacterAnimState::RunJump:
 	case CharacterAnimState::Roll:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 		return;
 		break;
 	}

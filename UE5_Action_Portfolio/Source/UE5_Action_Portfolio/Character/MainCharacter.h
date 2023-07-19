@@ -44,4 +44,14 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	class UWeaponAction* CurWeaponAction;
 	CharacterAnimState* AnimState;
+
+	// 무기 장착하고 해제하는 매쉬 해야함
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* SwordWeaponMesh;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* BowWeaponMesh;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* ShieldWeaponMesh;
 };

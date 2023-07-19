@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "MainCharacter.h"
 #include "Global/Enums.h"
 #include "MainCharacterAnimInstance.generated.h"
 
@@ -29,4 +28,7 @@ public:
 	CharacterAnimState Animstate = CharacterAnimState::Idle;
 	UPROPERTY()
 	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;
+
+	// -가 되면 역재생?
+	float AnimSpeed = 1.f;
 };

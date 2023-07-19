@@ -9,6 +9,7 @@
 #include "Weapon/UnArmedAction.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/AnimaitionData.h"
+#include "Global/WeaponData.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -19,14 +20,20 @@ AMainCharacter::AMainCharacter()
 	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight));
 	MainCameraSpringArmComponent->bUsePawnControlRotation = true;
 	MainCameraSpringArmComponent->TargetArmLength = 450.f;
-
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
+	BaseTurnRate = 30.f;
+	BaseLookUpRate = 30.f;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	BaseTurnRate = 30.f;
-	BaseLookUpRate = 30.f;
+	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
+	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
+	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
+
+	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
+	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
+	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
 
 	//UGlobalGameInstance* Ins = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
@@ -52,7 +59,6 @@ void AMainCharacter::BeginPlay()
 	this->bUseControllerRotationYaw = false;
 
 	CurWeaponAction = NewObject<UUnArmedAction>();
-
 	CurWeaponAction->SetCurCharacter(this);
 }
 

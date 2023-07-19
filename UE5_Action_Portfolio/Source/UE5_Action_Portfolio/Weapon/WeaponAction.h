@@ -12,6 +12,7 @@ class UE5_ACTION_PORTFOLIO_API UWeaponAction : public UObject
 	
 public:
 	UWeaponAction();
+	virtual void BeginPlay();
 	
 	void Tick(float _DeltaTime);
 	void SetCurCharacter(ACharacter* _CurChar);
@@ -19,7 +20,7 @@ public:
 
 	CharacterAnimState* GetAnimState();
 	void SetAnimState(CharacterAnimState _State);
-
+	// 무기 장착하고 해제하는 매쉬 해야함
 	void IsRollMoveToFalse();
 	void ChangeWeapon(FName _Weapon);
 	void ChangeSetUnArmed();
@@ -32,13 +33,15 @@ public:
 	virtual void RollorRunAction(float _Value);
 	virtual void ShiftButtonAction();
 
-	virtual void BeginPlay();
 
 public:
 	// 캐릭터
 	UPROPERTY()
 	ACharacter* CurCharacter;
 	CharacterAnimState AnimState = CharacterAnimState::Idle;
+
+	// 무기
+	EWeaponType WeaponType = EWeaponType::UnArmed;
 
 	// 캐릭터 움직임 상태
 	bool IsForwardWalk = false; 

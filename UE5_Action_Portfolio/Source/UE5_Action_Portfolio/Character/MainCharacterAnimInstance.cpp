@@ -25,6 +25,7 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 	{
 		Animstate = CharacterAnimState::Idle;
 		character->CurWeaponAction->SetAnimState(Animstate);
+		AnimSpeed = 1.f;
 		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
 	}
 }
@@ -112,7 +113,18 @@ void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	if (false == Montage_IsPlaying(montage))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
-		Montage_Play(montage, 1.0f);
+		// 무기가 있는 상태에서 없는 상태로 갈 땐 역재생
+		if (EWeaponType::UnArmed == character->CurWeaponAction->WeaponType && (CharacterAnimState::EquipOrDisArmBow == Animstate || CharacterAnimState::EquipOrDisArmSwordAndShield == Animstate))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
+			Montage_Play(montage, AnimSpeed, EMontagePlayReturnType::MontageLength, 1.f);
+		}
+		// 나머지 일반적인 애니메이션 재생
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
+			Montage_Play(montage, AnimSpeed);
+		}
+
 	}
 }
