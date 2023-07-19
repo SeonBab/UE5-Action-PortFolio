@@ -60,6 +60,8 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
+	CurWeapon->Tick(_DeltaTime);
+
 	AnimState = CurWeapon->GetAnimState();
 }
 

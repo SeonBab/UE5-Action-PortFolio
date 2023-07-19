@@ -20,4 +20,6 @@ public:
 	virtual void RollorRunAction(float _Value) override;
 	virtual void ShiftButtonAction() override;
 
+private:
+	// 활 데이터
 };

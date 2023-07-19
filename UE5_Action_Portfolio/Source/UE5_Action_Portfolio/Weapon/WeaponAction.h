@@ -14,7 +14,7 @@ class UE5_ACTION_PORTFOLIO_API UWeaponAction : public UObject
 public:
 	UWeaponAction();
 	
-
+	void Tick(float _DeltaTime) {};
 	void SetCurCharacter(ACharacter* _CurChar);
 	void SetCharacterAirControl(float _Value);
 
