@@ -29,6 +29,5 @@ public:
 	UPROPERTY()
 	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;
 
-	// -가 되면 역재생?
 	float AnimSpeed = 1.f;
 };

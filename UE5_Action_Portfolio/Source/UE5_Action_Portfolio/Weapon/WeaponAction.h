@@ -28,6 +28,7 @@ public:
 	void ChangeSetSwordAndSheiled();
 	void PressSpaceBarCkeckAndRoll(float _DeltaTime);
 
+	virtual void AttackAction(float _Value);
 	virtual void WAndSButtonAction(float _Value);
 	virtual void DAndAButtonAction(float _Value);
 	virtual void RollorRunAction(float _Value);

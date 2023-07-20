@@ -14,19 +14,20 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 		return;
 	}
 
-	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || AllAnimations[CharacterAnimState::Roll] == Anim)
+	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || 
+		AllAnimations[CharacterAnimState::Roll] == Anim || AllAnimations[CharacterAnimState::Attack] == Anim)
 	{
 		Animstate = CharacterAnimState::Idle;
 		character->CurWeaponAction->SetAnimState(Animstate);
-		character->CurWeaponAction->SetCharacterAirControl(1.f);
 		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+		character->CurWeaponAction->SetCharacterAirControl(1.f);
 	}
 	else if (AllAnimations[CharacterAnimState::EquipOrDisArmBow] == Anim || AllAnimations[CharacterAnimState::EquipOrDisArmSwordAndShield] == Anim)
 	{
 		Animstate = CharacterAnimState::Idle;
 		character->CurWeaponAction->SetAnimState(Animstate);
-		AnimSpeed = 1.f;
 		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+		AnimSpeed = 1.f;
 	}
 }
 
@@ -71,7 +72,7 @@ void UMainCharacterAnimInstance::NativeBeginPlay()
 		return;
 	}
 
-	struct FAnimaitionData* FindAnimaitionData = Instance->GetAnimaitionData(TEXT("UnArmed"));
+	struct FAnimaitionData* FindAnimaitionData = Instance->GetAllAnimaitionDatas(TEXT("UnArmed"));
 
 	if (nullptr == FindAnimaitionData)
 	{

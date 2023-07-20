@@ -58,7 +58,7 @@ void UWeaponAction::ChangeWeapon(FName _Weapon)
 
 	UGlobalGameInstance* Instacne = CurCharacter->GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	const struct FAnimaitionData* FindAnimationData = Instacne->GetAnimaitionData(_Weapon);
+	const struct FAnimaitionData* FindAnimationData = Instacne->GetAllAnimaitionDatas(_Weapon);
 
 	if (nullptr == FindAnimationData)
 	{
@@ -157,6 +157,27 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 	}
 }
 
+void UWeaponAction::AttackAction(float _Value)
+{
+	switch (AnimState)
+	{
+	case CharacterAnimState::Roll:
+	case CharacterAnimState::WalkJump:
+	case CharacterAnimState::RunJump:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+		return;
+		break;
+	}
+	
+	if (0.f != _Value)
+	{
+		AnimState = CharacterAnimState::Attack;
+
+	}
+
+}
+
 void UWeaponAction::WAndSButtonAction(float _Value)
 {
 	// 이동하면 안되는 상태
@@ -166,6 +187,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	case CharacterAnimState::Roll:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+	case CharacterAnimState::Attack:
 		return;
 		break;
 	}
@@ -225,6 +247,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	case CharacterAnimState::Roll:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+	case CharacterAnimState::Attack:
 		return;
 		break;
 	}
@@ -294,6 +317,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 			case CharacterAnimState::Roll:
 			case CharacterAnimState::EquipOrDisArmBow:
 			case CharacterAnimState::EquipOrDisArmSwordAndShield:
+			case CharacterAnimState::Attack:
 				PressSpacebarTime = 0;
 				PressSpacebar = false;
 				return;
@@ -326,6 +350,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 	case CharacterAnimState::Roll:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+	case CharacterAnimState::Attack:
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
 		return;
@@ -358,6 +383,7 @@ void UWeaponAction::ShiftButtonAction()
 	case CharacterAnimState::Roll:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+	case CharacterAnimState::Attack:
 		return;
 		break;
 	}

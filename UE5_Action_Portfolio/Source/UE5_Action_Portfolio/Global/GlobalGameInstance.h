@@ -17,14 +17,14 @@ public:
 	UGlobalGameInstance();
 	~UGlobalGameInstance();
 
-	//TMap<CharacterAnimState, UAnimMontage*> GetAllAnimations(FName Name);
+	struct FWeaponData* GetAllWeaponDatas(FName _Name);
 
-	struct FAnimaitionData* GetAnimaitionData(FName Name);
+	struct FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
 
 private:
 	UPROPERTY()
-	UDataTable* AllAnimations;
+	UDataTable* AllWeaponDatas;
 
 	UPROPERTY()
-	UDataTable* WeaponDatas;
+	UDataTable* AllAnimations;
 };

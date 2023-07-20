@@ -27,29 +27,9 @@ AMainCharacter::AMainCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
-	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
-	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
-
-	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
-	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
-	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
-
-	//UGlobalGameInstance* Ins = GetWorld()->GetGameInstance<UGlobalGameInstance>();
-
-	//if (nullptr == Ins)
-	//{
-	//	return;
-	//}
-
-	//FAnimaitionData* FindAnimaitionData = Ins->GetAnimaitionData(TEXT("UnArmed"));
-
-	//if (nullptr == FindAnimaitionData)
-	//{
-	//	return;
-	//}
-
-	//AllAnimations = FindAnimaitionData->AllAnimations;
+	//SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
+	//BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
+	//ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
 }
 
 void AMainCharacter::BeginPlay()
@@ -80,6 +60,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelUp", EKeys::MouseScrollUp));
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelDown", EKeys::MouseScrollDown));
 
+	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton, 1.f));
+
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerTurn", EKeys::MouseX, 1.f));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerLooKUp", EKeys::MouseY, -1.f));
 
@@ -96,8 +78,11 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("QuickSlot2", EKeys::Two));
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("QuickSlot3", EKeys::Three));
 
+
 	_PlayerInputComponent->BindAction("PlayerWheelUp", EInputEvent::IE_Pressed, this, &AMainCharacter::ZoomIn);
 	_PlayerInputComponent->BindAction("PlayerWheelDown", EInputEvent::IE_Pressed, this, &AMainCharacter::ZoomOut);
+
+	_PlayerInputComponent->BindAxis("PlayerMouseLeft", this, &AMainCharacter::Attack);
 
 	_PlayerInputComponent->BindAxis("PlayerTurn", this, &AMainCharacter::AddControllerYawInput);
 	_PlayerInputComponent->BindAxis("PlayerLooKUp", this, &AMainCharacter::AddControllerPitchInput);
@@ -112,6 +97,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	_PlayerInputComponent->BindAction("QuickSlot1", EInputEvent::IE_Pressed, this, &AMainCharacter::ChangeUnArmed);
 	_PlayerInputComponent->BindAction("QuickSlot2", EInputEvent::IE_Pressed, this, &AMainCharacter::ChangeBow);
 	_PlayerInputComponent->BindAction("QuickSlot3", EInputEvent::IE_Pressed, this, &AMainCharacter::ChangeSwordAndSheiled);
+
 }
 
 
@@ -129,6 +115,11 @@ void AMainCharacter::ZoomOut()
 	{
 		MainCameraSpringArmComponent->TargetArmLength *= 1.1;
 	}
+}
+
+void AMainCharacter::Attack(float _Value)
+{
+	CurWeaponAction->AttackAction(_Value);
 }
 
 void AMainCharacter::MoveForward(float _Value)

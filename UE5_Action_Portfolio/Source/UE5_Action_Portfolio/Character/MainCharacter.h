@@ -17,6 +17,7 @@ public:
 	// 조작
 	void ZoomIn();
 	void ZoomOut();
+	void Attack(float _Value);
 	void MoveForward(float _Value);
 	void MoveRight(float _Value);
 	void RollorRun(float _Value);
@@ -45,13 +46,5 @@ public:
 	class UWeaponAction* CurWeaponAction;
 	CharacterAnimState* AnimState;
 
-	// 무기 장착하고 해제하는 매쉬 해야함
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	USkeletalMeshComponent* SwordWeaponMesh;
-
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	USkeletalMeshComponent* BowWeaponMesh;
-
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	USkeletalMeshComponent* ShieldWeaponMesh;
+	// 무기 장착하고 해제하는 코드 해야함
 };
