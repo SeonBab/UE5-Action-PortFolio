@@ -41,7 +41,7 @@ public:
 	float BaseTurnRate;
 	float BaseLookUpRate;
 
-	// 무기
+	// 장착 한 무기
 	UPROPERTY(BlueprintReadWrite)
 	class UWeaponAction* CurWeaponAction;
 	CharacterAnimState* AnimState;
@@ -58,6 +58,14 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	USkeletalMeshComponent* ShieldWeaponMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<EWeaponType, USkeletalMesh*> WeaponArrays;
+	// 장착 하지 않은 무기
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* BackBowWeaponMesh;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* BackSwordWeaponMesh;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* BackShieldWeaponMesh;
+
 };

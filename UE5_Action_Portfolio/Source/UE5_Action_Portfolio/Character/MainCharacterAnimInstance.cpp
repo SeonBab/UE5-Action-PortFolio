@@ -93,6 +93,7 @@ void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
 		if (CharacterAnimState::EquipOrDisArmBow == CurAnimState)
 		{
 			character->BowWeaponMesh->SetSkeletalMesh(nullptr);
+			character->BackBowWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Bow")));
 			character->UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
 		}
 		// 칼과 방패를 들고 있을 때
@@ -100,6 +101,8 @@ void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
 		{
 			character->SwordWeaponMesh->SetSkeletalMesh(nullptr);
 			character->ShieldWeaponMesh->SetSkeletalMesh(nullptr);
+			character->BackSwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
+			character->BackShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
 			character->UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
 		}
 
@@ -108,6 +111,7 @@ void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
 	else if (EWeaponType::Bow == CurWeaponType)
 	{
 		character->UnArmedWeaponMesh->SetSkeletalMesh(nullptr);
+		character->BackBowWeaponMesh->SetSkeletalMesh(nullptr);
 		character->BowWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Bow")));
 
 	}
@@ -117,6 +121,8 @@ void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
 		character->SwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
 		character->ShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
 		character->UnArmedWeaponMesh->SetSkeletalMesh(nullptr);
+		character->BackSwordWeaponMesh->SetSkeletalMesh(nullptr);
+		character->BackShieldWeaponMesh->SetSkeletalMesh(nullptr);
 	}
 }
 

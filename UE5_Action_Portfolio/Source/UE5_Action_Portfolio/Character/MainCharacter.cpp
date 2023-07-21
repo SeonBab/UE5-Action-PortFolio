@@ -36,6 +36,14 @@ AMainCharacter::AMainCharacter()
 	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
 	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
 	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
+
+	BackBowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackBowMesh"));
+	BackSwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackSwordMesh"));
+	BackShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackShiedlMesh"));
+
+	BackBowWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackBow"));
+	BackSwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackSword"));
+	BackShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackShield"));
 }
 
 void AMainCharacter::BeginPlay()
@@ -55,6 +63,10 @@ void AMainCharacter::BeginPlay()
 	}
 
 	UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
+
+	BackBowWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Bow")));
+	BackSwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
+	BackShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
 }
 
 void AMainCharacter::Tick(float _DeltaTime)

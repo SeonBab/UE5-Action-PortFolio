@@ -225,7 +225,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		// 달린다
 		else if (AnimState == CharacterAnimState::Run)
 		{
-
+			IsForwardWalk = true;
 		}
 
 		// 점프 하며 공중에 있는게 아니라면 이동 불가능
@@ -285,7 +285,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		// 달린다
 		else if (AnimState == CharacterAnimState::Run)
 		{
-
+			IsLeftWalk = true;
 		}
 
 		// 점프 하며 공중에 있는게 아니라면 이동 불가능
@@ -360,6 +360,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		AnimState = CharacterAnimState::Idle;
 		return;
 	}
+
 	switch (AnimState)
 	{
 	case CharacterAnimState::Idle:
