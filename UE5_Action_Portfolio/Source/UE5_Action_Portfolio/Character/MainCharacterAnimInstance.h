@@ -17,6 +17,8 @@ public:
 	void AnimNotify_RollStop();
 	UFUNCTION()
 	void AnimNotify_JumpStart();
+	UFUNCTION()
+	void AnimNotify_ChangeWeapon();
 
 protected:
 	void NativeInitializeAnimation() override;

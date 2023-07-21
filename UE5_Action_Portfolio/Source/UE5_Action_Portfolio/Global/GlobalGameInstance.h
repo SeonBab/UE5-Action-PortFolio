@@ -17,14 +17,15 @@ public:
 	UGlobalGameInstance();
 	~UGlobalGameInstance();
 
-	struct FWeaponData* GetAllWeaponDatas(FName _Name);
+	struct FWeaponData* GetWeaponData(FName _Name);
+	USkeletalMesh* GetWeaponMesh(FName _Name);
 
 	struct FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
 
 private:
 	UPROPERTY()
-	UDataTable* AllWeaponDatas;
+	UDataTable* WeaponDatas;
 
 	UPROPERTY()
-	UDataTable* AllAnimations;
+	UDataTable* Animations;
 };

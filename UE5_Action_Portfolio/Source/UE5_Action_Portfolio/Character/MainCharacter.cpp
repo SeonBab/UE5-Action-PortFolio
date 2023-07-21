@@ -27,9 +27,15 @@ AMainCharacter::AMainCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	//SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
-	//BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
-	//ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
+	UnArmedWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("UnArmedMesh"));
+	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
+	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
+	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
+
+	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
+	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
+	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
+	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
 }
 
 void AMainCharacter::BeginPlay()
@@ -40,6 +46,15 @@ void AMainCharacter::BeginPlay()
 
 	CurWeaponAction = NewObject<UUnArmedAction>();
 	CurWeaponAction->SetCurCharacter(this);
+
+	UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Instance)
+	{
+		return;
+	}
+
+	UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
 }
 
 void AMainCharacter::Tick(float _DeltaTime)

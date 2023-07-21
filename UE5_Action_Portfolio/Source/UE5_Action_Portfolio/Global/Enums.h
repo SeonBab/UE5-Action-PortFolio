@@ -9,6 +9,7 @@ enum class EWeaponType : uint8
 	UnArmed,
 	Bow,
 	Sword,
+	Shiled,
 };
 
 

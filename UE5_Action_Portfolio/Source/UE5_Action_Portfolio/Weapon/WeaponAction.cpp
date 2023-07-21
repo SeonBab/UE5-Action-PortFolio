@@ -104,14 +104,23 @@ void UWeaponAction::ChangeSetUnArmed()
 
 void UWeaponAction::ChangeSetBow()
 {
-	// Idle을 제외한 상태는 리턴, 같은 무기로 변경시 장비 장착 해제
+	// Idle을 제외한 상태는 리턴
 	if (CharacterAnimState::Idle != AnimState)
 	{
 		return;
 	}
+	// 같은 무기로 변경시 장비 장착 해제
 	else if (EWeaponType::Bow == WeaponType)
 	{
 		ChangeSetUnArmed();
+		return;
+	}
+	// 다른 무기로 변경시 해체하고 장비
+	else if (EWeaponType::Sword == WeaponType)
+	{
+		// 장비 변경 애니메이션이 안됨
+		ChangeSetUnArmed();
+		SwordAndSheiledToBow = true;
 		return;
 	}
 
@@ -122,14 +131,23 @@ void UWeaponAction::ChangeSetBow()
 
 void UWeaponAction::ChangeSetSwordAndSheiled()
 {
-	// Idle을 제외한 상태는 리턴, 같은 무기로 변경시 장비 장착 해제
+	// Idle을 제외한 상태는 리턴
 	if (CharacterAnimState::Idle != AnimState)
 	{
 		return;
 	}
+	//같은 무기로 변경시 장비 장착 해제
 	else if (EWeaponType::Sword == WeaponType)
 	{
 		ChangeSetUnArmed();
+		return;
+	}
+	// 다른 무기로 변경시 해체하고 장비
+	else if (EWeaponType::Bow == WeaponType)
+	{
+		// 장비 변경 애니메이션이 안됨
+		ChangeSetUnArmed();
+		BowToSwordAndSheiled = true;
 		return;
 	}
 

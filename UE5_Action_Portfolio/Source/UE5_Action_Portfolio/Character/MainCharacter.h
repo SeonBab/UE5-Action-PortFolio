@@ -46,5 +46,18 @@ public:
 	class UWeaponAction* CurWeaponAction;
 	CharacterAnimState* AnimState;
 
-	// 무기 장착하고 해제하는 코드 해야함
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* UnArmedWeaponMesh;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* BowWeaponMesh;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* SwordWeaponMesh;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USkeletalMeshComponent* ShieldWeaponMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<EWeaponType, USkeletalMesh*> WeaponArrays;
 };

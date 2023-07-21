@@ -28,6 +28,18 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 		character->CurWeaponAction->SetAnimState(Animstate);
 		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
 		AnimSpeed = 1.f;
+
+		if (true == character->CurWeaponAction->SwordAndSheiledToBow)
+		{
+			character->ChangeBow();
+			character->CurWeaponAction->SwordAndSheiledToBow = false;
+		}
+		else if (true == character->CurWeaponAction->BowToSwordAndSheiled)
+		{
+			character->ChangeSwordAndSheiled();
+			character->CurWeaponAction->BowToSwordAndSheiled = false;
+		}
+
 	}
 }
 
@@ -53,6 +65,59 @@ void UMainCharacterAnimInstance::AnimNotify_JumpStart()
 	}
 
 	character->Jump();
+}
+
+void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
+{
+	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+	
+	EWeaponType CurWeaponType = character->CurWeaponAction->WeaponType;
+	CharacterAnimState CurAnimState = character->CurWeaponAction->AnimState;
+
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Instance)
+	{
+		return;
+	}
+
+	// 전환 하려는 무기가 맨손일 때
+	if (EWeaponType::UnArmed == CurWeaponType)
+	{
+		// 활을 들고 있을 때
+		if (CharacterAnimState::EquipOrDisArmBow == CurAnimState)
+		{
+			character->BowWeaponMesh->SetSkeletalMesh(nullptr);
+			character->UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
+		}
+		// 칼과 방패를 들고 있을 때
+		else if (CharacterAnimState::EquipOrDisArmSwordAndShield == CurAnimState)
+		{
+			character->SwordWeaponMesh->SetSkeletalMesh(nullptr);
+			character->ShieldWeaponMesh->SetSkeletalMesh(nullptr);
+			character->UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
+		}
+
+	}
+	// 전환 하려는 무기가 활일 때
+	else if (EWeaponType::Bow == CurWeaponType)
+	{
+		character->UnArmedWeaponMesh->SetSkeletalMesh(nullptr);
+		character->BowWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Bow")));
+
+	}
+	// 전환 하려는 무기가 칼과 방패일 때
+	else if (EWeaponType::Sword == CurWeaponType)
+	{
+		character->SwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
+		character->ShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
+		character->UnArmedWeaponMesh->SetSkeletalMesh(nullptr);
+	}
 }
 
 void UMainCharacterAnimInstance::NativeInitializeAnimation()

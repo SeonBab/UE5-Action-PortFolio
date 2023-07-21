@@ -7,96 +7,44 @@ AWeaponActor::AWeaponActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
-	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
-	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
-
-	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
-
-	if (nullptr == Instance)
-	{
-		return;
-	}
-
-
-
-	{
-		struct FWeaponData* FindAnimaitionData = Instance->GetAllWeaponDatas(TEXT("UnArmed"));
-
-		if (nullptr == FindAnimaitionData)
-		{
-			return;
-		}
-
-		USkeletalMesh* WeaponMesh = FindAnimaitionData->WeaponMesh;
-		EWeaponType WeaponType = FindAnimaitionData->Type;
-
-		if (nullptr == WeaponMesh || EWeaponType::None == WeaponType)
-		{
-			return;
-		}
-
-		WeaponArrays.Add(WeaponType, WeaponMesh);
-	}
-
-	{
-		struct FWeaponData* FindAnimaitionData = Instance->GetAllWeaponDatas(TEXT("Bow"));
-
-		if (nullptr == FindAnimaitionData)
-		{
-			return;
-		}
-
-		USkeletalMesh* WeaponMesh = FindAnimaitionData->WeaponMesh;
-		EWeaponType WeaponType = FindAnimaitionData->Type;
-
-		if (nullptr == WeaponMesh || EWeaponType::None == WeaponType)
-		{
-			return;
-		}
-
-		WeaponArrays.Add(WeaponType, WeaponMesh);
-	}
-
-	{
-		struct FWeaponData* FindAnimaitionData = Instance->GetAllWeaponDatas(TEXT("SwordAndShield"));
-
-		if (nullptr == FindAnimaitionData)
-		{
-			return;
-		}
-
-		USkeletalMesh* WeaponMesh = FindAnimaitionData->WeaponMesh;
-		EWeaponType WeaponType = FindAnimaitionData->Type;
-
-		if (nullptr == WeaponMesh || EWeaponType::None == WeaponType)
-		{
-			return;
-		}
-
-		WeaponArrays.Add(WeaponType, WeaponMesh);
-	}
-
 	//{
-	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT(""));
+	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT("/Script/Engine.SkeletalMesh'/Game/Weapon/UnArmed_SkeletalMesh.UnArmed_SkeletalMesh'"));
 
 	//	if (true == MeshLoader.Succeeded())
 	//	{
-	//		WeaponArrays.Add(MeshLoader.Object);
+	//		WeaponArrays.Add(EWeaponType::UnArmed, MeshLoader.Object);
 	//	}
 	//}
 
 	//{
-	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT(""));
+	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT("/Script/Engine.SkeletalMesh'/Game/Weapon/SK_WP_Bow_04.SK_WP_Bow_04'"));
 
 	//	if (true == MeshLoader.Succeeded())
 	//	{
-	//		WeaponArrays.Add(MeshLoader.Object);
+	//		WeaponArrays.Add(EWeaponType::Bow, MeshLoader.Object);
 	//	}
 	//}
 
 	//{
-	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT(""));
+	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT("/Script/Engine.SkeletalMesh'/Game/Weapon/WP_Sword_04_A_WP_Sword_04_A.WP_Sword_04_A_WP_Sword_04_A'"));
+
+	//	if (true == MeshLoader.Succeeded())
+	//	{
+	//		WeaponArrays.Add(EWeaponType::Sword, MeshLoader.Object);
+	//	}
+	//}
+
+	//{
+	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT("/Script/Engine.SkeletalMesh'/Game/Weapon/WP_Sheild_03_A_WP_Sheild_03_A.WP_Sheild_03_A_WP_Sheild_03_A'"));
+
+	//	if (true == MeshLoader.Succeeded())
+	//	{
+	//		WeaponArrays.Add(EWeaponType::Shiled, MeshLoader.Object);
+	//	}
+	//}
+
+	//{
+	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshLoader(TEXT("무기레퍼런스"));
 
 	//	if (true == MeshLoader.Succeeded())
 	//	{

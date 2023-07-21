@@ -45,6 +45,8 @@ public:
 	EWeaponType WeaponType = EWeaponType::UnArmed;
 
 	// 캐릭터 움직임 상태
+	bool BowToSwordAndSheiled = false;
+	bool SwordAndSheiledToBow = false;
 	bool IsForwardWalk = false; 
 	bool IsLeftWalk = false;
 	bool IsRollMove = false;

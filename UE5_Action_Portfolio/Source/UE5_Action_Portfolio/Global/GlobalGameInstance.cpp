@@ -14,7 +14,7 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 		if (DataTable.Succeeded())
 		{
-			AllAnimations = DataTable.Object;
+			Animations = DataTable.Object;
 		}
 	}
 
@@ -25,7 +25,7 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 		if (DataTable.Succeeded())
 		{
-			AllWeaponDatas = DataTable.Object;
+			WeaponDatas = DataTable.Object;
 		}
 	}
 }
@@ -34,22 +34,41 @@ UGlobalGameInstance::~UGlobalGameInstance()
 {
 }
 
-FWeaponData* UGlobalGameInstance::GetAllWeaponDatas(FName _Name)
+FWeaponData* UGlobalGameInstance::GetWeaponData(FName _Name)
 {
-	check(nullptr != AllWeaponDatas)
+	check(nullptr != WeaponDatas)
 
-	FWeaponData* FindTable = AllWeaponDatas->FindRow<FWeaponData>(_Name, _Name.ToString());
+	FWeaponData* FindTable = WeaponDatas->FindRow<FWeaponData>(_Name, _Name.ToString());
 	
 	check(nullptr != FindTable)
 
 	return FindTable;
 }
 
+USkeletalMesh* UGlobalGameInstance::GetWeaponMesh(FName _Name)
+{
+	if (nullptr == WeaponDatas)
+	{
+		return nullptr;
+	}
+
+	FWeaponData* FindTable = WeaponDatas->FindRow<FWeaponData>(_Name, _Name.ToString());
+
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
+
+	USkeletalMesh* FindMesh = FindTable->WeaponMesh;
+
+	return FindMesh;
+}
+
 FAnimaitionData* UGlobalGameInstance::GetAllAnimaitionDatas(FName _Name)
 {
-	check(nullptr != AllAnimations)
+	check(nullptr != Animations)
 
-	FAnimaitionData* FindTable = AllAnimations->FindRow<FAnimaitionData>(_Name, _Name.ToString());
+	FAnimaitionData* FindTable = Animations->FindRow<FAnimaitionData>(_Name, _Name.ToString());
 
 	check(nullptr != FindTable)
 
