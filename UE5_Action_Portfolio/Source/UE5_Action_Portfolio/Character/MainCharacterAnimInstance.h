@@ -20,6 +20,9 @@ public:
 	UFUNCTION()
 	void AnimNotify_ChangeWeapon();
 
+	UFUNCTION()
+	void AnimNotify_AttackCheck();
+
 protected:
 	void NativeInitializeAnimation() override;
 	void NativeBeginPlay() override;

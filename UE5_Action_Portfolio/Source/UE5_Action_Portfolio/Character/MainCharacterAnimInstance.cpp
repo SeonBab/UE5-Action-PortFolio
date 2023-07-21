@@ -39,7 +39,6 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 			character->ChangeSwordAndSheiled();
 			character->CurWeaponAction->BowToSwordAndSheiled = false;
 		}
-
 	}
 }
 
@@ -123,6 +122,29 @@ void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
 		character->UnArmedWeaponMesh->SetSkeletalMesh(nullptr);
 		character->BackSwordWeaponMesh->SetSkeletalMesh(nullptr);
 		character->BackShieldWeaponMesh->SetSkeletalMesh(nullptr);
+	}
+}
+
+void UMainCharacterAnimInstance::AnimNotify_AttackCheck()
+{
+	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	bool Value = character->CurWeaponAction->AttackCheck;
+
+	if (0 == Value)
+	{
+		Animstate = CharacterAnimState::Idle;
+		character->CurWeaponAction->SetAnimState(Animstate);
+		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+	}
+	else
+	{
+		character->CurWeaponAction->AttackCheck = false;
 	}
 }
 

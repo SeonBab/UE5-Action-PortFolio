@@ -28,11 +28,11 @@ public:
 	void ChangeSetSwordAndSheiled();
 	void PressSpaceBarCkeckAndRoll(float _DeltaTime);
 
-	virtual void AttackAction(float _Value);
 	virtual void WAndSButtonAction(float _Value);
 	virtual void DAndAButtonAction(float _Value);
 	virtual void RollorRunAction(float _Value);
 	virtual void ShiftButtonAction();
+	virtual void AttackAction(float _Value);
 
 
 public:
@@ -53,6 +53,7 @@ public:
 	bool IsWalkJump = false;
 	bool IsRunJump = false;
 	bool PressSpacebar = false;
+	bool AttackCheck = false;
 	float PressSpacebarTime = 0.f;
 	const float RunCount = 0.8f;
 	const float WalkSpeed = 500.f;

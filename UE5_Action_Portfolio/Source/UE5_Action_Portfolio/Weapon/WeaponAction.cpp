@@ -67,7 +67,6 @@ void UWeaponAction::ChangeWeapon(FName _Weapon)
 
 	Ptr->AllAnimations = FindAnimationData->AllAnimations;
 	WeaponType = FindAnimationData->Type;
-	int a = 0;
 }
 
 void UWeaponAction::ChangeSetUnArmed()
@@ -173,27 +172,6 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
 	}
-}
-
-void UWeaponAction::AttackAction(float _Value)
-{
-	switch (AnimState)
-	{
-	case CharacterAnimState::Roll:
-	case CharacterAnimState::WalkJump:
-	case CharacterAnimState::RunJump:
-	case CharacterAnimState::EquipOrDisArmBow:
-	case CharacterAnimState::EquipOrDisArmSwordAndShield:
-		return;
-		break;
-	}
-	
-	if (0.f != _Value)
-	{
-		AnimState = CharacterAnimState::Attack;
-
-	}
-
 }
 
 void UWeaponAction::WAndSButtonAction(float _Value)
@@ -420,4 +398,31 @@ void UWeaponAction::ShiftButtonAction()
 	}
 
 	CurCharacter->GetCharacterMovement()->AirControl = 0.3f;
+}
+
+void UWeaponAction::AttackAction(float _Value)
+{
+	switch (AnimState)
+	{
+	case CharacterAnimState::Roll:
+	case CharacterAnimState::WalkJump:
+	case CharacterAnimState::RunJump:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+		return;
+		break;
+	}
+	
+	if (0.f != _Value)
+	{
+		if (EWeaponType::UnArmed == WeaponType || EWeaponType::Bow == WeaponType)
+		{
+			AnimState = CharacterAnimState::Attack;
+		}
+		else if (EWeaponType::Sword == WeaponType)
+		{
+			AnimState = CharacterAnimState::Attack;
+			AttackCheck = true;
+		}
+	}
 }
