@@ -37,5 +37,4 @@ public:
 	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;
 
 	float AnimSpeed = 1.f;
-	int AttackCount = 1;
 };
