@@ -17,7 +17,7 @@ public:
 	// ¡∂¿€
 	void ZoomIn();
 	void ZoomOut();
-	void Attack(float _Value);
+	void Attack();
 	void MoveForward(float _Value);
 	void MoveRight(float _Value);
 	void RollorRun(float _Value);

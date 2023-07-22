@@ -87,7 +87,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelUp", EKeys::MouseScrollUp));
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelDown", EKeys::MouseScrollDown));
 
-	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton, 1.f));
+	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton));
+	//UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton, 1.f));
 
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerTurn", EKeys::MouseX, 1.f));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerLooKUp", EKeys::MouseY, -1.f));
@@ -109,7 +110,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	_PlayerInputComponent->BindAction("PlayerWheelUp", EInputEvent::IE_Pressed, this, &AMainCharacter::ZoomIn);
 	_PlayerInputComponent->BindAction("PlayerWheelDown", EInputEvent::IE_Pressed, this, &AMainCharacter::ZoomOut);
 
-	_PlayerInputComponent->BindAxis("PlayerMouseLeft", this, &AMainCharacter::Attack);
+	_PlayerInputComponent->BindAction("PlayerMouseLeft", EInputEvent::IE_Pressed, this, &AMainCharacter::Attack);
+	//_PlayerInputComponent->BindAxis("PlayerMouseLeft", this, &AMainCharacter::Attack);
 
 	_PlayerInputComponent->BindAxis("PlayerTurn", this, &AMainCharacter::AddControllerYawInput);
 	_PlayerInputComponent->BindAxis("PlayerLooKUp", this, &AMainCharacter::AddControllerPitchInput);
@@ -144,9 +146,9 @@ void AMainCharacter::ZoomOut()
 	}
 }
 
-void AMainCharacter::Attack(float _Value)
+void AMainCharacter::Attack()
 {
-	CurWeaponAction->AttackAction(_Value);
+	CurWeaponAction->AttackAction();
 }
 
 void AMainCharacter::MoveForward(float _Value)

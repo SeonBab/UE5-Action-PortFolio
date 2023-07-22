@@ -32,7 +32,7 @@ public:
 	virtual void DAndAButtonAction(float _Value);
 	virtual void RollorRunAction(float _Value);
 	virtual void ShiftButtonAction();
-	virtual void AttackAction(float _Value);
+	virtual void AttackAction();
 
 
 public:

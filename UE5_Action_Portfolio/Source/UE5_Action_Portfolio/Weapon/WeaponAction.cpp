@@ -400,7 +400,7 @@ void UWeaponAction::ShiftButtonAction()
 	CurCharacter->GetCharacterMovement()->AirControl = 0.3f;
 }
 
-void UWeaponAction::AttackAction(float _Value)
+void UWeaponAction::AttackAction()
 {
 	switch (AnimState)
 	{
@@ -413,16 +413,17 @@ void UWeaponAction::AttackAction(float _Value)
 		break;
 	}
 	
-	if (0.f != _Value)
+	if (EWeaponType::UnArmed == WeaponType || EWeaponType::Bow == WeaponType)
 	{
-		if (EWeaponType::UnArmed == WeaponType || EWeaponType::Bow == WeaponType)
+		AnimState = CharacterAnimState::Attack;
+	}
+	else if (EWeaponType::Sword == WeaponType)
+	{
+		if (CharacterAnimState::Attack == AnimState)
 		{
-			AnimState = CharacterAnimState::Attack;
-		}
-		else if (EWeaponType::Sword == WeaponType)
-		{
-			AnimState = CharacterAnimState::Attack;
 			AttackCheck = true;
 		}
+
+		AnimState = CharacterAnimState::Attack;
 	}
 }

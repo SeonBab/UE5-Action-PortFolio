@@ -136,7 +136,7 @@ void UMainCharacterAnimInstance::AnimNotify_AttackCheck()
 
 	bool Value = character->CurWeaponAction->AttackCheck;
 
-	if (0 == Value)
+	if (false == Value)
 	{
 		Animstate = CharacterAnimState::Idle;
 		character->CurWeaponAction->SetAnimState(Animstate);

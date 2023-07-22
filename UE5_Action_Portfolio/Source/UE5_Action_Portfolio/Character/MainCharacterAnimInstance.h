@@ -23,6 +23,8 @@ public:
 	UFUNCTION()
 	void AnimNotify_AttackCheck();
 
+	void JumpToAttackMontageSection(int AttackCount);
+
 protected:
 	void NativeInitializeAnimation() override;
 	void NativeBeginPlay() override;
@@ -35,4 +37,5 @@ public:
 	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;
 
 	float AnimSpeed = 1.f;
+	int AttackCount = 1;
 };
