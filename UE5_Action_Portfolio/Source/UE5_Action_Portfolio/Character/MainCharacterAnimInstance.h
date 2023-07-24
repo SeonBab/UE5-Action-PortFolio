@@ -19,11 +19,14 @@ public:
 	void AnimNotify_JumpStart();
 	UFUNCTION()
 	void AnimNotify_ChangeWeapon();
-
 	UFUNCTION()
 	void AnimNotify_AttackCheck();
+	UFUNCTION()
+	void AnimNotify_AimorBlockCheck();
+	UFUNCTION()
+	void AnimNotify_ArrowReadyCheck();
 
-	void JumpToAttackMontageSection(int AttackCount);
+	//void JumpToAttackMontageSection(int AttackCount);
 
 protected:
 	void NativeInitializeAnimation() override;

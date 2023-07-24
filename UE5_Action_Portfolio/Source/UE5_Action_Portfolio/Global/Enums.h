@@ -36,5 +36,5 @@ enum class CharacterAnimState : uint8
 	Attack,
 	AimOrBlock,
 	ShieldBlockIdle,
-	Parry,
+	ParryorFire,
 };

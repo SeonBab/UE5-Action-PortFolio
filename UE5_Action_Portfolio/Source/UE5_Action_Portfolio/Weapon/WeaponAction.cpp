@@ -184,6 +184,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
+	case CharacterAnimState::ParryorFire:
 		return;
 		break;
 	}
@@ -244,6 +245,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
+	case CharacterAnimState::ParryorFire:
 		return;
 		break;
 	}
@@ -314,6 +316,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 			case CharacterAnimState::EquipOrDisArmBow:
 			case CharacterAnimState::EquipOrDisArmSwordAndShield:
 			case CharacterAnimState::Attack:
+			case CharacterAnimState::ParryorFire:
 				PressSpacebarTime = 0;
 				PressSpacebar = false;
 				return;
@@ -330,21 +333,36 @@ void UWeaponAction::RollorRunAction(float _Value)
 		return;
 	}
 
-	// 달리면 안되는 상태
+	// 달리기와 구르면 안되는 상태
 	switch (AnimState)
 	{
-	case CharacterAnimState::Idle:
-	case CharacterAnimState::WalkJump:
-	case CharacterAnimState::RunJump:
 	case CharacterAnimState::Roll:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
-	case CharacterAnimState::AimOrBlock:
+	case CharacterAnimState::ParryorFire:
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
 		return;
+	// 점프가 끝나고도 달리기 유지
+	case CharacterAnimState::WalkJump:
+	case CharacterAnimState::RunJump:
+		return;
 		break;
+	}
+
+	// 누른 시간 체크 시작
+	if (false == PressSpacebar)
+	{
+		PressSpacebar = true;
+	}
+
+	// 달리면 안되는 상태
+	switch (AnimState)
+	{
+	case CharacterAnimState::Idle:
+	case CharacterAnimState::AimOrBlock:
+		return;
 	}
 
 	if (false == IsForwardWalk && false == IsLeftWalk)
@@ -353,12 +371,6 @@ void UWeaponAction::RollorRunAction(float _Value)
 		PressSpacebar = false;
 		AnimState = CharacterAnimState::Idle;
 		return;
-	}
-
-	// 누른 시간 체크 시작
-	if (false == PressSpacebar)
-	{
-		PressSpacebar = true;
 	}
 
 	if (nullptr != CurCharacter->Controller && PressSpacebarTime >= RunCount)
@@ -382,6 +394,7 @@ void UWeaponAction::ShiftButtonAction()
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
+	case CharacterAnimState::ParryorFire:
 		return;
 		break;
 	}
@@ -412,18 +425,32 @@ void UWeaponAction::AttackAction()
 	case CharacterAnimState::RunJump:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+	case CharacterAnimState::ParryorFire:
 		return;
 		break;
 	}
 
-	if (EWeaponType::UnArmed == WeaponType || EWeaponType::Bow == WeaponType)
+	if (EWeaponType::UnArmed == WeaponType)
 	{
-		if (CharacterAnimState::AimOrBlock == AnimState)
-		{
-			AttackCheck = true;
-		}
-
 		AnimState = CharacterAnimState::Attack;
+	}
+	else if (EWeaponType::Bow == WeaponType)
+	{
+		// 조준 중이며 화살이 준비 된 상태
+		if (CharacterAnimState::AimOrBlock == AnimState && true == ArrowReady)
+		{
+			AnimState = CharacterAnimState::ParryorFire;
+		}
+		// 조준 중이며 화살이 준비 안된 상태
+		else if (CharacterAnimState::AimOrBlock == AnimState && false == EarlyArrowCheck)
+		{
+			EarlyArrowCheck = true;
+		}
+		// 조준이 아닌 일반 공격인 상태
+		else if (CharacterAnimState::AimOrBlock != AnimState && false == ArrowReady)
+		{
+			AnimState = CharacterAnimState::Attack;
+		}
 	}
 	else if (EWeaponType::Sword == WeaponType)
 	{
@@ -458,6 +485,7 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
+	case CharacterAnimState::ParryorFire:
 		return;
 		break;
 	}

@@ -19,14 +19,14 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 	{
 		Animstate = CharacterAnimState::Idle;
 		character->CurWeaponAction->SetAnimState(Animstate);
-		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.f);
 		character->CurWeaponAction->SetCharacterAirControl(1.f);
 	}
 	else if (AllAnimations[CharacterAnimState::EquipOrDisArmBow] == Anim || AllAnimations[CharacterAnimState::EquipOrDisArmSwordAndShield] == Anim)
 	{
 		Animstate = CharacterAnimState::Idle;
 		character->CurWeaponAction->SetAnimState(Animstate);
-		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.f);
 		AnimSpeed = 1.f;
 
 		if (true == character->CurWeaponAction->SwordAndSheiledToBow)
@@ -38,6 +38,17 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 		{
 			character->ChangeSwordAndSheiled();
 			character->CurWeaponAction->BowToSwordAndSheiled = false;
+		}
+	}
+	else if (AllAnimations[CharacterAnimState::ParryorFire] == Anim)
+	{
+		if (EWeaponType::Bow == character->CurWeaponAction->WeaponType)
+		{
+			Animstate = CharacterAnimState::AimOrBlock;
+			character->CurWeaponAction->SetAnimState(Animstate);
+			Montage_Play(AllAnimations[CharacterAnimState::AimOrBlock], 1.f);
+			character->CurWeaponAction->ArrowReady = false;
+			character->CurWeaponAction->EarlyArrowCheck = false;
 		}
 	}
 }
@@ -149,19 +160,56 @@ void UMainCharacterAnimInstance::AnimNotify_AttackCheck()
 			character->CurWeaponAction->AttackCheck = false;
 		}
 	}
-	else if (CharacterAnimState::AimOrBlock == character->CurWeaponAction->AnimState)
+}
+
+void UMainCharacterAnimInstance::AnimNotify_AimorBlockCheck()
+{
+	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
 	{
-		if (false == Value)
+		return;
+	}
+
+	if (CharacterAnimState::AimOrBlock == character->CurWeaponAction->AnimState)
+	{
+		// 다시 에임or 블락
+		FName SectionName = "Aimorblock2";
+
+		UAnimMontage* montage = AllAnimations[Animstate];
+
+		if (nullptr == montage)
 		{
-			// 다시 에임
-			//Montage_JumpToSection()
+			return;
 		}
-		else
-		{
-			// 발사로 점프 후 다시 에임
-			//Montage_JumpToSection()
-			character->CurWeaponAction->AttackCheck = false;
-		}
+
+		Montage_JumpToSection(SectionName, montage);
+	}
+}
+
+void UMainCharacterAnimInstance::AnimNotify_ArrowReadyCheck()
+{
+	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	// 미리 공격 입력을 눌렀을 때
+	if (true == character->CurWeaponAction->EarlyArrowCheck && CharacterAnimState::AimOrBlock == Animstate)
+	{
+		character->CurWeaponAction->ArrowReady = false;
+		character->CurWeaponAction->EarlyArrowCheck = false;
+
+		Animstate = CharacterAnimState::ParryorFire;
+		character->CurWeaponAction->SetAnimState(Animstate);
+		Montage_Play(AllAnimations[CharacterAnimState::ParryorFire], 1.f);
+	}
+	// 준비된 후 입력을 받으려 할 때
+	else if (false == character->CurWeaponAction->EarlyArrowCheck)
+	{
+		character->CurWeaponAction->ArrowReady = true;
 	}
 }
 

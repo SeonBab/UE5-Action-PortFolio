@@ -55,6 +55,8 @@ public:
 	bool IsRunJump = false;
 	bool PressSpacebar = false;
 	bool AttackCheck = false;
+	bool ArrowReady = false;
+	bool EarlyArrowCheck = false;
 	float PressSpacebarTime = 0.f;
 	const float RunCount = 0.8f;
 	const float WalkSpeed = 500.f;
