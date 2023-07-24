@@ -331,14 +331,6 @@ void UWeaponAction::RollorRunAction(float _Value)
 	}
 
 	// 달리면 안되는 상태
-	if (false == IsForwardWalk && false == IsLeftWalk)
-	{
-		PressSpacebarTime = 0;
-		PressSpacebar = false;
-		AnimState = CharacterAnimState::Idle;
-		return;
-	}
-
 	switch (AnimState)
 	{
 	case CharacterAnimState::Idle:
@@ -348,10 +340,19 @@ void UWeaponAction::RollorRunAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
+	case CharacterAnimState::AimOrBlock:
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
 		return;
 		break;
+	}
+
+	if (false == IsForwardWalk && false == IsLeftWalk)
+	{
+		PressSpacebarTime = 0;
+		PressSpacebar = false;
+		AnimState = CharacterAnimState::Idle;
+		return;
 	}
 
 	// 누른 시간 체크 시작
@@ -389,12 +390,14 @@ void UWeaponAction::ShiftButtonAction()
 	if (CharacterAnimState::Run == AnimState)
 	{
 		AnimState = CharacterAnimState::RunJump;
+		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 		CurCharacter->Jump();
 	}
 	// 걸을 때, 가만히 있을 때 점프
-	else if (CharacterAnimState::Walk == AnimState || CharacterAnimState::Idle == AnimState)
+	else
 	{
 		AnimState = CharacterAnimState::WalkJump;
+		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 
 	CurCharacter->GetCharacterMovement()->AirControl = 0.3f;
@@ -412,9 +415,14 @@ void UWeaponAction::AttackAction()
 		return;
 		break;
 	}
-	
+
 	if (EWeaponType::UnArmed == WeaponType || EWeaponType::Bow == WeaponType)
 	{
+		if (CharacterAnimState::AimOrBlock == AnimState)
+		{
+			AttackCheck = true;
+		}
+
 		AnimState = CharacterAnimState::Attack;
 	}
 	else if (EWeaponType::Sword == WeaponType)
@@ -425,5 +433,47 @@ void UWeaponAction::AttackAction()
 		}
 
 		AnimState = CharacterAnimState::Attack;
+	}
+}
+
+void UWeaponAction::AimorBlockAtion(float _Value)
+{
+	if (0 == _Value)
+	{
+		if (CharacterAnimState::AimOrBlock == AnimState)
+		{
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+			AnimState = CharacterAnimState::Idle;
+		}
+
+		return;
+	}
+
+	switch (AnimState)
+	{
+	case CharacterAnimState::Roll:
+	case CharacterAnimState::WalkJump:
+	case CharacterAnimState::Run:
+	case CharacterAnimState::RunJump:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+	case CharacterAnimState::Attack:
+		return;
+		break;
+	}
+
+	if (EWeaponType::UnArmed == WeaponType)
+	{
+		return;
+	}
+	else if (EWeaponType::Sword == WeaponType)
+	{
+		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
+		AnimState = CharacterAnimState::AimOrBlock;
+	}
+	else if (EWeaponType::Bow == WeaponType)
+	{
+		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
+		AnimState = CharacterAnimState::AimOrBlock;
 	}
 }

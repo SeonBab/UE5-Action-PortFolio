@@ -136,15 +136,32 @@ void UMainCharacterAnimInstance::AnimNotify_AttackCheck()
 
 	bool Value = character->CurWeaponAction->AttackCheck;
 
-	if (false == Value)
+	if (CharacterAnimState::Attack == character->CurWeaponAction->AnimState)
 	{
-		Animstate = CharacterAnimState::Idle;
-		character->CurWeaponAction->SetAnimState(Animstate);
-		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+		if (false == Value)
+		{
+			Animstate = CharacterAnimState::Idle;
+			character->CurWeaponAction->SetAnimState(Animstate);
+			Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+		}
+		else
+		{
+			character->CurWeaponAction->AttackCheck = false;
+		}
 	}
-	else
+	else if (CharacterAnimState::AimOrBlock == character->CurWeaponAction->AnimState)
 	{
-		character->CurWeaponAction->AttackCheck = false;
+		if (false == Value)
+		{
+			// 다시 에임
+			//Montage_JumpToSection()
+		}
+		else
+		{
+			// 발사로 점프 후 다시 에임
+			//Montage_JumpToSection()
+			character->CurWeaponAction->AttackCheck = false;
+		}
 	}
 }
 

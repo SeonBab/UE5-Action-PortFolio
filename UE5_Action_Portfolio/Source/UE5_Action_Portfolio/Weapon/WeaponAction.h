@@ -33,6 +33,7 @@ public:
 	virtual void RollorRunAction(float _Value);
 	virtual void ShiftButtonAction();
 	virtual void AttackAction();
+	virtual void AimorBlockAtion(float _Value);
 
 
 public:
@@ -58,4 +59,5 @@ public:
 	const float RunCount = 0.8f;
 	const float WalkSpeed = 500.f;
 	const float RunSpeed = 700.f;
+	const float AimorBlockSpeed = 250.f;
 };

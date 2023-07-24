@@ -89,6 +89,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton));
 	//UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton, 1.f));
+	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseRight", EKeys::RightMouseButton, 1.f));
 
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerTurn", EKeys::MouseX, 1.f));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerLooKUp", EKeys::MouseY, -1.f));
@@ -112,6 +113,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 
 	_PlayerInputComponent->BindAction("PlayerMouseLeft", EInputEvent::IE_Pressed, this, &AMainCharacter::Attack);
 	//_PlayerInputComponent->BindAxis("PlayerMouseLeft", this, &AMainCharacter::Attack);
+	_PlayerInputComponent->BindAxis("PlayerMouseRight", this, &AMainCharacter::AimorBlock);
 
 	_PlayerInputComponent->BindAxis("PlayerTurn", this, &AMainCharacter::AddControllerYawInput);
 	_PlayerInputComponent->BindAxis("PlayerLooKUp", this, &AMainCharacter::AddControllerPitchInput);
@@ -184,4 +186,9 @@ void AMainCharacter::ChangeBow()
 void AMainCharacter::ChangeSwordAndSheiled()
 {
 	CurWeaponAction->ChangeSetSwordAndSheiled();
+}
+
+void AMainCharacter::AimorBlock(float _Value)
+{
+	CurWeaponAction->AimorBlockAtion(_Value);
 }

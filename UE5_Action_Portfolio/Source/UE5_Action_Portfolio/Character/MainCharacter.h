@@ -25,6 +25,7 @@ public:
 	void ChangeUnArmed();
 	void ChangeBow();
 	void ChangeSwordAndSheiled();
+	void AimorBlock(float _Value);
 
 protected:
 	virtual void BeginPlay() override;
