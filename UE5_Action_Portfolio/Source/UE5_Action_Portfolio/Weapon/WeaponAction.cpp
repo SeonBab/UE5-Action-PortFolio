@@ -189,6 +189,12 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		break;
 	}
 
+	// 블락 중일 땐 이동하지 않는다
+	if (EWeaponType::Sword == WeaponType && CharacterAnimState::AimOrBlock == AnimState)
+	{
+		return;
+	}
+
 	// 이동한다
 	if (nullptr != CurCharacter->Controller && 0.f != _Value)
 	{
@@ -248,6 +254,12 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	case CharacterAnimState::ParryorFire:
 		return;
 		break;
+	}
+
+	// 블락 중일 땐 이동하지 않는다
+	if (EWeaponType::Sword == WeaponType && CharacterAnimState::AimOrBlock == AnimState)
+	{
+		return;
 	}
 
 	// 이동한다
@@ -496,7 +508,6 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	}
 	else if (EWeaponType::Sword == WeaponType)
 	{
-		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
 		AnimState = CharacterAnimState::AimOrBlock;
 	}
 	else if (EWeaponType::Bow == WeaponType)
