@@ -174,7 +174,7 @@ void UMainCharacterAnimInstance::AnimNotify_AimorBlockCheck()
 	if (CharacterAnimState::AimOrBlock == character->CurWeaponAction->AnimState)
 	{
 		// 다시 에임or 블락
-		FName SectionName = "Aimorblock2";
+		FName SectionName = "AimorBlock2";
 
 		UAnimMontage* montage = AllAnimations[Animstate];
 
