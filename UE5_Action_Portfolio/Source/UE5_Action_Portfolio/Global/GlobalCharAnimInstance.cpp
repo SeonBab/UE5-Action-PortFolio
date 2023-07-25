@@ -176,14 +176,14 @@ void UGlobalCharAnimInstance::AnimNotify_AimorBlockCheck()
 		// 다시 에임or 블락
 		FName SectionName = "AimorBlock2";
 
-		UAnimMontage* montage = AllAnimations[Animstate];
+		UAnimMontage* Montage = AllAnimations[Animstate];
 
-		if (nullptr == montage)
+		if (nullptr == Montage)
 		{
 			return;
 		}
 
-		Montage_JumpToSection(SectionName, montage);
+		Montage_JumpToSection(SectionName, Montage);
 	}
 }
 
@@ -263,30 +263,32 @@ void UGlobalCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		return;
 	}
 
-	UAnimMontage* montage = AllAnimations[Animstate];
+	UAnimMontage* Montage = AllAnimations[Animstate];
 
-	if (nullptr == montage)
+	if (nullptr == Montage)
 	{
 		return;
 	}
 
-	if (false == Montage_IsPlaying(montage))
+	if (false == Montage_IsPlaying(Montage))
 	{
 		// 무기가 있는 상태에서 없는 상태로 갈 땐 역재생
 		if (EWeaponType::UnArmed == character->CurWeaponAction->WeaponType && (CharacterAnimState::EquipOrDisArmBow == Animstate || CharacterAnimState::EquipOrDisArmSwordAndShield == Animstate))
 		{
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
-			Montage_Play(montage, AnimSpeed, EMontagePlayReturnType::MontageLength, 1.f);
+			Montage_Play(Montage, AnimSpeed, EMontagePlayReturnType::MontageLength, 1.f);
 		}
 		// 나머지 일반적인 애니메이션 재생
 		else
 		{
-			//if (Montage == CurMontage && -1 != DefaultAniState && false == Montage->bLoop)
+			//if (Montage == CurMontage &&  true == Montage->bLoop)
 			//{
-			//	Montage = AllAnimations[DefaultAniState];
+			//	return;
 			//}
+
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
-			Montage_Play(montage, AnimSpeed);
+			//CurMontage = Montage;
+			Montage_Play(Montage, AnimSpeed);
 		}
 	}
 }

@@ -37,6 +37,8 @@ public:
 	CharacterAnimState Animstate = CharacterAnimState::Idle;
 	UPROPERTY()
 	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;
+	
+	//class UAnimMontage* CurMontage = nullptr;
 
 	float AnimSpeed = 1.f;
 };
