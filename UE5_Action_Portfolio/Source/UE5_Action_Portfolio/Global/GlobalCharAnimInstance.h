@@ -3,10 +3,10 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Global/Enums.h"
-#include "MainCharacterAnimInstance.generated.h"
+#include "GlobalCharAnimInstance.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UMainCharacterAnimInstance : public UAnimInstance
+class UE5_ACTION_PORTFOLIO_API UGlobalCharAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
@@ -34,7 +34,6 @@ protected:
 	void NativeUpdateAnimation(float DeltaTime) override;
 
 public:
-	UPROPERTY()
 	CharacterAnimState Animstate = CharacterAnimState::Idle;
 	UPROPERTY()
 	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;

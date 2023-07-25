@@ -4,7 +4,7 @@
 #include "Global/GlobalGameInstance.h"
 #include "Global/AnimaitionData.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Character/MainCharacterAnimInstance.h"
+#include "Global/GlobalCharAnimInstance.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Character.h"
 
@@ -49,7 +49,7 @@ void UWeaponAction::IsRollMoveToFalse()
 
 void UWeaponAction::ChangeWeapon(FName _Weapon)
 {
-	UMainCharacterAnimInstance* Ptr = Cast<UMainCharacterAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
+	UGlobalCharAnimInstance* Ptr = Cast<UGlobalCharAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
 
 	if (nullptr == Ptr)
 	{
@@ -78,7 +78,7 @@ void UWeaponAction::ChangeSetUnArmed()
 	}
 
 	// 역재생을 위한 AnimInstance
-	UMainCharacterAnimInstance* Ptr = Cast<UMainCharacterAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
+	UGlobalCharAnimInstance* Ptr = Cast<UGlobalCharAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
 
 	if (nullptr == Ptr)
 	{

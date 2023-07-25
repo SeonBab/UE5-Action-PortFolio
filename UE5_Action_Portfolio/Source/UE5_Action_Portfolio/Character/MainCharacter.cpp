@@ -7,9 +7,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/UnArmedAction.h"
-#include "Global/GlobalGameInstance.h"
-#include "Global/AnimaitionData.h"
-#include "Global/WeaponData.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -26,24 +23,6 @@ AMainCharacter::AMainCharacter()
 	BaseLookUpRate = 30.f;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	UnArmedWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("UnArmedMesh"));
-	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
-	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
-	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
-
-	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
-	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
-	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
-	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
-
-	BackBowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackBowMesh"));
-	BackSwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackSwordMesh"));
-	BackShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackShiedlMesh"));
-
-	BackBowWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackBow"));
-	BackSwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackSword"));
-	BackShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackShield"));
 }
 
 void AMainCharacter::BeginPlay()
@@ -51,31 +30,11 @@ void AMainCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	this->bUseControllerRotationYaw = false;
-
-	CurWeaponAction = NewObject<UUnArmedAction>();
-	CurWeaponAction->SetCurCharacter(this);
-
-	UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
-
-	if (nullptr == Instance)
-	{
-		return;
-	}
-
-	UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
-
-	BackBowWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Bow")));
-	BackSwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
-	BackShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
 }
 
 void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
-
-	CurWeaponAction->Tick(_DeltaTime);
-
-	AnimState = CurWeaponAction->GetAnimState();
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)
@@ -88,7 +47,6 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelDown", EKeys::MouseScrollDown));
 
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton));
-	//UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton, 1.f));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseRight", EKeys::RightMouseButton, 1.f));
 
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerTurn", EKeys::MouseX, 1.f));
@@ -112,7 +70,6 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	_PlayerInputComponent->BindAction("PlayerWheelDown", EInputEvent::IE_Pressed, this, &AMainCharacter::ZoomOut);
 
 	_PlayerInputComponent->BindAction("PlayerMouseLeft", EInputEvent::IE_Pressed, this, &AMainCharacter::Attack);
-	//_PlayerInputComponent->BindAxis("PlayerMouseLeft", this, &AMainCharacter::Attack);
 	_PlayerInputComponent->BindAxis("PlayerMouseRight", this, &AMainCharacter::AimorBlock);
 
 	_PlayerInputComponent->BindAxis("PlayerTurn", this, &AMainCharacter::AddControllerYawInput);

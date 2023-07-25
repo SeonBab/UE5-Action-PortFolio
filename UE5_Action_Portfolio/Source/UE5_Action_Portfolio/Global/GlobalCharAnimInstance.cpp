@@ -1,13 +1,13 @@
-#include "Character/MainCharacterAnimInstance.h"
-#include "MainCharacter.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "Global/GlobalCharAnimInstance.h"
+#include "Global/GlobalCharacter.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/AnimaitionData.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Weapon/WeaponAction.h"
 
-void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
+void UGlobalCharAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -31,12 +31,12 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 
 		if (true == character->CurWeaponAction->SwordAndSheiledToBow)
 		{
-			character->ChangeBow();
+			character->CurWeaponAction->ChangeSetBow();
 			character->CurWeaponAction->SwordAndSheiledToBow = false;
 		}
 		else if (true == character->CurWeaponAction->BowToSwordAndSheiled)
 		{
-			character->ChangeSwordAndSheiled();
+			character->CurWeaponAction->ChangeSetSwordAndSheiled();
 			character->CurWeaponAction->BowToSwordAndSheiled = false;
 		}
 	}
@@ -53,9 +53,9 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
 	}
 }
 
-void UMainCharacterAnimInstance::AnimNotify_RollStop()
+void UGlobalCharAnimInstance::AnimNotify_RollStop()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -65,9 +65,9 @@ void UMainCharacterAnimInstance::AnimNotify_RollStop()
 	character->CurWeaponAction->IsRollMoveToFalse();
 }
 
-void UMainCharacterAnimInstance::AnimNotify_JumpStart()
+void UGlobalCharAnimInstance::AnimNotify_JumpStart()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -77,9 +77,9 @@ void UMainCharacterAnimInstance::AnimNotify_JumpStart()
 	character->Jump();
 }
 
-void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
+void UGlobalCharAnimInstance::AnimNotify_ChangeWeapon()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -136,9 +136,9 @@ void UMainCharacterAnimInstance::AnimNotify_ChangeWeapon()
 	}
 }
 
-void UMainCharacterAnimInstance::AnimNotify_AttackCheck()
+void UGlobalCharAnimInstance::AnimNotify_AttackCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -162,9 +162,9 @@ void UMainCharacterAnimInstance::AnimNotify_AttackCheck()
 	}
 }
 
-void UMainCharacterAnimInstance::AnimNotify_AimorBlockCheck()
+void UGlobalCharAnimInstance::AnimNotify_AimorBlockCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -187,9 +187,9 @@ void UMainCharacterAnimInstance::AnimNotify_AimorBlockCheck()
 	}
 }
 
-void UMainCharacterAnimInstance::AnimNotify_ArrowReadyCheck()
+void UGlobalCharAnimInstance::AnimNotify_ArrowReadyCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -213,15 +213,15 @@ void UMainCharacterAnimInstance::AnimNotify_ArrowReadyCheck()
 	}
 }
 
-void UMainCharacterAnimInstance::NativeInitializeAnimation()
+void UGlobalCharAnimInstance::NativeInitializeAnimation()
 {
 }
 
-void UMainCharacterAnimInstance::NativeBeginPlay()
+void UGlobalCharAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	OnMontageBlendingOut.AddDynamic(this, &UMainCharacterAnimInstance::MontageEnd);
+	OnMontageBlendingOut.AddDynamic(this, &UGlobalCharAnimInstance::MontageEnd);
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
@@ -240,7 +240,7 @@ void UMainCharacterAnimInstance::NativeBeginPlay()
 	AllAnimations = FindAnimaitionData->AllAnimations;
 }
 
-void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
+void UGlobalCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 {
 	Super::NativeUpdateAnimation(DeltaTime);
 
@@ -249,7 +249,7 @@ void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		return;
 	}
 
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -281,9 +281,12 @@ void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		// 나머지 일반적인 애니메이션 재생
 		else
 		{
+			//if (Montage == CurMontage && -1 != DefaultAniState && false == Montage->bLoop)
+			//{
+			//	Montage = AllAnimations[DefaultAniState];
+			//}
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
 			Montage_Play(montage, AnimSpeed);
 		}
-
 	}
 }
