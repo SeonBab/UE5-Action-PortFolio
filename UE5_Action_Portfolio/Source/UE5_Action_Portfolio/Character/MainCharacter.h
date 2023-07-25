@@ -27,6 +27,7 @@ public:
 	void ChangeBow();
 	void ChangeSwordAndSheiled();
 	void AimorBlock(float _Value);
+	void LockOnTarget();
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,4 +43,5 @@ public:
 	class UCameraComponent* MainCameraComponent;
 	float BaseTurnRate;
 	float BaseLookUpRate;
+	bool LockonChose = false;
 };

@@ -281,13 +281,7 @@ void UGlobalCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		// 나머지 일반적인 애니메이션 재생
 		else
 		{
-			//if (Montage == CurMontage &&  true == Montage->bLoop)
-			//{
-			//	return;
-			//}
-
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
-			//CurMontage = Montage;
 			Montage_Play(Montage, AnimSpeed);
 		}
 	}

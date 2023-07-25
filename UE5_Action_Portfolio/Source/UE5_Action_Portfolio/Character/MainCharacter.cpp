@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Character/MainCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -46,6 +43,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelUp", EKeys::MouseScrollUp));
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerWheelDown", EKeys::MouseScrollDown));
 
+	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Tab", EKeys::Tab));
+
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("PlayerMouseLeft", EKeys::LeftMouseButton));
 	UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("PlayerMouseRight", EKeys::RightMouseButton, 1.f));
 
@@ -68,6 +67,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 
 	_PlayerInputComponent->BindAction("PlayerWheelUp", EInputEvent::IE_Pressed, this, &AMainCharacter::ZoomIn);
 	_PlayerInputComponent->BindAction("PlayerWheelDown", EInputEvent::IE_Pressed, this, &AMainCharacter::ZoomOut);
+
+	_PlayerInputComponent->BindAction("Tab", EInputEvent::IE_Pressed, this, &AMainCharacter::LockOnTarget);
 
 	_PlayerInputComponent->BindAction("PlayerMouseLeft", EInputEvent::IE_Pressed, this, &AMainCharacter::Attack);
 	_PlayerInputComponent->BindAxis("PlayerMouseRight", this, &AMainCharacter::AimorBlock);
@@ -148,4 +149,17 @@ void AMainCharacter::ChangeSwordAndSheiled()
 void AMainCharacter::AimorBlock(float _Value)
 {
 	CurWeaponAction->AimorBlockAtion(_Value);
+}
+
+void AMainCharacter::LockOnTarget()
+{
+	// 플립/플롭
+	if (false == LockonChose)
+	{
+		
+	}
+	else if (true == LockonChose)
+	{
+
+	}
 }
