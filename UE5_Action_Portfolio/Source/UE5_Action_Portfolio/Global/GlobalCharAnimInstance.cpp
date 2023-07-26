@@ -213,6 +213,30 @@ void UGlobalCharAnimInstance::AnimNotify_ArrowReadyCheck()
 	}
 }
 
+void UGlobalCharAnimInstance::AnimNotify_ChordToHand()
+{
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+	character->CurWeaponAction->BowStringCheck = true;
+}
+
+void UGlobalCharAnimInstance::AnimNotify_BowFire()
+{
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+	character->CurWeaponAction->BowStringCheck = false;
+
+	// 화살 발사
+}
+
 void UGlobalCharAnimInstance::NativeInitializeAnimation()
 {
 }
@@ -222,6 +246,7 @@ void UGlobalCharAnimInstance::NativeBeginPlay()
 	Super::NativeBeginPlay();
 
 	OnMontageBlendingOut.AddDynamic(this, &UGlobalCharAnimInstance::MontageEnd);
+	//OnInterrupted.AddDynamic(this, &UGlobalCharAnimInstance::Interrupted);
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 

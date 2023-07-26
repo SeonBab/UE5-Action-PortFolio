@@ -25,6 +25,10 @@ public:
 	void AnimNotify_AimorBlockCheck();
 	UFUNCTION()
 	void AnimNotify_ArrowReadyCheck();
+	UFUNCTION()
+	void AnimNotify_ChordToHand();
+	UFUNCTION()
+	void AnimNotify_BowFire();
 
 	//void JumpToAttackMontageSection(int AttackCount);
 

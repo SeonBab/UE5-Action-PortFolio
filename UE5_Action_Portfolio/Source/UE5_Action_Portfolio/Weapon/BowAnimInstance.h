@@ -13,7 +13,7 @@ public:
 	void InitializeAnimation();
 	void NativeBeginPlay();
 	void NativeUpdateAnimation();
-	void SetHandTransform(const FTransform _HandTransform);
+	void SetHandTransform(const FVector _HandTransform);
 
 public:
 

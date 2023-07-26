@@ -7,6 +7,7 @@
 #include "Global/GlobalCharAnimInstance.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Character.h"
+#include "Weapon/BowAnimInstance.h"
 
 UWeaponAction::UWeaponAction()
 {	
@@ -172,6 +173,42 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
 	}
+}
+
+void UWeaponAction::BowChordMove()
+{
+	if (EWeaponType::Bow == WeaponType && (CharacterAnimState::AimOrBlock != AnimState && CharacterAnimState::Attack != AnimState))
+	{
+		BowStringCheck = false;
+	}
+
+	//// GetAnimInstance°¡ nullÀÌ´Ù
+	//if (true == BowStringCheck)
+	//{
+	//	USkeletalMeshComponent* SkeletalMeshComponent = CurCharacter->GetMesh();
+
+	//	if (nullptr != SkeletalMeshComponent)
+	//	{
+	//		FTransform Trans = SkeletalMeshComponent->GetSocketTransform(TEXT("RightHand"));
+	//		UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance()); 
+	//		FVector Vec = Trans.GetLocation();
+
+	//		if (nullptr != BowAnim)
+	//		{
+	//			BowAnim->SetHandTransform(Vec);
+	//		}
+	//	}
+	//}
+	//else if (false == BowStringCheck)
+	//{
+	//	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
+
+	//	if (nullptr != BowAnim)
+	//	{
+	//		FVector Vec = FVector(27.662823, 0, 0);
+	//		BowAnim->SetHandTransform(Vec);
+	//	}
+	//}
 }
 
 void UWeaponAction::WAndSButtonAction(float _Value)

@@ -44,4 +44,6 @@ public:
 	float BaseTurnRate;
 	float BaseLookUpRate;
 	bool LockonChose = false;
+	float LockOnTargetRange = 1500.f;
+	AActor* LockedOnTargetActor = nullptr;
 };

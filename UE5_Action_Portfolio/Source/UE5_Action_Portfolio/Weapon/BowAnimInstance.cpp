@@ -15,9 +15,7 @@ void UBowAnimInstance::NativeUpdateAnimation()
 	
 }
 
-void UBowAnimInstance::SetHandTransform(const FTransform _HandTransform)
+void UBowAnimInstance::SetHandTransform(const FVector _HandTransform)
 {
-	FVector Pos = _HandTransform.GetLocation();
-
-	HandTransform = Pos;
+	HandTransform = _HandTransform;
 }

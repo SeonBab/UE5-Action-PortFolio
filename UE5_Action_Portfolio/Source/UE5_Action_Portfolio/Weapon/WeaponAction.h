@@ -27,6 +27,7 @@ public:
 	void ChangeSetBow();
 	void ChangeSetSwordAndSheiled();
 	void PressSpaceBarCkeckAndRoll(float _DeltaTime);
+	void BowChordMove();
 
 	virtual void WAndSButtonAction(float _Value);
 	virtual void DAndAButtonAction(float _Value);
@@ -44,6 +45,7 @@ public:
 
 	// 무기
 	EWeaponType WeaponType = EWeaponType::UnArmed;
+	bool BowStringCheck = false;
 
 	// 캐릭터 움직임 상태
 	bool BowToSwordAndSheiled = false;

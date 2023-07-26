@@ -4,7 +4,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/WeaponAction.h"
-#include "Weapon/BowAnimInstance.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -33,16 +33,6 @@ void AMainCharacter::BeginPlay()
 void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
-
-	USkeletalMeshComponent* SkeletalMeshComponent = GetMesh();
-	FTransform Trans;
-
-	if (nullptr != SkeletalMeshComponent)
-	{
-		Trans = SkeletalMeshComponent->GetSocketTransform(TEXT("RightHand"));
-		//BowWeaponMesh // SetHandTransform() 호출
-	}
-
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)
@@ -167,10 +157,48 @@ void AMainCharacter::LockOnTarget()
 	// 플립/플롭
 	if (false == LockonChose)
 	{
-		
+		FVector Start = GetActorLocation(); // 시작 지점
+		FVector End = GetActorForwardVector() * LockOnTargetRange; // 끝 지점
+		End = End.RotateAngleAxis(-50.f, FVector::UpVector); // 왼쪽 방향부터
+
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType; // 히트 가능한 오브젝트 유형
+		//ObjectTypeQuery3라고 해야하나?
+		ObjectType.Emplace(EObjectTypeQuery::ObjectTypeQuery3);
+		//TEnumAsByte<EObjectTypeQuery> WorldStatic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic);
+		//TEnumAsByte<EObjectTypeQuery> WorldDynamic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic);
+		//ObjectTypes.Add(WorldStatic);
+		//ObjectTypes.Add(WorldDynamic);
+		TArray<AActor*> NotTargeting; // 무시할 액터들
+		NotTargeting.Emplace(this);
+
+		FHitResult OutHit; // 히트 결과 값을 받는 변수
+
+		float TargetDistance = LockOnTargetRange; // 가장 가까운 액터와의 거리 저장
+		AActor* HitActor = nullptr; // 가장 가까운 액터 저장
+
+		for (int i = 0; i <= 100; i += 10) // 반복 하면서 오른쪽 방향으로 돌림
+		{
+			FVector Direction = End.RotateAngleAxis(i, FVector::UpVector);
+			FVector EndPoint = Start + Direction;
+
+			bool IsHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), Start, EndPoint, 200.f, ObjectType, false, NotTargeting, EDrawDebugTrace::ForDuration, OutHit, true);
+
+			if (true == IsHit && OutHit.Distance < TargetDistance)
+			{
+				TargetDistance = OutHit.Distance;
+				HitActor = OutHit.GetActor();
+			}
+		}
+
+		if (nullptr != HitActor)
+		{
+			LockonChose = true;
+			LockedOnTargetActor = HitActor;
+		}
 	}
 	else if (true == LockonChose)
 	{
-
+		LockonChose = false;
+		LockedOnTargetActor = nullptr;
 	}
 }
