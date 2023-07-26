@@ -3,7 +3,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Weapon/UnArmedAction.h"
+#include "Weapon/WeaponAction.h"
+#include "Weapon/BowAnimInstance.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -32,6 +33,16 @@ void AMainCharacter::BeginPlay()
 void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
+
+	USkeletalMeshComponent* SkeletalMeshComponent = GetMesh();
+	FTransform Trans;
+
+	if (nullptr != SkeletalMeshComponent)
+	{
+		Trans = SkeletalMeshComponent->GetSocketTransform(TEXT("RightHand"));
+		//BowWeaponMesh // SetHandTransform() »£√‚
+	}
+
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)

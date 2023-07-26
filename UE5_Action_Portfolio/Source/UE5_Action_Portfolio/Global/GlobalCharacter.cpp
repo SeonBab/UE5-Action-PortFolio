@@ -11,9 +11,9 @@ AGlobalCharacter::AGlobalCharacter()
 	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
 	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
 
-	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
-	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandBow"));
-	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSword"));
+	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHand"));
+	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHand"));
+	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHand"));
 	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
 
 	BackBowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackBowMesh"));
