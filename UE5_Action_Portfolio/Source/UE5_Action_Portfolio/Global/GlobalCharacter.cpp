@@ -68,14 +68,7 @@ void AGlobalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 }
 
 void AGlobalCharacter::BowChordMove()
-{
-	//EWeaponType::Bow != CurWeaponAction->WeaponType && 
-	//if ((CharacterAnimState::AimOrBlock != CurWeaponAction->AnimState && CharacterAnimState::Attack != CurWeaponAction->AnimState))
-	//{
-	//	BowStringCheck = false;
-	//	return;
-	//}
-	
+{	
 	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
 
 	if (nullptr == BowAnim)
