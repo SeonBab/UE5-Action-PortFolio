@@ -13,11 +13,15 @@ public:
 	void InitializeAnimation();
 	void NativeBeginPlay();
 	void NativeUpdateAnimation();
+	const bool GetBowChordCheck();
+	void SetBowChordCheck(bool _Value);
 	void SetHandTransform(const FVector _HandTransform);
 
 public:
 
 private:
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool BowChordCheck = false;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
 	FVector HandTransform = FVector::ZeroVector;
 };

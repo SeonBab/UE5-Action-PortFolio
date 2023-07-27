@@ -12,7 +12,7 @@ class UE5_ACTION_PORTFOLIO_API UGlobalCharAnimInstance : public UAnimInstance
 	
 public:
 	UFUNCTION()
-	void MontageEnd(UAnimMontage* Anim, bool Inter);
+	void MontageBlendingOut(UAnimMontage* Anim, bool Inter);
 	UFUNCTION()
 	void AnimNotify_RollStop();
 	UFUNCTION()

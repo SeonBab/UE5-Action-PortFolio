@@ -18,6 +18,9 @@ protected:
 	virtual void Tick(float _DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* _PlayerInputComponent) override;
 
+private:
+	void BowChordMove();
+
 public:
 	UPROPERTY()
 	class UWeaponAction* CurWeaponAction;

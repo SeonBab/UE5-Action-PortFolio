@@ -5,8 +5,7 @@
 #include "Global/AnimaitionData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Global/GlobalCharAnimInstance.h"
-#include "Components/StaticMeshComponent.h"
-#include "GameFramework/Character.h"
+#include "Global/GlobalCharacter.h"
 #include "Weapon/BowAnimInstance.h"
 
 UWeaponAction::UWeaponAction()
@@ -173,42 +172,6 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
 	}
-}
-
-void UWeaponAction::BowChordMove()
-{
-	if (EWeaponType::Bow == WeaponType && (CharacterAnimState::AimOrBlock != AnimState && CharacterAnimState::Attack != AnimState))
-	{
-		BowStringCheck = false;
-	}
-
-	//// GetAnimInstance°¡ nullÀÌ´Ù
-	//if (true == BowStringCheck)
-	//{
-	//	USkeletalMeshComponent* SkeletalMeshComponent = CurCharacter->GetMesh();
-
-	//	if (nullptr != SkeletalMeshComponent)
-	//	{
-	//		FTransform Trans = SkeletalMeshComponent->GetSocketTransform(TEXT("RightHand"));
-	//		UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance()); 
-	//		FVector Vec = Trans.GetLocation();
-
-	//		if (nullptr != BowAnim)
-	//		{
-	//			BowAnim->SetHandTransform(Vec);
-	//		}
-	//	}
-	//}
-	//else if (false == BowStringCheck)
-	//{
-	//	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
-
-	//	if (nullptr != BowAnim)
-	//	{
-	//		FVector Vec = FVector(27.662823, 0, 0);
-	//		BowAnim->SetHandTransform(Vec);
-	//	}
-	//}
 }
 
 void UWeaponAction::WAndSButtonAction(float _Value)
@@ -519,8 +482,25 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		if (CharacterAnimState::AimOrBlock == AnimState)
 		{
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+
 			AnimState = CharacterAnimState::Idle;
 		}
+
+		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
+
+		if (nullptr == character && false == character->IsValidLowLevel())
+		{
+			return;
+		}
+
+		UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
+
+		if (nullptr == BowAnim)
+		{
+			return;
+		}
+
+		BowAnim->SetBowChordCheck(false);
 
 		return;
 	}

@@ -1,6 +1,7 @@
 #include "Global/GlobalCharacter.h"
 #include "Global/GlobalGameInstance.h"
 #include "Weapon/WeaponAction.h"
+#include "Weapon/BowAnimInstance.h"
 
 AGlobalCharacter::AGlobalCharacter()
 {
@@ -11,9 +12,9 @@ AGlobalCharacter::AGlobalCharacter()
 	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
 	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
 
-	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHand"));
-	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHand"));
-	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHand"));
+	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandSoket"));
+	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandSoket"));
+	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSoket"));
 	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
 
 	BackBowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackBowMesh"));
@@ -53,10 +54,45 @@ void AGlobalCharacter::Tick(float _DeltaTime)
 	Super::Tick(_DeltaTime);
 
 	CurWeaponAction->Tick(_DeltaTime);
+
+	if (EWeaponType::Bow == CurWeaponAction->WeaponType)
+	{
+		BowChordMove();
+	}
 }
 
 void AGlobalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AGlobalCharacter::BowChordMove()
+{
+	//EWeaponType::Bow != CurWeaponAction->WeaponType && 
+	//if ((CharacterAnimState::AimOrBlock != CurWeaponAction->AnimState && CharacterAnimState::Attack != CurWeaponAction->AnimState))
+	//{
+	//	BowStringCheck = false;
+	//	return;
+	//}
+	
+	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
+
+	if (nullptr == BowAnim)
+	{
+		return;
+	}
+
+	if (true == BowAnim->GetBowChordCheck())
+	{
+		USkeletalMeshComponent* SkeletalMeshComponent = GetMesh();
+
+		if (nullptr != SkeletalMeshComponent)
+		{
+			FVector Vec = SkeletalMeshComponent->GetSocketLocation(TEXT("RightHandSoket"));
+			
+
+			BowAnim->SetHandTransform(Vec);
+		}
+	}
 }

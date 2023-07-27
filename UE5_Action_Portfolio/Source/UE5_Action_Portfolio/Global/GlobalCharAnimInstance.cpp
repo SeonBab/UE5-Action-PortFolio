@@ -4,8 +4,9 @@
 #include "Global/AnimaitionData.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon/WeaponAction.h"
+#include "Weapon/BowAnimInstance.h"
 
-void UGlobalCharAnimInstance::MontageEnd(UAnimMontage* Anim, bool Inter)
+void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -221,7 +222,10 @@ void UGlobalCharAnimInstance::AnimNotify_ChordToHand()
 	{
 		return;
 	}
-	character->CurWeaponAction->BowStringCheck = true;
+
+	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
+
+	BowAnim->SetBowChordCheck(true);
 }
 
 void UGlobalCharAnimInstance::AnimNotify_BowFire()
@@ -232,7 +236,10 @@ void UGlobalCharAnimInstance::AnimNotify_BowFire()
 	{
 		return;
 	}
-	character->CurWeaponAction->BowStringCheck = false;
+
+	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
+
+	BowAnim->SetBowChordCheck(false);
 
 	// 화살 발사
 }
@@ -245,8 +252,8 @@ void UGlobalCharAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	OnMontageBlendingOut.AddDynamic(this, &UGlobalCharAnimInstance::MontageEnd);
-	//OnInterrupted.AddDynamic(this, &UGlobalCharAnimInstance::Interrupted);
+	OnMontageBlendingOut.AddDynamic(this, &UGlobalCharAnimInstance::MontageBlendingOut);
+	//OnMontageEnded.AddDynamic(this, &UGlobalCharAnimInstance::MontageEnded);
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 

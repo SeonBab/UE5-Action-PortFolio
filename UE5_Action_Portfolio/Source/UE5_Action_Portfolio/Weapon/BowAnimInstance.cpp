@@ -3,7 +3,6 @@
 
 void UBowAnimInstance::InitializeAnimation()
 {
-	//CurSkeletalMeshComponenet = GetOwningComponent();
 }
 
 void UBowAnimInstance::NativeBeginPlay()
@@ -14,6 +13,17 @@ void UBowAnimInstance::NativeUpdateAnimation()
 {
 	
 }
+
+const bool UBowAnimInstance::GetBowChordCheck()
+{
+	return BowChordCheck;
+}
+
+void UBowAnimInstance::SetBowChordCheck(bool _Value)
+{
+	BowChordCheck = _Value;
+}
+
 
 void UBowAnimInstance::SetHandTransform(const FVector _HandTransform)
 {
