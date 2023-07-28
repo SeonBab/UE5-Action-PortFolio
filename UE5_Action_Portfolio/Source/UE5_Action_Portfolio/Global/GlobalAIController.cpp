@@ -1,6 +1,7 @@
-#include "AI/GlobalAIController.h"
+#include "Global/GlobalAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Global/GlobalAICharacter.h"
 
 AGlobalAIController::AGlobalAIController()
@@ -27,5 +28,8 @@ void AGlobalAIController::OnPossess(APawn* _InPawn)
 		return;
 	}
 
-	BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsser);
+	BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	BlackboardComponent->SetValueAsObject(TEXT("SelfActor"), _InPawn);
+
+	BehaviorTreeComponent->StartTree(*BehaviorTree);
 }

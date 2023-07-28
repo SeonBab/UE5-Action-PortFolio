@@ -1,7 +1,7 @@
 #include "Global/GlobalCharAnimInstance.h"
 #include "Global/GlobalCharacter.h"
 #include "Global/GlobalGameInstance.h"
-#include "Global/AnimaitionData.h"
+#include "Global/Data/AnimaitionData.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon/WeaponAction.h"
 #include "Weapon/BowAnimInstance.h"

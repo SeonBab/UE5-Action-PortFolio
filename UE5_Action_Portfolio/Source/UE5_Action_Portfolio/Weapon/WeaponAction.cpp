@@ -2,7 +2,7 @@
 
 #include "Weapon/WeaponAction.h"
 #include "Global/GlobalGameInstance.h"
-#include "Global/AnimaitionData.h"
+#include "Global/Data/AnimaitionData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Global/GlobalCharAnimInstance.h"
 #include "Global/GlobalCharacter.h"

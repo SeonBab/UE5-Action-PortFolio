@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
-#include "Enums.h"
+#include "Global/Enums.h"
 #include "AnimaitionData.generated.h"
 
 USTRUCT(BlueprintType)

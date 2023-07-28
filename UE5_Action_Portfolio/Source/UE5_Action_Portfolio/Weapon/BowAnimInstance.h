@@ -11,8 +11,8 @@ class UE5_ACTION_PORTFOLIO_API UBowAnimInstance : public UAnimInstance
 
 public:
 	void InitializeAnimation();
-	void NativeBeginPlay();
-	void NativeUpdateAnimation();
+	void NativeBeginPlay() override;
+	void NativeUpdateAnimation(float _DeltaTime) override;
 	const bool GetBowChordCheck();
 	void SetBowChordCheck(bool _Value);
 	void SetHandTransform(const FVector _HandTransform);

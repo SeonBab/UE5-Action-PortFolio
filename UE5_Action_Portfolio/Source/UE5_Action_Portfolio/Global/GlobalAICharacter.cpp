@@ -2,6 +2,8 @@
 
 
 #include "Global/GlobalAICharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Global/GlobalAIController.h"
 
 UBehaviorTree* AGlobalAICharacter::GetBehaviorTree()
 {
@@ -12,7 +14,14 @@ UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
 {
     if (nullptr == BlackboardComponent)
     {
+        AGlobalAIController* AICon = GetController<AGlobalAIController>();
         
+        if (nullptr == AICon)
+        {
+            return nullptr;
+        }
+
+        BlackboardComponent = AICon->GetBlackboardComponent();
     }
 
     return BlackboardComponent;

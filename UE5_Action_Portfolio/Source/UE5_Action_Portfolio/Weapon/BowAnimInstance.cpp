@@ -9,7 +9,7 @@ void UBowAnimInstance::NativeBeginPlay()
 {
 }
 
-void UBowAnimInstance::NativeUpdateAnimation()
+void UBowAnimInstance::NativeUpdateAnimation(float _DeltaTime)
 {
 	
 }
