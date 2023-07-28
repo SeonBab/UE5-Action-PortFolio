@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/WeaponAction.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -12,7 +13,7 @@ AMainCharacter::AMainCharacter()
 
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
-	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight));
+	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 2));
 	MainCameraSpringArmComponent->bUsePawnControlRotation = true;
 	MainCameraSpringArmComponent->TargetArmLength = 450.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -33,6 +34,11 @@ void AMainCharacter::BeginPlay()
 void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
+
+	if (true == CurWeaponAction->GetLockOnCheck())
+	{
+		LookAtTarget(_DeltaTime);
+	}
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)
@@ -155,7 +161,7 @@ void AMainCharacter::AimorBlock(float _Value)
 void AMainCharacter::LockOnTarget()
 {
 	// 플립/플롭
-	if (false == LockonChose)
+	if (false == CurWeaponAction->GetLockOnCheck())
 	{
 		FVector Start = GetActorLocation(); // 시작 지점
 		FVector End = GetActorForwardVector() * LockOnTargetRange; // 끝 지점
@@ -192,13 +198,30 @@ void AMainCharacter::LockOnTarget()
 
 		if (nullptr != HitActor)
 		{
-			LockonChose = true;
+			CurWeaponAction->SetLockOnCheck(true);
 			LockedOnTargetActor = HitActor;
+
+			// 캐릭터가 몬스터에 시점이 고정됨
+			this->bUseControllerRotationYaw = true;
 		}
 	}
-	else if (true == LockonChose)
+	else if (true == CurWeaponAction->GetLockOnCheck())
 	{
-		LockonChose = false;
+		CurWeaponAction->SetLockOnCheck(false);
 		LockedOnTargetActor = nullptr;
+		
+		// 캐릭터의 시점 고정이 풀림
+		this->bUseControllerRotationYaw = false;
 	}
+}
+
+void AMainCharacter::LookAtTarget(float _DeltaTime)
+{
+	FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LockOnLocation);
+	FRotator InterpRotation = UKismetMathLibrary::RInterpTo(GetController()->GetControlRotation(), LookAtRotation, _DeltaTime, 10.f);
+
+	FRotator LookAtActor = FRotator(InterpRotation.Pitch, InterpRotation.Yaw, GetController()->GetControlRotation().Roll);
+
+	GetController()->SetControlRotation(LookAtActor);
 }

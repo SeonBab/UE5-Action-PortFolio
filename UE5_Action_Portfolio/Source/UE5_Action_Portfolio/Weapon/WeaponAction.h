@@ -17,16 +17,18 @@ public:
 	void Tick(float _DeltaTime);
 	void SetCurCharacter(ACharacter* _CurChar);
 	void SetCharacterAirControl(float _Value);
+	void SetLockOnCheck(bool _Value);
+	bool GetLockOnCheck();
 
 	CharacterAnimState* GetAnimState();
 	void SetAnimState(CharacterAnimState _State);
-	// 무기 장착하고 해제하는 매쉬 해야함
 	void IsRollMoveToFalse();
 	void ChangeWeapon(FName _Weapon);
 	void ChangeSetUnArmed();
 	void ChangeSetBow();
 	void ChangeSetSwordAndSheiled();
 	void PressSpaceBarCkeckAndRoll(float _DeltaTime);
+
 
 	virtual void WAndSButtonAction(float _Value);
 	virtual void DAndAButtonAction(float _Value);
@@ -57,9 +59,11 @@ public:
 	bool AttackCheck = false;
 	bool ArrowReady = false;
 	bool EarlyArrowCheck = false;
+	bool LockOnCheck = false;
 	float PressSpacebarTime = 0.f;
 	const float RunCount = 0.8f;
 	const float WalkSpeed = 500.f;
-	const float RunSpeed = 700.f;
+	const float LockOnSpeed = 400.f;
+	const float RunSpeed = 600.f;
 	const float AimorBlockSpeed = 250.f;
 };

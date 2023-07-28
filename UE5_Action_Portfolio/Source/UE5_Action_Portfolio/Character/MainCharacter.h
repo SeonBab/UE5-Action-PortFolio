@@ -28,6 +28,7 @@ public:
 	void ChangeSwordAndSheiled();
 	void AimorBlock(float _Value);
 	void LockOnTarget();
+	void LookAtTarget(float _DeltaTime);
 
 protected:
 	virtual void BeginPlay() override;
@@ -43,7 +44,6 @@ public:
 	class UCameraComponent* MainCameraComponent;
 	float BaseTurnRate;
 	float BaseLookUpRate;
-	bool LockonChose = false;
 	float LockOnTargetRange = 1500.f;
 	AActor* LockedOnTargetActor = nullptr;
 };

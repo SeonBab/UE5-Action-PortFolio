@@ -20,6 +20,15 @@ void UWeaponAction::BeginPlay()
 void UWeaponAction::Tick(float _DeltaTime)
 {
 	PressSpaceBarCkeckAndRoll(_DeltaTime);
+
+	if (true == LockOnCheck && CharacterAnimState::Idle == AnimState)
+	{
+		AnimState = CharacterAnimState::LockOnIdle;
+	}
+	else if (false == LockOnCheck && CharacterAnimState::LockOnIdle == AnimState)
+	{
+		AnimState = CharacterAnimState::Idle;
+	}
 }
 
 void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
@@ -30,6 +39,16 @@ void UWeaponAction::SetCurCharacter(ACharacter* _CurChar)
 void UWeaponAction::SetCharacterAirControl(float _Value)
 {
 	CurCharacter->GetCharacterMovement()->AirControl = _Value;
+}
+
+void UWeaponAction::SetLockOnCheck(bool _Value)
+{
+	LockOnCheck = _Value;
+}
+
+bool UWeaponAction::GetLockOnCheck()
+{
+	return LockOnCheck;
 }
 
 CharacterAnimState* UWeaponAction::GetAnimState()
@@ -198,26 +217,33 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	// 이동한다
 	if (nullptr != CurCharacter->Controller && 0.f != _Value)
 	{
-		// 걷는다
-		if (AnimState == CharacterAnimState::Idle || AnimState == CharacterAnimState::Walk)
+		switch (AnimState)
 		{
-			IsForwardWalk = true;
-
-			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-
+		case CharacterAnimState::Idle:
 			AnimState = CharacterAnimState::Walk;
-		}
-		// 달린다
-		else if (AnimState == CharacterAnimState::Run)
-		{
-			IsForwardWalk = true;
+		case CharacterAnimState::Walk:
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+			break;
+		case CharacterAnimState::Run:
+			break;
+		case CharacterAnimState::LockOnIdle:
+		case CharacterAnimState::LockOnBackward:
+		case CharacterAnimState::LockOnForward:
+			if (-1.f == _Value)
+			{
+				AnimState = CharacterAnimState::LockOnBackward;
+			}
+			else if (1.f == _Value)
+			{
+				AnimState = CharacterAnimState::LockOnForward;
+			}
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
+			break;
+		case CharacterAnimState::LockOnForwardRun:
+			break;
 		}
 
-		// 점프 하며 공중에 있는게 아니라면 이동 불가능
-		if (false == CurCharacter->GetCharacterMovement()->IsFalling() && (CharacterAnimState::WalkJump == AnimState || CharacterAnimState::RunJump == AnimState))
-		{
-			return;
-		}
+		IsForwardWalk = true;
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
@@ -234,9 +260,16 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 			IsForwardWalk = false;
 		}
 
-		if (AnimState == CharacterAnimState::Walk && false == IsLeftWalk)
+		if ((CharacterAnimState::Walk == AnimState || CharacterAnimState::LockOnForward == AnimState || CharacterAnimState::LockOnBackward == AnimState) && false == IsLeftWalk)
 		{
-			AnimState = CharacterAnimState::Idle;
+			if (false == LockOnCheck)
+			{
+				AnimState = CharacterAnimState::Idle;
+			}
+			else if (true == LockOnCheck)
+			{
+				AnimState = CharacterAnimState::LockOnIdle;
+			}
 		}
 	}
 }
@@ -265,26 +298,33 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	// 이동한다
 	if (nullptr != CurCharacter->Controller && 0.f != _Value)
 	{
-		// 걷는다
-		if (AnimState == CharacterAnimState::Idle || AnimState == CharacterAnimState::Walk)
+		switch (AnimState)
 		{
-			IsLeftWalk = true;
-
-			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-
+		case CharacterAnimState::Idle:
 			AnimState = CharacterAnimState::Walk;
-		}
-		// 달린다
-		else if (AnimState == CharacterAnimState::Run)
-		{
-			IsLeftWalk = true;
+		case CharacterAnimState::Walk:
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+			break;
+		case CharacterAnimState::Run:
+			break;
+		case CharacterAnimState::LockOnIdle:
+		case CharacterAnimState::LockOnLeft:
+		case CharacterAnimState::LockOnRight:
+			if (-1.f == _Value)
+			{
+				AnimState = CharacterAnimState::LockOnRight;
+			}
+			else if (1.f == _Value)
+			{
+				AnimState = CharacterAnimState::LockOnLeft;
+			}
+			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
+			break;
+		case CharacterAnimState::LockOnForwardRun:
+			break;
 		}
 
-		// 점프 하며 공중에 있는게 아니라면 이동 불가능
-		if (false == CurCharacter->GetCharacterMovement()->IsFalling() && CharacterAnimState::RunJump == AnimState)
-		{
-			return;
-		}
+		IsLeftWalk = true;
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
@@ -300,9 +340,16 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 			IsLeftWalk = false;
 		}
 
-		if (AnimState == CharacterAnimState::Walk && false == IsForwardWalk)
+		if ((CharacterAnimState::Walk == AnimState || CharacterAnimState::LockOnLeft == AnimState || CharacterAnimState::LockOnRight == AnimState) && false == IsForwardWalk)
 		{
-			AnimState = CharacterAnimState::Idle;
+			if (false == LockOnCheck)
+			{
+				AnimState = CharacterAnimState::Idle;
+			}
+			else if (true == LockOnCheck)
+			{
+				AnimState = CharacterAnimState::LockOnIdle;
+			}
 		}
 	}
 }
@@ -313,7 +360,15 @@ void UWeaponAction::RollorRunAction(float _Value)
 	{
 		if (AnimState == CharacterAnimState::Run)
 		{
-			AnimState = CharacterAnimState::Idle;
+			if (true == LockOnCheck)
+			{
+				CurCharacter->bUseControllerRotationYaw = true;
+				AnimState = CharacterAnimState::LockOnIdle;
+			}
+			else if (false == LockOnCheck)
+			{
+				AnimState = CharacterAnimState::Idle;
+			}
 		}
 
 		// 짧게 입력이 들어왔는지 확인
@@ -374,6 +429,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 	{
 	case CharacterAnimState::Idle:
 	case CharacterAnimState::AimOrBlock:
+	case CharacterAnimState::LockOnIdle:
 		return;
 	}
 
@@ -381,14 +437,27 @@ void UWeaponAction::RollorRunAction(float _Value)
 	{
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
-		AnimState = CharacterAnimState::Idle;
+
+		if (true == LockOnCheck)
+		{
+			AnimState = CharacterAnimState::LockOnIdle;
+		}
+		else if (false == LockOnCheck)
+		{
+			AnimState = CharacterAnimState::Idle;
+		}
+
 		return;
 	}
 
 	if (nullptr != CurCharacter->Controller && PressSpacebarTime >= RunCount)
 	{
 		// 달린다
-		// 달리는 애니메이션이 빨리 재생된다???
+		if (true == LockOnCheck)
+		{
+			CurCharacter->bUseControllerRotationYaw = false;
+		}
+
 		AnimState = CharacterAnimState::Run;
 
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
