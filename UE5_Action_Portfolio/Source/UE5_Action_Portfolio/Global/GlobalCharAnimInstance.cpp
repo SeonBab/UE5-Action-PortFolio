@@ -18,16 +18,30 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || 
 		AllAnimations[CharacterAnimState::Roll] == Anim || AllAnimations[CharacterAnimState::Attack] == Anim)
 	{
-		Animstate = CharacterAnimState::Idle;
+		if (false == character->CurWeaponAction->IsLockOn)
+		{
+			Animstate = CharacterAnimState::Idle;
+		}
+		else if (true == character->CurWeaponAction->IsLockOn)
+		{
+			Animstate = CharacterAnimState::LockOnIdle;
+		}
 		character->CurWeaponAction->SetAnimState(Animstate);
-		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.f);
+		Montage_Play(AllAnimations[Animstate], 1.f);
 		character->CurWeaponAction->SetCharacterAirControl(1.f);
 	}
 	else if (AllAnimations[CharacterAnimState::EquipOrDisArmBow] == Anim || AllAnimations[CharacterAnimState::EquipOrDisArmSwordAndShield] == Anim)
 	{
-		Animstate = CharacterAnimState::Idle;
+		if (false == character->CurWeaponAction->IsLockOn)
+		{
+			Animstate = CharacterAnimState::Idle;
+		}
+		else if (true == character->CurWeaponAction->IsLockOn)
+		{
+			Animstate = CharacterAnimState::LockOnIdle;
+		}
 		character->CurWeaponAction->SetAnimState(Animstate);
-		Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.f);
+		Montage_Play(AllAnimations[Animstate], 1.f);
 		AnimSpeed = 1.f;
 
 		if (true == character->CurWeaponAction->SwordAndSheiledToBow)
@@ -47,7 +61,7 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		{
 			Animstate = CharacterAnimState::AimOrBlock;
 			character->CurWeaponAction->SetAnimState(Animstate);
-			Montage_Play(AllAnimations[CharacterAnimState::AimOrBlock], 1.f);
+			Montage_Play(AllAnimations[Animstate], 1.f);
 			character->CurWeaponAction->ArrowReady = false;
 			character->CurWeaponAction->EarlyArrowCheck = false;
 		}
@@ -152,9 +166,16 @@ void UGlobalCharAnimInstance::AnimNotify_AttackCheck()
 	{
 		if (false == Value)
 		{
-			Animstate = CharacterAnimState::Idle;
+			if (false == character->CurWeaponAction->IsLockOn)
+			{
+				Animstate = CharacterAnimState::Idle;
+			}
+			else if (true == character->CurWeaponAction->IsLockOn)
+			{
+				Animstate = CharacterAnimState::LockOnIdle;
+			}
 			character->CurWeaponAction->SetAnimState(Animstate);
-			Montage_Play(AllAnimations[CharacterAnimState::Idle], 1.0f);
+			Montage_Play(AllAnimations[Animstate], 1.0f);
 		}
 		else
 		{
@@ -205,7 +226,7 @@ void UGlobalCharAnimInstance::AnimNotify_ArrowReadyCheck()
 
 		Animstate = CharacterAnimState::ParryorFire;
 		character->CurWeaponAction->SetAnimState(Animstate);
-		Montage_Play(AllAnimations[CharacterAnimState::ParryorFire], 1.f);
+		Montage_Play(AllAnimations[Animstate], 1.f);
 	}
 	// 준비된 후 입력을 받으려 할 때
 	else if (false == character->CurWeaponAction->EarlyArrowCheck)

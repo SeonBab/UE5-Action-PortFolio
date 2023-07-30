@@ -38,6 +38,7 @@ protected:
 	void NativeUpdateAnimation(float DeltaTime) override;
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	CharacterAnimState Animstate = CharacterAnimState::Idle;
 	UPROPERTY()
 	TMap<CharacterAnimState, UAnimMontage*> AllAnimations;

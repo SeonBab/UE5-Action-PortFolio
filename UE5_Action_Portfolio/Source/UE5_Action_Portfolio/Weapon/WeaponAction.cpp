@@ -21,11 +21,11 @@ void UWeaponAction::Tick(float _DeltaTime)
 {
 	PressSpaceBarCkeckAndRoll(_DeltaTime);
 
-	if (true == LockOnCheck && CharacterAnimState::Idle == AnimState)
+	if (true == IsLockOn && CharacterAnimState::Idle == AnimState)
 	{
 		AnimState = CharacterAnimState::LockOnIdle;
 	}
-	else if (false == LockOnCheck && CharacterAnimState::LockOnIdle == AnimState)
+	else if (false == IsLockOn && CharacterAnimState::LockOnIdle == AnimState)
 	{
 		AnimState = CharacterAnimState::Idle;
 	}
@@ -41,14 +41,19 @@ void UWeaponAction::SetCharacterAirControl(float _Value)
 	CurCharacter->GetCharacterMovement()->AirControl = _Value;
 }
 
+EWeaponType UWeaponAction::GetWeaponType()
+{
+	return WeaponType;
+}
+
 void UWeaponAction::SetLockOnCheck(bool _Value)
 {
-	LockOnCheck = _Value;
+	IsLockOn = _Value;
 }
 
 bool UWeaponAction::GetLockOnCheck()
 {
-	return LockOnCheck;
+	return IsLockOn;
 }
 
 CharacterAnimState* UWeaponAction::GetAnimState()
@@ -182,19 +187,73 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 		PressSpacebarTime += _DeltaTime;
 	}
 
-	// 굴렀을 때 움직이기
-	if (true == IsRollMove)
+	//// 굴렀을 때 움직이기
+	//if (true == IsRollMove)
+	//{
+	//	FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
+
+	//	DeltaLocation.X = 600 * _DeltaTime;
+
+	//	CurCharacter->AddActorLocalOffset(DeltaLocation, true);
+	//}
+
+	// 위치 말고 방향으로 해야 할 것 같다
+	// 캐릭터를 각 방향으로 돌리고 구르기 애니메이션 재생
+	// 애니메이션이 재생되는동안 앞으로 움직인다.
+	// 움직임이 끝나고 다시 원래 방향으로 돌아와야한다.
+	
+	// 움직이기 전 이동하려는 방향으로 캐릭터 회전
+
+	//FVector Start = CurCharacter->GetActorLocation(); // 시작 지점
+	//FRotator End = CurCharacter->GetActorRotation(); // 끝 지점
+	//FVector Direction;
+
+	// //움직인다.
+	//if (true == IsRollMove)
+	//{
+
+	//	if (true == IsForwardWalk)
+	//	{
+	//		Direction = End.RotateAngleAxis(0, FVector::UpVector);
+	//	}
+	//	if (true == IsBackwardWalk)
+	//	{
+	//		Direction = End.RotateAngleAxis(180, FVector::UpVector);
+	//	}
+	//	if (true == IsLeftWalk)
+	//	{
+	//		Direction = End.RotateAngleAxis(-90, FVector::UpVector);
+	//	}
+	//	if (true == IsRightWalk)
+	//	{
+	//		Direction = End.RotateAngleAxis(90, FVector::UpVector);
+	//	}
+
+	//	CurCharacter->AddActorLocalRotation(End, true);
+	//}
+}
+
+bool UWeaponAction::LockOnAfterRun(float _DeltaTime)
+{
+	if (true == LockOnCheck)
 	{
-		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
-
-		DeltaLocation.X = 700 * _DeltaTime;
-
-		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
+		LockOnAfterRunTime += _DeltaTime;
 	}
+
+	if (LockOnAfterRunCount < LockOnAfterRunTime)
+	{
+		LockOnCheck = false;
+		LockOnAfterRunTime = 0.f;
+
+		return true;
+	}
+
+	return false;
 }
 
 void UWeaponAction::WAndSButtonAction(float _Value)
 {
+
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
@@ -204,9 +263,12 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
 	case CharacterAnimState::ParryorFire:
+	MoveXValue = 0;
 		return;
 		break;
 	}
+
+	MoveXValue = _Value;
 
 	// 블락 중일 땐 이동하지 않는다
 	if (EWeaponType::Sword == WeaponType && CharacterAnimState::AimOrBlock == AnimState)
@@ -237,13 +299,24 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 			{
 				AnimState = CharacterAnimState::LockOnForward;
 			}
+			LockOnAfterRunTime = 0.f;
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
 		case CharacterAnimState::LockOnForwardRun:
 			break;
 		}
 
-		IsForwardWalk = true;
+
+		if (-1.f == _Value)
+		{
+			IsForwardWalk = false;
+			IsBackwardWalk = true;
+		}
+		else if (1.f == _Value)
+		{
+			IsForwardWalk = true;
+			IsBackwardWalk = false;
+		}
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
@@ -258,15 +331,16 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		if (0.f == _Value)
 		{
 			IsForwardWalk = false;
+			IsBackwardWalk = false;
 		}
 
-		if ((CharacterAnimState::Walk == AnimState || CharacterAnimState::LockOnForward == AnimState || CharacterAnimState::LockOnBackward == AnimState) && false == IsLeftWalk)
+		if ((CharacterAnimState::Walk == AnimState || CharacterAnimState::LockOnForward == AnimState || CharacterAnimState::LockOnBackward == AnimState) && (false == IsLeftWalk && false == IsRightWalk))
 		{
-			if (false == LockOnCheck)
+			if (false == IsLockOn)
 			{
 				AnimState = CharacterAnimState::Idle;
 			}
-			else if (true == LockOnCheck)
+			else if (true == IsLockOn)
 			{
 				AnimState = CharacterAnimState::LockOnIdle;
 			}
@@ -276,6 +350,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 
 void UWeaponAction::DAndAButtonAction(float _Value)
 {
+
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
@@ -285,9 +360,12 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
 	case CharacterAnimState::ParryorFire:
+	MoveYValue = 0;
 		return;
 		break;
 	}
+
+	MoveYValue = _Value;
 
 	// 블락 중일 땐 이동하지 않는다
 	if (EWeaponType::Sword == WeaponType && CharacterAnimState::AimOrBlock == AnimState)
@@ -312,19 +390,29 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		case CharacterAnimState::LockOnRight:
 			if (-1.f == _Value)
 			{
-				AnimState = CharacterAnimState::LockOnRight;
+				AnimState = CharacterAnimState::LockOnLeft;
 			}
 			else if (1.f == _Value)
 			{
-				AnimState = CharacterAnimState::LockOnLeft;
+				AnimState = CharacterAnimState::LockOnRight;
 			}
+			LockOnAfterRunTime = 0.f;
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
 		case CharacterAnimState::LockOnForwardRun:
 			break;
 		}
 
-		IsLeftWalk = true;
+		if (-1.f == _Value)
+		{
+			IsLeftWalk = true;
+			IsRightWalk = false;
+		}
+		else if (1.f == _Value)
+		{
+			IsLeftWalk = false;
+			IsRightWalk = true;
+		}
 
 		const FRotator Rotation = CurCharacter->Controller->GetControlRotation();
 
@@ -338,15 +426,16 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		if (0.f == _Value)
 		{
 			IsLeftWalk = false;
+			IsRightWalk = false;
 		}
 
-		if ((CharacterAnimState::Walk == AnimState || CharacterAnimState::LockOnLeft == AnimState || CharacterAnimState::LockOnRight == AnimState) && false == IsForwardWalk)
+		if ((CharacterAnimState::Walk == AnimState || CharacterAnimState::LockOnLeft == AnimState || CharacterAnimState::LockOnRight == AnimState) && (false == IsForwardWalk && false == IsBackwardWalk))
 		{
-			if (false == LockOnCheck)
+			if (false == IsLockOn)
 			{
 				AnimState = CharacterAnimState::Idle;
 			}
-			else if (true == LockOnCheck)
+			else if (true == IsLockOn)
 			{
 				AnimState = CharacterAnimState::LockOnIdle;
 			}
@@ -360,12 +449,12 @@ void UWeaponAction::RollorRunAction(float _Value)
 	{
 		if (AnimState == CharacterAnimState::Run)
 		{
-			if (true == LockOnCheck)
+			if (true == IsLockOn)
 			{
-				CurCharacter->bUseControllerRotationYaw = true;
+				LockOnCheck = true;
 				AnimState = CharacterAnimState::LockOnIdle;
 			}
-			else if (false == LockOnCheck)
+			else if (false == IsLockOn)
 			{
 				AnimState = CharacterAnimState::Idle;
 			}
@@ -424,6 +513,24 @@ void UWeaponAction::RollorRunAction(float _Value)
 		PressSpacebar = true;
 	}
 
+	if (false == IsForwardWalk && false == IsBackwardWalk && false == IsLeftWalk && false == IsRightWalk)
+	{
+		PressSpacebarTime = 0;
+		PressSpacebar = false;
+
+		if (true == IsLockOn)
+		{
+			LockOnCheck = true;
+			AnimState = CharacterAnimState::LockOnIdle;
+		}
+		else if (false == IsLockOn)
+		{
+			AnimState = CharacterAnimState::Idle;
+		}
+
+		return;
+	}
+
 	// 달리면 안되는 상태
 	switch (AnimState)
 	{
@@ -433,28 +540,12 @@ void UWeaponAction::RollorRunAction(float _Value)
 		return;
 	}
 
-	if (false == IsForwardWalk && false == IsLeftWalk)
-	{
-		PressSpacebarTime = 0;
-		PressSpacebar = false;
-
-		if (true == LockOnCheck)
-		{
-			AnimState = CharacterAnimState::LockOnIdle;
-		}
-		else if (false == LockOnCheck)
-		{
-			AnimState = CharacterAnimState::Idle;
-		}
-
-		return;
-	}
-
 	if (nullptr != CurCharacter->Controller && PressSpacebarTime >= RunCount)
 	{
 		// 달린다
-		if (true == LockOnCheck)
+		if (true == IsLockOn)
 		{
+			LockOnAfterRunTime = 0.f;
 			CurCharacter->bUseControllerRotationYaw = false;
 		}
 
@@ -601,4 +692,19 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
 		AnimState = CharacterAnimState::AimOrBlock;
 	}
+}
+
+float UWeaponAction::GetMoveXValue()
+{
+	return MoveXValue;
+}
+
+float UWeaponAction::GetMoveYValue()
+{
+	return MoveYValue;
+}
+
+bool UWeaponAction::GetIsLockOn()
+{
+	return IsLockOn;
 }

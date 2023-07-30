@@ -17,6 +17,8 @@ public:
 	void Tick(float _DeltaTime);
 	void SetCurCharacter(ACharacter* _CurChar);
 	void SetCharacterAirControl(float _Value);
+	UFUNCTION(BlueprintCallable)
+	EWeaponType GetWeaponType();
 	void SetLockOnCheck(bool _Value);
 	bool GetLockOnCheck();
 
@@ -28,15 +30,21 @@ public:
 	void ChangeSetBow();
 	void ChangeSetSwordAndSheiled();
 	void PressSpaceBarCkeckAndRoll(float _DeltaTime);
+	bool LockOnAfterRun(float _DeltaTime);
 
+	void WAndSButtonAction(float _Value);
+	void DAndAButtonAction(float _Value);
+	void RollorRunAction(float _Value);
+	void ShiftButtonAction();
+	void AttackAction();
+	void AimorBlockAtion(float _Value);
 
-	virtual void WAndSButtonAction(float _Value);
-	virtual void DAndAButtonAction(float _Value);
-	virtual void RollorRunAction(float _Value);
-	virtual void ShiftButtonAction();
-	virtual void AttackAction();
-	virtual void AimorBlockAtion(float _Value);
-
+	UFUNCTION(BlueprintCallable)
+	float GetMoveXValue();
+	UFUNCTION(BlueprintCallable)
+	float GetMoveYValue();
+	UFUNCTION(BlueprintCallable)
+	bool GetIsLockOn();
 
 public:
 	// Ä³¸¯ÅÍ
@@ -51,19 +59,26 @@ public:
 	bool BowToSwordAndSheiled = false;
 	bool SwordAndSheiledToBow = false;
 	bool IsForwardWalk = false; 
+	bool IsBackwardWalk = false;
 	bool IsLeftWalk = false;
+	bool IsRightWalk = false;
 	bool IsRollMove = false;
 	bool IsWalkJump = false;
 	bool IsRunJump = false;
+	bool IsLockOn = false;
 	bool PressSpacebar = false;
 	bool AttackCheck = false;
 	bool ArrowReady = false;
 	bool EarlyArrowCheck = false;
 	bool LockOnCheck = false;
 	float PressSpacebarTime = 0.f;
+	float LockOnAfterRunTime = 0.f;
+	const float LockOnAfterRunCount = 2.f;
 	const float RunCount = 0.8f;
 	const float WalkSpeed = 500.f;
 	const float LockOnSpeed = 400.f;
 	const float RunSpeed = 600.f;
 	const float AimorBlockSpeed = 250.f;
+	float MoveXValue = 0.f;
+	float MoveYValue = 0.f;
 };

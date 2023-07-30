@@ -26,6 +26,11 @@ AGlobalCharacter::AGlobalCharacter()
 	BackShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackShield"));
 }
 
+UWeaponAction* AGlobalCharacter::GetCurWeaponAction()
+{
+	return CurWeaponAction;
+}
+
 void AGlobalCharacter::BeginPlay()
 {
 	Super::BeginPlay();

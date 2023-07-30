@@ -35,9 +35,34 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
+	// 캐릭터가 달리다가 멈췄나?
 	if (true == CurWeaponAction->GetLockOnCheck())
 	{
 		LookAtTarget(_DeltaTime);
+	}
+
+	// 캐릭터가 달리다가 멈추고 일정 시간이 지났나?
+	if (true == CurWeaponAction->LockOnAfterRun(_DeltaTime))
+	{
+		IsLookAtTartget = true;
+	}
+	// 멈추고 일정 시간이 지났으면 캐릭터를 다시 락온으로 회전시킨다
+	if (true == IsLookAtTartget)
+	{
+		FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
+		FVector CurChar = GetActorLocation();
+
+		LockOnLocation.Z = 0.0f;
+		CurChar.Z = 0.0f;
+
+		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(CurChar, LockOnLocation);
+		SetActorRotation(UKismetMathLibrary::RInterpTo(GetActorRotation(), LookAtRotation, _DeltaTime, 10.f));
+
+		if (5.f >= FMath::Abs(LookAtRotation.Yaw - GetActorRotation().Yaw))
+		{
+			IsLookAtTartget = false;
+			bUseControllerRotationYaw = true;
+		}
 	}
 }
 

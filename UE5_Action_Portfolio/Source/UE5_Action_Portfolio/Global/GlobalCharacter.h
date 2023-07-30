@@ -12,6 +12,8 @@ class UE5_ACTION_PORTFOLIO_API AGlobalCharacter : public ACharacter
 
 public:
 	AGlobalCharacter();
+	UFUNCTION(BlueprintCallable)
+	class UWeaponAction* GetCurWeaponAction();
 
 protected:
 	virtual void BeginPlay() override;

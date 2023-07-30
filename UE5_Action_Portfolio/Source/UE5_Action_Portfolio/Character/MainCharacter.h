@@ -46,4 +46,7 @@ public:
 	float BaseLookUpRate;
 	float LockOnTargetRange = 1500.f;
 	AActor* LockedOnTargetActor = nullptr;
+
+private:
+	bool IsLookAtTartget = false;
 };
