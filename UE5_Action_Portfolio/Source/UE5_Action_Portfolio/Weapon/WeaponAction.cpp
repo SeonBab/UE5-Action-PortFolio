@@ -187,50 +187,59 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 		PressSpacebarTime += _DeltaTime;
 	}
 
-	//// 굴렀을 때 움직이기
-	//if (true == IsRollMove)
-	//{
-	//	FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
-
-	//	DeltaLocation.X = 600 * _DeltaTime;
-
-	//	CurCharacter->AddActorLocalOffset(DeltaLocation, true);
-	//}
-
-	// 위치 말고 방향으로 해야 할 것 같다
+	// 방향으로 해야 할 것 같다
 	// 캐릭터를 각 방향으로 돌리고 구르기 애니메이션 재생
 	// 애니메이션이 재생되는동안 앞으로 움직인다.
 	// 움직임이 끝나고 다시 원래 방향으로 돌아와야한다.
 	
 	// 움직이기 전 이동하려는 방향으로 캐릭터 회전
 
-	//FVector Start = CurCharacter->GetActorLocation(); // 시작 지점
-	//FRotator End = CurCharacter->GetActorRotation(); // 끝 지점
-	//FVector Direction;
+	FRotator Direction = CurCharacter->GetActorRotation(); // 끝 지점
 
-	// //움직인다.
-	//if (true == IsRollMove)
-	//{
+	if (true == IsRollMove && true == IsLockOn)
+	{
 
-	//	if (true == IsForwardWalk)
-	//	{
-	//		Direction = End.RotateAngleAxis(0, FVector::UpVector);
-	//	}
-	//	if (true == IsBackwardWalk)
-	//	{
-	//		Direction = End.RotateAngleAxis(180, FVector::UpVector);
-	//	}
-	//	if (true == IsLeftWalk)
-	//	{
-	//		Direction = End.RotateAngleAxis(-90, FVector::UpVector);
-	//	}
-	//	if (true == IsRightWalk)
-	//	{
-	//		Direction = End.RotateAngleAxis(90, FVector::UpVector);
-	//	}
+		//if (true == IsForwardWalk)
+		//{
+		//	FVector F = CurCharacter->GetActorForwardVector();
 
-	//	CurCharacter->AddActorLocalRotation(End, true);
-	//}
+		//	Direction = F.Rotation();
+		//}
+		//else if (true == IsBackwardWalk)
+		//{
+		//	FVector B = -CurCharacter->GetActorForwardVector();
+
+		//	Direction = B.Rotation();
+		//}
+		//else if (true == IsLeftWalk)
+		//{
+		//	FVector L = -CurCharacter->GetActorRightVector();
+		//	
+		//	Direction = L.Rotation();
+		//}
+		//else if (true == IsRightWalk)
+		//{
+		//	FVector R = CurCharacter->GetActorRightVector();
+
+		//	Direction = R.Rotation();
+		//}
+		
+		//const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
+		
+		Direction = IsWalkRotator.Rotation();
+
+		CurCharacter->SetActorRotation(Direction);
+	}
+
+	// 굴렀을 때 움직이기
+	if (true == IsRollMove)
+	{
+		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
+
+		DeltaLocation.X = 600 * _DeltaTime;
+
+		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
+	}
 }
 
 bool UWeaponAction::LockOnAfterRun(float _DeltaTime)
@@ -253,6 +262,7 @@ bool UWeaponAction::LockOnAfterRun(float _DeltaTime)
 
 void UWeaponAction::WAndSButtonAction(float _Value)
 {
+	IsWalkRotator.X = _Value;
 
 	// 이동하면 안되는 상태
 	switch (AnimState)
@@ -350,6 +360,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 
 void UWeaponAction::DAndAButtonAction(float _Value)
 {
+	IsWalkRotator.Y = _Value;
 
 	// 이동하면 안되는 상태
 	switch (AnimState)
