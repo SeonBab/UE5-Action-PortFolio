@@ -58,7 +58,6 @@ public:
 	// 캐릭터 움직임 상태
 	bool BowToSwordAndSheiled = false;
 	bool SwordAndSheiledToBow = false;
-	FVector IsWalkRotator = FVector::ZeroVector;
 	bool IsForwardWalk = false; 
 	bool IsBackwardWalk = false;
 	bool IsLeftWalk = false;
