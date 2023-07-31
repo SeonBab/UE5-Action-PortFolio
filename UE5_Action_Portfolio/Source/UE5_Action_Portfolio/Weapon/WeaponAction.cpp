@@ -95,8 +95,8 @@ void UWeaponAction::ChangeWeapon(FName _Weapon)
 
 void UWeaponAction::ChangeSetUnArmed()
 {
-	// Idle만 무기 변경 가능, 장비를 끼고 있어야 UnArmed 가능
-	if (CharacterAnimState::Idle != AnimState || EWeaponType::UnArmed == WeaponType)
+	// Idle과 LockOnIdle만 무기 변경 가능, 장비를 끼고 있어야 UnArmed 가능
+	if ((CharacterAnimState::Idle != AnimState && CharacterAnimState::LockOnIdle != AnimState) || EWeaponType::UnArmed == WeaponType)
 	{
 		return;
 	}
@@ -127,8 +127,8 @@ void UWeaponAction::ChangeSetUnArmed()
 
 void UWeaponAction::ChangeSetBow()
 {
-	// Idle을 제외한 상태는 리턴
-	if (CharacterAnimState::Idle != AnimState)
+	// Idle과 LockOnIdle을 제외한 상태는 리턴
+	if (CharacterAnimState::Idle != AnimState && CharacterAnimState::LockOnIdle != AnimState)
 	{
 		return;
 	}
@@ -154,8 +154,8 @@ void UWeaponAction::ChangeSetBow()
 
 void UWeaponAction::ChangeSetSwordAndSheiled()
 {
-	// Idle을 제외한 상태는 리턴
-	if (CharacterAnimState::Idle != AnimState)
+	// Idle과 LockOnIdle을 제외한 상태는 리턴
+	if (CharacterAnimState::Idle != AnimState && CharacterAnimState::LockOnIdle != AnimState)
 	{
 		return;
 	}
