@@ -1,9 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Global/GlobalAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Global/GlobalAIController.h"
+#include "AI/AICon.h"
 
 UBehaviorTree* AGlobalAICharacter::GetBehaviorTree()
 {
@@ -14,7 +11,7 @@ UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
 {
     if (nullptr == BlackboardComponent)
     {
-        AGlobalAIController* AICon = GetController<AGlobalAIController>();
+        AAICon* AICon = GetController<AAICon>();
         
         if (nullptr == AICon)
         {

@@ -5,11 +5,11 @@
 #include "GlobalAIController.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API AGlobalAIController : public AAIController
+class UE5_ACTION_PORTFOLIO_API AAICon : public AAIController
 {
 	GENERATED_BODY()
 public:
-	AGlobalAIController();
+	AAICon();
 
 protected:
 	void OnPossess(APawn* _InPawn) override;

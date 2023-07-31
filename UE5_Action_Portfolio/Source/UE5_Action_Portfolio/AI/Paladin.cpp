@@ -1,7 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Monster/Paladin.h"
+#include "AI/Paladin.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/Data/MonsterData.h"
 #include "BehaviorTree/BlackboardComponent.h"

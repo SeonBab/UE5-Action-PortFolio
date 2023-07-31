@@ -1,16 +1,16 @@
-#include "Global/GlobalAIController.h"
+#include "AI/AICon.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Global/GlobalAICharacter.h"
 
-AGlobalAIController::AGlobalAIController()
+AAICon::AAICon()
 {
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 }
 
-void AGlobalAIController::OnPossess(APawn* _InPawn)
+void AAICon::OnPossess(APawn* _InPawn)
 {
 	Super::OnPossess(_InPawn);
 
