@@ -17,7 +17,10 @@ void APaladin::BeginPlay()
 
 	Super::BeginPlay();
 
-	//GetBlackboardComponent()->SetValueAsString(TEXT("TargetTag"), TEXT("Player"));
-	//GetBlackboardComponent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
+	GetBlackboardComponent()->SetValueAsString(TEXT("TargetTag"), TEXT("Player"));
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("PatrolRange"), 800.f);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), 150.f);
 	//GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
 }

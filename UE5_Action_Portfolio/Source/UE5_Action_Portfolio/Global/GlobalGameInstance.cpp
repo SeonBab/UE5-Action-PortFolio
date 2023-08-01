@@ -1,10 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "GlobalGameInstance.h"
 #include "Global/Data/AnimaitionData.h"
 #include "Global/Data/WeaponData.h"
 #include "Global/Data/MonsterData.h"
+
+FRandomStream UGlobalGameInstance::MainRandom;
 
 UGlobalGameInstance::UGlobalGameInstance()
 {

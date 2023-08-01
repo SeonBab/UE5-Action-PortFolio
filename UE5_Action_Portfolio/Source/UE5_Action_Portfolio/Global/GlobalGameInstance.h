@@ -23,6 +23,9 @@ public:
 
 	struct FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
 
+public:
+	static FRandomStream MainRandom;
+
 private:
 	UPROPERTY()
 	UDataTable* WeaponDatas;

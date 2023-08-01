@@ -41,8 +41,10 @@ enum class CharacterAnimState : uint8
 UENUM(BlueprintType)
 enum class AIBTTask : uint8
 {
-	None,
-	Idle,
-	Move,
-	Patrol,
+	None UMETA(DisplayName = "Null"),
+	Idle UMETA(DisplayName = "IDLE"),
+	Patrol UMETA(DisplayName = "Patrol"),
+	Chase UMETA(DisplayName = "CHASE"),
+	Return UMETA(DisplayName = "RETURN"),
+	Attack UMETA(DisplayName = "ATTACK")
 };

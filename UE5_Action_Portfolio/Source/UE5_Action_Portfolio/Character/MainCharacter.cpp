@@ -22,6 +22,8 @@ AMainCharacter::AMainCharacter()
 	BaseLookUpRate = 30.f;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	Tags.Add(ActorType);
 }
 
 void AMainCharacter::BeginPlay()
