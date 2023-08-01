@@ -30,8 +30,6 @@ public:
 	UFUNCTION()
 	void AnimNotify_BowFire();
 
-	//void JumpToAttackMontageSection(int AttackCount);
-
 protected:
 	void NativeInitializeAnimation() override;
 	void NativeBeginPlay() override;

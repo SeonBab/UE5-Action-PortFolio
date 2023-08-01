@@ -274,7 +274,6 @@ void UGlobalCharAnimInstance::NativeBeginPlay()
 	Super::NativeBeginPlay();
 
 	OnMontageBlendingOut.AddDynamic(this, &UGlobalCharAnimInstance::MontageBlendingOut);
-	//OnMontageEnded.AddDynamic(this, &UGlobalCharAnimInstance::MontageEnded);
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 

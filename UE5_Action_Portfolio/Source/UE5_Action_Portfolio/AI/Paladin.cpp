@@ -17,7 +17,7 @@ void APaladin::BeginPlay()
 
 	Super::BeginPlay();
 
-	GetBlackboardComponent()->SetValueAsString(TEXT("TargetTag"), TEXT("Player"));
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
+	//GetBlackboardComponent()->SetValueAsString(TEXT("TargetTag"), TEXT("Player"));
+	//GetBlackboardComponent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
+	//GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
 }

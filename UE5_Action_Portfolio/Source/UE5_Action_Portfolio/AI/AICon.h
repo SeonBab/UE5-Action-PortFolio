@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "GlobalAIController.generated.h"
+#include "AICon.generated.h"
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AAICon : public AAIController

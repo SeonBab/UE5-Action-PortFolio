@@ -37,3 +37,12 @@ enum class CharacterAnimState : uint8
 	AimOrBlock,
 	ParryorFire,
 };
+
+UENUM(BlueprintType)
+enum class AIBTTask : uint8
+{
+	None,
+	Idle,
+	Move,
+	Patrol,
+};
