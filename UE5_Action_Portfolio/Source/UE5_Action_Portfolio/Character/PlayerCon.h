@@ -16,9 +16,8 @@ class UE5_ACTION_PORTFOLIO_API APlayerCon : public APlayerController, public IGe
 	GENERATED_BODY()
 	
 public:
-	APlayerCon();
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
-private:
-	FGenericTeamId TeamId;
+private: 
+	FGenericTeamId TeamId = FGenericTeamId(0);
 };

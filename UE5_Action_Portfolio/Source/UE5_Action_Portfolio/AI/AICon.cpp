@@ -4,7 +4,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
-
+#include "Character/PlayerCon.h"
 #include "Global/GlobalAICharacter.h"
 
 AAICon::AAICon()
@@ -17,13 +17,21 @@ AAICon::AAICon()
 	AISenseConfigSight->DetectionByAffiliation.bDetectEnemies = true;
 	AISenseConfigSight->DetectionByAffiliation.bDetectNeutrals = true;
 	AISenseConfigSight->DetectionByAffiliation.bDetectFriendlies = false;
-	AISenseConfigSight->SightRadius = 1000.f;
-	AISenseConfigSight->LoseSightRadius = 2000.f;
+	AISenseConfigSight->SightRadius = 1100.f;
+	AISenseConfigSight->LoseSightRadius = 1500.f;
+	AISenseConfigSight->PeripheralVisionAngleDegrees = 90.f;
+	AISenseConfigSight->SetMaxAge(5.f);
 
 	AIPerceptionComponent->ConfigureSense(*AISenseConfigSight);
 	AIPerceptionComponent->SetDominantSense(UAISenseConfig_Sight::StaticClass());
-	
+	AIPerceptionComponent->SetDominantSense(AISenseConfigSight->GetSenseImplementation());
+
 	AAIController::SetGenericTeamId(FGenericTeamId(1));
+}
+
+void AAICon::Tick(float _DeltaTime)
+{
+	Super::Tick(_DeltaTime);
 }
 
 void AAICon::OnPossess(APawn* _InPawn)
@@ -55,7 +63,7 @@ void AAICon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAICon::OnTargetPerceptionUpdated_Delegate);
+	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAICon::OnTargetPerceptionUpdated);
 }
 
 ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
@@ -63,8 +71,9 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 	APawn const* OtherPawn = Cast<APawn>(&Other);
 
 	if (nullptr != OtherPawn)
-	{
-		IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController());
+	{	
+		// 왜 nullptr이 계속 리턴되는가????
+		const IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController());
 
 		if (nullptr != TeamAgent)
 		{
@@ -84,21 +93,35 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 	return ETeamAttitude::Neutral;
 }
 
-void AAICon::OnTargetPerceptionUpdated_Delegate(AActor* _Actor, FAIStimulus _Stimulus)
+void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 {
-	int a = 0;
 	switch (_Stimulus.Type)
 	{
-	case 0: // 타깃 인식 성공 SensingSucceeded
-		a = 1;
+	case _Stimulus.SensingSucceeded: // 타깃 인식 성공
+		// 인식은 잘 되는데 GetTeamAttitudeTowards 함수에 문제가 있다.
+		if (ETeamAttitude::Hostile == GetTeamAttitudeTowards(*_Actor))
+		{
+			//PerceivedActor = _Actor;
+			//BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
+		}
+
+		if (nullptr != PerceivedActor)
+		{
+			PerceivedActor = nullptr;
+		}
+		else
+		{
+			PerceivedActor = _Actor;
+		}
+		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
 		break;
-	case 1: // 타깃 인식 실패 SensingFailed
-		a = 2;
+	case _Stimulus.SensingFailed: // 타깃 인식 실패
+		PerceivedActor = nullptr;
+		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
 		break;
 	default:
 		return;
 		break;
 	}
-
-
+	
 }

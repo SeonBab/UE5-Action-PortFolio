@@ -75,9 +75,9 @@ public:
 	float LockOnAfterRunTime = 0.f;
 	const float LockOnAfterRunCount = 2.f;
 	const float RunCount = 0.8f;
-	const float WalkSpeed = 500.f;
+	const float WalkSpeed = 450.f;
 	const float LockOnSpeed = 400.f;
-	const float RunSpeed = 600.f;
+	const float RunSpeed = 700.f;
 	const float AimorBlockSpeed = 250.f;
 	float MoveXValue = 0.f;
 	float MoveYValue = 0.f;
