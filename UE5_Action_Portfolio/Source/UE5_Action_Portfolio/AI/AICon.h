@@ -14,6 +14,12 @@ public:
 protected:
 	void OnPossess(APawn* _InPawn) override;
 
+	virtual void BeginPlay() override;
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+
+	UFUNCTION()
+	void OnTargetPerceptionUpdated_Delegate(AActor* _Actor, FAIStimulus _Stimulus);
+
 private:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBehaviorTreeComponent* BehaviorTreeComponent = nullptr;
