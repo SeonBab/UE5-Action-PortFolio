@@ -16,7 +16,12 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UBehaviorTreeComponent* BehaviorTreeComponent;
+	class UBehaviorTreeComponent* BehaviorTreeComponent = nullptr;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UBlackboardComponent* BlackboardComponent;
+	class UBlackboardComponent* BlackboardComponent = nullptr;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent = nullptr;
+	TObjectPtr<class UAISenseConfig_Sight> AISenseConfigSight = nullptr;
+	//TObjectPtr<class UAISenseConfig_Hearing> AISenseConfigHearing = nullptr;
+
 };
