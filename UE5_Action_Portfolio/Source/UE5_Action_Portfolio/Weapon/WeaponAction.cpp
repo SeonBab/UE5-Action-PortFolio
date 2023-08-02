@@ -187,36 +187,39 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 		PressSpacebarTime += _DeltaTime;
 	}
 
-	// 이렇게 if문 4개가 아닌 FVector로 할 수 있는가??? 방법을 잘 모르겠으나 추후 시간이 난다면 바꿔보자
-	// 방향 돌리기
-	if (true == IsRollMove && true == IsLockOn)
+	if (true == IsRollMove)
 	{
-		FRotator Rotation;
-		FVector Angle;
+		// 이렇게 if문 4개가 아닌 FVector로 할 수 있는가???
+		// 방향 돌리기
+		if (true == IsLockOn)
+		{
+			FRotator Rotation;
+			FVector Angle;
 
-		if (true == IsForwardWalk)
-		{
-			Angle = CurCharacter->GetActorForwardVector();
-			Angle.Z = 0;
-		}
-		if (true == IsBackwardWalk)
-		{
-			Angle = -CurCharacter->GetActorForwardVector();
-			Angle.Z = 0;
-		}
-		if (true == IsLeftWalk)
-		{
-			Angle += -CurCharacter->GetActorRightVector();
-			Angle.Z = 0;
-		}
-		if (true == IsRightWalk)
-		{
-			Angle += CurCharacter->GetActorRightVector();
-			Angle.Z = 0;
-		}
+			if (true == IsForwardWalk)
+			{
+				Angle = CurCharacter->GetActorForwardVector();
+				Angle.Z = 0;
+			}
+			if (true == IsBackwardWalk)
+			{
+				Angle = -CurCharacter->GetActorForwardVector();
+				Angle.Z = 0;
+			}
+			if (true == IsLeftWalk)
+			{
+				Angle += -CurCharacter->GetActorRightVector();
+				Angle.Z = 0;
+			}
+			if (true == IsRightWalk)
+			{
+				Angle += CurCharacter->GetActorRightVector();
+				Angle.Z = 0;
+			}
 
-		Rotation = Angle.Rotation();
-		CurCharacter->SetActorRotation(Rotation);
+			Rotation = Angle.Rotation();
+			CurCharacter->SetActorRotation(Rotation);
+		}
 
 		// 움직이기
 		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
