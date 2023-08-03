@@ -21,7 +21,7 @@ void UWeaponAction::Tick(float _DeltaTime)
 {
 	PressSpaceBarCkeckAndRoll(_DeltaTime);
 
-	if (true == IsLockOn && CharacterAnimState::Idle == AnimState)
+	if (true == IsLockOn && (CharacterAnimState::Idle == AnimState || CharacterAnimState::Walk == AnimState))
 	{
 		AnimState = CharacterAnimState::LockOnIdle;
 	}
@@ -44,6 +44,11 @@ void UWeaponAction::SetCharacterAirControl(float _Value)
 EWeaponType UWeaponAction::GetWeaponType()
 {
 	return WeaponType;
+}
+
+bool UWeaponAction::GetAttackCheck()
+{
+	return AttackCheck;
 }
 
 void UWeaponAction::SetLockOnCheck(bool _Value)

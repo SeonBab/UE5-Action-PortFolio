@@ -4,12 +4,6 @@ EBTNodeResult::Type UBTTask_PatrolMove::ExecuteTask(UBehaviorTreeComponent& Owne
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
-
-	int PatrolCount = Blackboard->GetValueAsInt(TEXT("PatrolCount"));
-	++PatrolCount;
-	Blackboard->SetValueAsInt(TEXT("PatrolCount"), PatrolCount);
-
 	return EBTNodeResult::InProgress;
 }
 
@@ -62,7 +56,7 @@ void UBTTask_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 		if (10.f <= FMath::Abs(Angle0 - Angle1))
 		{
-			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 500.f * DeltaSeconds });
+			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
 			GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
 		}
 		else
@@ -82,6 +76,7 @@ void UBTTask_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 
 		float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
+
 		if (AttackRange >= Dis.Size())
 		{
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

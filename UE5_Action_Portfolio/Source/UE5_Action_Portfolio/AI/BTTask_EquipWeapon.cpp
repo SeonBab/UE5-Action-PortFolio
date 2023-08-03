@@ -4,6 +4,8 @@ EBTNodeResult::Type UBTTask_EquipWeapon::ExecuteTask(UBehaviorTreeComponent& Own
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
+	GetGlobalCharacter(OwnerComp)->bUseControllerRotationYaw = true;
+
 	ResetStateTime(OwnerComp);
 
 	EWeaponType CurWeaponType = GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
@@ -15,15 +17,18 @@ EBTNodeResult::Type UBTTask_EquipWeapon::ExecuteTask(UBehaviorTreeComponent& Own
 
 	FVector Dir = TargetPos - CurPos;
 
-	if (EWeaponType::UnArmed == CurWeaponType)
-	{
-		GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetLockOnCheck(true);
+	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetLockOnCheck(true);
 
-		if (500 <= Dir.Size())
+	if (500 <= Dir.Size())
+	{
+		if (EWeaponType::Bow != CurWeaponType)
 		{
 			GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetBow();
 		}
-		else
+	}
+	else
+	{
+		if (EWeaponType::Sword != CurWeaponType)
 		{
 			GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetSwordAndSheiled();
 		}

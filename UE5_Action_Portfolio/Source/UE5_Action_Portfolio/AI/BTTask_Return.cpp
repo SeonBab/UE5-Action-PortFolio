@@ -5,8 +5,9 @@ EBTNodeResult::Type UBTTask_Return::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
-
+	
 	Blackboard->SetValueAsInt(TEXT("PatrolCount"), 0);
+	Blackboard->SetValueAsBool(TEXT("IsReturn"), false);
 
 	return EBTNodeResult::InProgress;
 }
@@ -55,6 +56,7 @@ void UBTTask_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 		GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 
 		float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
+
 		if (AttackRange >= Dis.Size())
 		{
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

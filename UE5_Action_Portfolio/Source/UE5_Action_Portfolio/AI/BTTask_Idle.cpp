@@ -7,13 +7,7 @@ EBTNodeResult::Type UBTTask_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	//UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
-	//AActor* TargetActor = Cast<AActor>(TargetObject);
-
-	//if (nullptr != TargetActor)
-	//{
-	//	return EBTNodeResult::Failed;
-	//}
+	GetGlobalCharacter(OwnerComp)->bUseControllerRotationYaw = false;
 
 	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetUnArmed();
 	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetLockOnCheck(false);
@@ -23,15 +17,6 @@ EBTNodeResult::Type UBTTask_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 void UBTTask_Idle::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
-	//AActor* ResultActor = GetTargetSearch(OwnerComp);
-
-	//if (nullptr != ResultActor)
-	//{
-	//	GetBlackboardComponent(OwnerComp)->SetValueAsObject(TEXT("TargetActor"), ResultActor);
-	//	FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-	//	return;
-	//}
 
 	if (5.0f <= GetStateTime(OwnerComp))
 	{

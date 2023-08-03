@@ -2,13 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "AI/BTTask_AIBase.h"
-#include "BTTask_WeaponMove.generated.h"
+#include "BTTask_Attack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UBTTask_WeaponMove : public UBTTask_AIBase
+class UE5_ACTION_PORTFOLIO_API UBTTask_Attack : public UBTTask_AIBase
 {
 	GENERATED_BODY()
 	
@@ -18,5 +18,5 @@ protected:
 	void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds);
 
 private:
-	int MoveTime = 0;
+	int MeleeAtackCount = 0;
 };

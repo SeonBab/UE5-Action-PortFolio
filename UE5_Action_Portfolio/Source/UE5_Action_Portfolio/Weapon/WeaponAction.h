@@ -19,6 +19,7 @@ public:
 	void SetCharacterAirControl(float _Value);
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetWeaponType();
+	bool GetAttackCheck();
 	void SetLockOnCheck(bool _Value);
 	bool GetLockOnCheck();
 

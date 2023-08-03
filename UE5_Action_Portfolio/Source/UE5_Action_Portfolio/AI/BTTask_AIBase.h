@@ -24,8 +24,6 @@ public:
 	class AGlobalCharacter* GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp);
 	float GetStateTime(UBehaviorTreeComponent& OwnerComp);
 	void ResetStateTime(UBehaviorTreeComponent& OwnerComp);
-	void SetBTTaskChange(UBehaviorTreeComponent& OwnerComp, AIBTTask _Task);
-	class AActor* GetTargetSearch(UBehaviorTreeComponent& OwnerComp);
 	class UBlackboardComponent* GetBlackboardComponent(UBehaviorTreeComponent& OwnerComp);
 
 protected:

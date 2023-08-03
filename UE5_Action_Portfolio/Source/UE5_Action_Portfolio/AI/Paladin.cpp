@@ -17,14 +17,16 @@ void APaladin::BeginPlay()
 
 	Super::BeginPlay();
 
+	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
-	GetBlackboardComponent()->SetValueAsString(TEXT("TargetTag"), TEXT("Player"));
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("PatrolRange"), 800.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), 150.f);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), 250.f);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("PatrolCount"), 0);
 	GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
-	//GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
+	GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPos"), GetActorLocation());
+	GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), false);
+	GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), false);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
 
 	this->bUseControllerRotationYaw = false;
 }

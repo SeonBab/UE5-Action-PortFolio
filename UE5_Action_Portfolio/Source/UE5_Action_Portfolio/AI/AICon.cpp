@@ -38,12 +38,13 @@ void AAICon::Tick(float _DeltaTime)
 		LostTimer += _DeltaTime;
 	}
 
-	if (2.f <= LostTimer)
+	if (5.f <= LostTimer)
 	{
 		LostTimer = 0.f;
 		TargetLost = false;
 		PerceivedActor = nullptr;
 		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
+		BlackboardComponent->SetValueAsBool(TEXT("IsReturn"), true);
 	}
 }
 
@@ -85,7 +86,6 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 
 	if (nullptr != OtherPawn)
 	{	
-		// 왜 nullptr이 계속 리턴되는가????
 		const IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController());
 
 		if (nullptr != TeamAgent)
@@ -117,26 +117,37 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 			// 인식 했던 적이 없다면
 			if (nullptr == PerceivedActor)
 			{
+				LostTimer = 0.f;
+				TargetLost = false;
 				PerceivedActor = _Actor;
 
 			}
 			// 인식 했던 적이 있다면
 			// ex) 타겟이 새로 들어올 때
 			// ex) 인식 범위로 들어온 타겟이 다시 나갈 때
+			// ex) 인식 범위를 나갔던 타겟이 다시 들어올 때
 			else if (nullptr != PerceivedActor)
 			{
 				UObject* TargetObject = BlackboardComponent->GetValueAsObject(TEXT("TargetActor"));
 				AActor* TargetActor = Cast<AActor>(TargetObject);
 
 				// 인식 했던 적이 타겟과 같다
-				// ex) 인식 범위로 들어온 타겟이 다시 나갈 때
 				if (_Actor == TargetActor)
 				{
-					// 일정 시간 후에 nullptr로 변경
-					TargetLost = true;
+					// ex) 인식 범위를 나갔던 타겟이 다시 들어올 때
+					if (true == TargetLost)
+					{
+						LostTimer = 0.f;
+						TargetLost = false;
+					}
+					// ex) 인식 범위로 들어온 타겟이 다시 나갈 때
+					else if (false == TargetLost)
+					{
+						TargetLost = true;
+					}
 				}
 				// 인식 했던 적이 다르다면
-				// ex) 타겟이 새로 들어올 때
+				// ex) 다른 타겟이 새로 들어오거나 나갈때
 				else
 				{
 					FVector CurLocation = GetOwner()->GetActorLocation();
@@ -147,6 +158,9 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 					// 인식 했던 적보다 새로 인식 된 적이 가깝다면 타겟 변경
 					if (PerceivedActorDis.Size() > TargetdActorDis.Size())
 					{
+						LostTimer = 0.f;
+						TargetLost = false;
+
 						PerceivedActor = _Actor;
 					}
 				}
