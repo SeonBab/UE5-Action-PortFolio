@@ -32,6 +32,19 @@ AAICon::AAICon()
 void AAICon::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
+
+	if (true == TargetLost)
+	{
+		LostTimer += _DeltaTime;
+	}
+
+	if (2.f <= LostTimer)
+	{
+		LostTimer = 0.f;
+		TargetLost = false;
+		PerceivedActor = nullptr;
+		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
+	}
 }
 
 void AAICon::OnPossess(APawn* _InPawn)
@@ -120,7 +133,7 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 				if (_Actor == TargetActor)
 				{
 					// 일정 시간 후에 nullptr로 변경
-					PerceivedActor = nullptr;
+					TargetLost = true;
 				}
 				// 인식 했던 적이 다르다면
 				// ex) 타겟이 새로 들어올 때

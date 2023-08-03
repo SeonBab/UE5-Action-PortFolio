@@ -32,5 +32,6 @@ private:
 	//TObjectPtr<class UAISenseConfig_Hearing> AISenseConfigHearing = nullptr;
 
 	AActor* PerceivedActor = nullptr;
-	float EnemyTimer = 0.f;
+	bool TargetLost = false;
+	float LostTimer = 0.f;
 };
