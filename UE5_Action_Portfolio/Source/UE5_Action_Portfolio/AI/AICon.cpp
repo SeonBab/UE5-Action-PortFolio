@@ -17,8 +17,8 @@ AAICon::AAICon()
 	AISenseConfigSight->DetectionByAffiliation.bDetectEnemies = true;
 	AISenseConfigSight->DetectionByAffiliation.bDetectNeutrals = true;
 	AISenseConfigSight->DetectionByAffiliation.bDetectFriendlies = false;
-	AISenseConfigSight->SightRadius = 1100.f;
-	AISenseConfigSight->LoseSightRadius = 1500.f;
+	AISenseConfigSight->SightRadius = 1500.f;
+	AISenseConfigSight->LoseSightRadius = 2000.f;
 	AISenseConfigSight->PeripheralVisionAngleDegrees = 90.f;
 	AISenseConfigSight->SetMaxAge(5.f);
 
@@ -97,23 +97,50 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 {
 	switch (_Stimulus.Type)
 	{
-	case _Stimulus.SensingSucceeded: // 타깃 인식 성공
-		// 인식은 잘 되는데 GetTeamAttitudeTowards 함수에 문제가 있다.
+	case _Stimulus.SensingSucceeded: // 타겟 인식 성공
+		// 인식한 타겟이 적이라면
 		if (ETeamAttitude::Hostile == GetTeamAttitudeTowards(*_Actor))
 		{
-			//PerceivedActor = _Actor;
-			//BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
-		}
+			// 인식 했던 적이 없다면
+			if (nullptr == PerceivedActor)
+			{
+				PerceivedActor = _Actor;
 
-		if (nullptr != PerceivedActor)
-		{
-			PerceivedActor = nullptr;
+			}
+			// 인식 했던 적이 있다면
+			// ex) 타겟이 새로 들어올 때
+			// ex) 인식 범위로 들어온 타겟이 다시 나갈 때
+			else if (nullptr != PerceivedActor)
+			{
+				UObject* TargetObject = BlackboardComponent->GetValueAsObject(TEXT("TargetActor"));
+				AActor* TargetActor = Cast<AActor>(TargetObject);
+
+				// 인식 했던 적이 타겟과 같다
+				// ex) 인식 범위로 들어온 타겟이 다시 나갈 때
+				if (_Actor == TargetActor)
+				{
+					// 일정 시간 후에 nullptr로 변경
+					PerceivedActor = nullptr;
+				}
+				// 인식 했던 적이 다르다면
+				// ex) 타겟이 새로 들어올 때
+				else
+				{
+					FVector CurLocation = GetOwner()->GetActorLocation();
+
+					FVector PerceivedActorDis = PerceivedActor->GetActorLocation() - CurLocation;
+					FVector TargetdActorDis = _Actor->GetActorLocation() - CurLocation;
+
+					// 인식 했던 적보다 새로 인식 된 적이 가깝다면 타겟 변경
+					if (PerceivedActorDis.Size() > TargetdActorDis.Size())
+					{
+						PerceivedActor = _Actor;
+					}
+				}
+			}
+
+			BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
 		}
-		else
-		{
-			PerceivedActor = _Actor;
-		}
-		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
 		break;
 	case _Stimulus.SensingFailed: // 타깃 인식 실패
 		PerceivedActor = nullptr;
