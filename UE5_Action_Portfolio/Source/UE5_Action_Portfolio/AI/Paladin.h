@@ -5,16 +5,14 @@
 #include "Global/Data/MonsterData.h"
 #include "Paladin.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API APaladin : public AGlobalAICharacter
 {
 	GENERATED_BODY()
 
 protected:
-	void BeginPlay() override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float _DeltaTime) override;
 
 private:
 	const struct FMonsterData* CurMonsterData;

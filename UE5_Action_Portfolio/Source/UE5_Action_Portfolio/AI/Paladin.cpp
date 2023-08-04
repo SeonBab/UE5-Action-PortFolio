@@ -30,3 +30,8 @@ void APaladin::BeginPlay()
 
 	this->bUseControllerRotationYaw = false;
 }
+
+void APaladin::Tick(float _DeltaTime)
+{
+	Super::Tick(_DeltaTime);
+}

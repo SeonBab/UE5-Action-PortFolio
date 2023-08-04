@@ -646,6 +646,11 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 			AnimState = CharacterAnimState::Idle;
 		}
 
+		if (EWeaponType::Bow == WeaponType && CharacterAnimState::Attack == AnimState)
+		{
+			return;
+		}
+
 		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
 
 		if (nullptr == character && false == character->IsValidLowLevel())
@@ -659,6 +664,7 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		{
 			return;
 		}
+
 
 		BowAnim->SetBowChordCheck(false);
 

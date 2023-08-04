@@ -6,9 +6,6 @@
 #include "Global/GlobalCharacter.h"
 #include "GlobalAICharacter.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AGlobalAICharacter : public AGlobalCharacter
 {
@@ -17,6 +14,10 @@ class UE5_ACTION_PORTFOLIO_API AGlobalAICharacter : public AGlobalCharacter
 public:
 	class UBehaviorTree* GetBehaviorTree();
 	class UBlackboardComponent* GetBlackboardComponent();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float _DeltaTime) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")

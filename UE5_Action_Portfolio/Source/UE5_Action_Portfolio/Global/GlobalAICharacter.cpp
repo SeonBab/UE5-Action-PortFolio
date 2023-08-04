@@ -23,3 +23,13 @@ UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
 
     return BlackboardComponent;
 }
+
+void AGlobalAICharacter::BeginPlay()
+{
+    Super::BeginPlay();
+}
+
+void AGlobalAICharacter::Tick(float _DeltaTime)
+{
+    Super::Tick(_DeltaTime);
+}

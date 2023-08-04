@@ -2,6 +2,7 @@
 #include "Global/GlobalGameInstance.h"
 #include "Weapon/WeaponAction.h"
 #include "Weapon/BowAnimInstance.h"
+#include "Weapon/Arrow.h"
 
 AGlobalCharacter::AGlobalCharacter()
 {
@@ -51,6 +52,8 @@ void AGlobalCharacter::BeginPlay()
 	BackSwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
 	BackShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
 
+	//BowWeaponMesh->SetAnimInstanceClass(BowAnimClass);
+
 	AnimState = CurWeaponAction->GetAnimState();
 }
 
@@ -60,7 +63,7 @@ void AGlobalCharacter::Tick(float _DeltaTime)
 
 	CurWeaponAction->Tick(_DeltaTime);
 
-	if (EWeaponType::Bow == CurWeaponAction->WeaponType)
+	if (EWeaponType::Bow == CurWeaponAction->GetWeaponType())
 	{
 		BowChordMove();
 	}
