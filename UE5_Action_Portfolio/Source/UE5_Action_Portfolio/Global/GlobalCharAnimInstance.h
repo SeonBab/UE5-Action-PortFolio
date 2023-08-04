@@ -29,6 +29,8 @@ public:
 	void AnimNotify_ChordToHand();
 	UFUNCTION()
 	void AnimNotify_BowFire();
+	UFUNCTION()
+	void AnimNotify_ReRoad();
 
 protected:
 	void NativeInitializeAnimation() override;

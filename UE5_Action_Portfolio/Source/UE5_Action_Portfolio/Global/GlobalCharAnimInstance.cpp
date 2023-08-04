@@ -265,6 +265,14 @@ void UGlobalCharAnimInstance::AnimNotify_BowFire()
 	// 화살 발사
 }
 
+void UGlobalCharAnimInstance::AnimNotify_ReRoad()
+{
+	// 화살 생성
+	//StaticLoadObject();
+	//StaticLoadClass();
+	//UWorld::SpawnActor();
+}
+
 void UGlobalCharAnimInstance::NativeInitializeAnimation()
 {
 }
