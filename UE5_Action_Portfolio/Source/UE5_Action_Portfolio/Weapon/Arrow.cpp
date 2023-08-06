@@ -36,7 +36,7 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 		FVector ForVec = GetActorForwardVector();
 		ForVec.Normalize();
 
-		FVector Cross = FVector::CrossProduct(Dir, ForVec);
+		FVector Cross = FVector::CrossProduct(ForVec, Dir);
 		
 		float DirAngle = Dir.Rotation().Roll;
 		float ForVecAngle = ForVec.Rotation().Roll;
@@ -46,12 +46,12 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 
 		if (10.f < FMath::Abs(DirAngle - ForVecAngle))
 		{
-			AddRot = { Cross.X * 250 * _DeltaTime, 0, 0 };
+			AddRot += { Cross.X * 250 * _DeltaTime, 0, 0 };
+			//SetRot.Roll = AddRot.Roll;
 		}
 		else
 		{
-			//Rot = Dir.Rotation();
-			//SetActorRotation(Rot);
+			//SetRot.Roll = Dir.X;
 		}
 
 		DirAngle = Dir.Rotation().Pitch;
@@ -60,11 +60,11 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 		if (10.f < FMath::Abs(DirAngle - ForVecAngle))
 		{
 			AddRot += { 0, Cross.Y * 250 * _DeltaTime, 0 };
+			//SetRot.Pitch = AddRot.Pitch;
 		}
 		else
 		{
-			//Rot = Dir.Rotation();
-			//SetActorRotation(Rot);
+			//SetRot.Pitch = Dir.Y;
 		}
 
 		DirAngle = Dir.Rotation().Yaw;
@@ -73,15 +73,17 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 		if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
 		{
 			AddRot += { 0, 0, Cross.Z * 250 * _DeltaTime };
+			//SetRot.Yaw = AddRot.Yaw;
 		}
 		else
 		{
-			//Rot = Dir.Rotation();
-			//SetActorRotation(Rot);
+			//SetRot.Yaw = Dir.Z;
 		}
 
 		// if에서 SetRot의 회전값을 각각 저장 else에서 if에 저장한 값 + else 해야하는 위치로 저장
 		// 여기서 set하고 난 뒤 add를 하면 회전이 잘 되나??
+		// Dir의 Rotation값을 넣으면 방향이 하늘을 바라본다 왤까?
+		//SetRot = Dir.Rotation();
 		//SetActorRotation(SetRot);
 		
 		AddRot.Euler();
