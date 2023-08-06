@@ -18,5 +18,7 @@ protected:
 	void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds);
 
 private:
+	bool AttackOrBlock = false;
 	int MeleeAtackCount = 0;
+	float BlockTime = 0;
 };

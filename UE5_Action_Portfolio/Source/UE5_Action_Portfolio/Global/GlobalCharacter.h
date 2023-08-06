@@ -14,6 +14,7 @@ public:
 	AGlobalCharacter();
 	UFUNCTION(BlueprintCallable)
 	class UWeaponAction* GetCurWeaponAction();
+	FVector GetBowJointLocation();
 
 protected:
 	virtual void BeginPlay() override;

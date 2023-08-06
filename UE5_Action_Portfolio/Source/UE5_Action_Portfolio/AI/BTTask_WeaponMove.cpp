@@ -4,7 +4,7 @@ EBTNodeResult::Type UBTTask_WeaponMove::ExecuteTask(UBehaviorTreeComponent& Owne
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	MoveTime = UGlobalGameInstance::MainRandom.RandRange(1, 3);
+	MoveTime = UGlobalGameInstance::MainRandom.RandRange(1, 2);
 
     return EBTNodeResult::InProgress;
 }
@@ -88,6 +88,7 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	else if (EWeaponType::Bow == CurWeaponType)
 	{
 		// 이동
+		// 일정 거리 이상이면 랜덤으로 움직이기
 		{
 			FVector TargetPos = TargetActor->GetActorLocation();
 			FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();

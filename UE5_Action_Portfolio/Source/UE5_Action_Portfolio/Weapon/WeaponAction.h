@@ -5,6 +5,8 @@
 #include "Global/Enums.h"
 #include "WeaponAction.generated.h"
 
+class AArrow;
+
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API UWeaponAction : public UObject
 {
@@ -22,6 +24,9 @@ public:
 	bool GetAttackCheck();
 	void SetLockOnCheck(bool _Value);
 	bool GetLockOnCheck();
+	void ArrowSpawn();
+
+
 
 	CharacterAnimState* GetAnimState();
 	void SetAnimState(CharacterAnimState _State);
@@ -82,4 +87,10 @@ public:
 	const float AimorBlockSpeed = 250.f;
 	float MoveXValue = 0.f;
 	float MoveYValue = 0.f;
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AArrow> ArrowClass;
+	AArrow* ReadyArrow = nullptr;
+
 };

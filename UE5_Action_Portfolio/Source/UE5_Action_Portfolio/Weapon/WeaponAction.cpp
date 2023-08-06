@@ -1,16 +1,22 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Weapon/WeaponAction.h"
-#include "Global/GlobalGameInstance.h"
 #include "Global/Data/AnimaitionData.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Global/GlobalGameInstance.h"
 #include "Global/GlobalCharAnimInstance.h"
 #include "Global/GlobalCharacter.h"
 #include "Weapon/BowAnimInstance.h"
+#include "Weapon/Arrow.h"
 
 UWeaponAction::UWeaponAction()
 {	
+	static ConstructorHelpers::FClassFinder<AArrow> BPArrow(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_Arrow.BP_Arrow_C'"));
 
+	if (BPArrow.Succeeded())
+	{
+		ArrowClass = BPArrow.Class;
+	}
 }
 
 void UWeaponAction::BeginPlay()
@@ -28,6 +34,12 @@ void UWeaponAction::Tick(float _DeltaTime)
 	else if (false == IsLockOn && CharacterAnimState::LockOnIdle == AnimState)
 	{
 		AnimState = CharacterAnimState::Idle;
+	}
+
+	if (nullptr != ReadyArrow)
+	{
+		FVector JointPos = Cast<AGlobalCharacter>(CurCharacter)->GetBowJointLocation();
+		ReadyArrow->ArrowReRoad(CurCharacter, JointPos, _DeltaTime);
 	}
 }
 
@@ -59,6 +71,24 @@ void UWeaponAction::SetLockOnCheck(bool _Value)
 bool UWeaponAction::GetLockOnCheck()
 {
 	return IsLockOn;
+}
+
+void UWeaponAction::ArrowSpawn()
+{
+	FVector SpawnPos = CurCharacter->GetMesh()->GetSocketLocation(TEXT("RightHandSoket"));
+	FRotator SpawnRot = CurCharacter->GetMesh()->GetSocketRotation(TEXT("RightHandSoket"));
+
+	FActorSpawnParameters SParam;
+	// 충돌시 근처 충돌하지 않는 위치에 스폰된다.
+	SParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+
+	if (nullptr == ArrowClass)
+	{
+		return;
+	}
+
+	ReadyArrow = CurCharacter->GetWorld()->UWorld::SpawnActor<AArrow>(ArrowClass, SpawnPos, SpawnRot, SParam);
 }
 
 CharacterAnimState* UWeaponAction::GetAnimState()
@@ -665,7 +695,7 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 			return;
 		}
 
-
+		ArrowReady = false;
 		BowAnim->SetBowChordCheck(false);
 
 		return;

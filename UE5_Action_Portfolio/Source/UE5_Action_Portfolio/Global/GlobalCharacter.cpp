@@ -32,6 +32,12 @@ UWeaponAction* AGlobalCharacter::GetCurWeaponAction()
 	return CurWeaponAction;
 }
 
+FVector AGlobalCharacter::GetBowJointLocation()
+{
+	FVector Pos = BowWeaponMesh->GetSocketLocation(TEXT("Bow_04_Joint"));
+	return Pos;
+}
+
 void AGlobalCharacter::BeginPlay()
 {
 	Super::BeginPlay();

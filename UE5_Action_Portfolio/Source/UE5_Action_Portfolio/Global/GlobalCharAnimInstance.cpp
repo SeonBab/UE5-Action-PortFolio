@@ -268,9 +268,28 @@ void UGlobalCharAnimInstance::AnimNotify_BowFire()
 void UGlobalCharAnimInstance::AnimNotify_ReRoad()
 {
 	// 화살 생성
+	
+	//UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	//if (nullptr == Instance)
+	//{
+	//	return;
+	//}
+
+	//TSubclassOf<UObject> Arrow = Instance->GetSubClass(TEXT("Arrow"))
+
 	//StaticLoadObject();
 	//StaticLoadClass();
 	//UWorld::SpawnActor();
+
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	character->GetCurWeaponAction()->ArrowSpawn();
 }
 
 void UGlobalCharAnimInstance::NativeInitializeAnimation()

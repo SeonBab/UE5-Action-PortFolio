@@ -20,7 +20,7 @@ void APaladin::BeginPlay()
 	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("PatrolRange"), 800.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), 250.f);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), 200.f);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("PatrolCount"), 0);
 	GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
 	GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPos"), GetActorLocation());

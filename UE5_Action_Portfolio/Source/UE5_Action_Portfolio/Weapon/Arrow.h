@@ -13,6 +13,10 @@ class UE5_ACTION_PORTFOLIO_API AArrow : public AActor
 public:	
 	AArrow();
 
+	UFUNCTION()
+	void ArrowBeginOverlap();
+	void ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _DeltaTime);
+	void SetIsRotation(bool _Value);
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,4 +29,7 @@ private:
 	USkeletalMeshComponent* ArrowSkeletalMesh;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
+
+	bool IsRotation = false;
+
 };
