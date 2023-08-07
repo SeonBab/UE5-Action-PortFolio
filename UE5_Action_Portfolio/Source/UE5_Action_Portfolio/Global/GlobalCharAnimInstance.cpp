@@ -5,6 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon/WeaponAction.h"
 #include "Weapon/BowAnimInstance.h"
+#include "Weapon/Arrow.h"
 
 void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
@@ -59,7 +60,7 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	{
 		if (EWeaponType::Bow == character->CurWeaponAction->WeaponType)
 		{
-			Animstate = CharacterAnimState::AimOrBlock;
+			Animstate = CharacterAnimState::Idle;
 			character->CurWeaponAction->SetAnimState(Animstate);
 			Montage_Play(AllAnimations[Animstate], 1.f);
 			character->CurWeaponAction->ArrowReady = false;
@@ -251,18 +252,6 @@ void UGlobalCharAnimInstance::AnimNotify_ChordToHand()
 
 void UGlobalCharAnimInstance::AnimNotify_BowFire()
 {
-	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
-
-	if (nullptr == character && false == character->IsValidLowLevel())
-	{
-		return;
-	}
-
-	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
-
-	BowAnim->SetBowChordCheck(false);
-
-	// 화살 발사
 }
 
 void UGlobalCharAnimInstance::AnimNotify_ReRoad()
@@ -290,6 +279,65 @@ void UGlobalCharAnimInstance::AnimNotify_ReRoad()
 	}
 
 	character->GetCurWeaponAction()->ArrowSpawn();
+}
+
+void UGlobalCharAnimInstance::AnimNotify_StartAttack()
+{
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	// 액터가 가진 태그를 가져올 수 있나?
+	//FName* ActorType = character->Tags.;
+	//character->GetCurWeaponAction()->GetReadyArrow()->ChangeCollision();
+
+	EWeaponType Weapon = character->GetCurWeaponAction()->GetWeaponType();
+	CharacterAnimState* AnimState = character->GetCurWeaponAction()->GetAnimState();
+
+	if (EWeaponType::UnArmed == Weapon)
+	{
+		
+	}
+	else if (EWeaponType::Sword == Weapon)
+	{
+		if (CharacterAnimState::Attack == *AnimState)
+		{
+
+		}
+		else if (CharacterAnimState::AimOrBlock == *AnimState)
+		{
+			//가드는 충돌 변경 없이 불 변수 수정
+		}
+		else if (CharacterAnimState::ParryorFire == *AnimState)
+		{
+
+		}
+	}
+	else if (EWeaponType::Bow == Weapon)
+	{
+		UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
+
+		if (nullptr != BowAnim)
+		{
+			BowAnim->SetBowChordCheck(false);
+		}
+
+		AArrow* CurArrow = character->GetCurWeaponAction()->GetReadyArrow();
+
+		if (nullptr != CurArrow)
+		{
+			CurArrow->SetIsLocationAndRotation(false);
+			CurArrow->FireInDirection();
+		}
+	}
+
+}
+
+void UGlobalCharAnimInstance::AnimNotify_EndAttack()
+{
 }
 
 void UGlobalCharAnimInstance::NativeInitializeAnimation()

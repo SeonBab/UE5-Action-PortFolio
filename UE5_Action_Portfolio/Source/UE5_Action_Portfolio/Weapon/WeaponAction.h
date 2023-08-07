@@ -25,6 +25,7 @@ public:
 	void SetLockOnCheck(bool _Value);
 	bool GetLockOnCheck();
 	void ArrowSpawn();
+	AArrow* GetReadyArrow();
 
 
 

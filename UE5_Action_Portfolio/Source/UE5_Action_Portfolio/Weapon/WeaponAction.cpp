@@ -76,7 +76,7 @@ bool UWeaponAction::GetLockOnCheck()
 void UWeaponAction::ArrowSpawn()
 {
 	FVector SpawnPos = CurCharacter->GetMesh()->GetSocketLocation(TEXT("RightHandSoket"));
-	FRotator SpawnRot = CurCharacter->GetMesh()->GetSocketRotation(TEXT("RightHandSoket"));
+	FRotator SpawnRot = { -90, 0, 0 };
 
 	FActorSpawnParameters SParam;
 	// 충돌시 근처 충돌하지 않는 위치에 스폰된다.
@@ -89,6 +89,11 @@ void UWeaponAction::ArrowSpawn()
 	}
 
 	ReadyArrow = CurCharacter->GetWorld()->UWorld::SpawnActor<AArrow>(ArrowClass, SpawnPos, SpawnRot, SParam);
+}
+
+AArrow* UWeaponAction::GetReadyArrow()
+{
+	return ReadyArrow;
 }
 
 CharacterAnimState* UWeaponAction::GetAnimState()
@@ -667,6 +672,8 @@ void UWeaponAction::AttackAction()
 
 void UWeaponAction::AimorBlockAtion(float _Value)
 {
+	// 가드 불 변수 설정 입력 없을 땐 false 입력 있을 땐 true
+	// true일 땐 받는 데미지 감소
 	if (0 == _Value)
 	{
 		if (CharacterAnimState::AimOrBlock == AnimState)

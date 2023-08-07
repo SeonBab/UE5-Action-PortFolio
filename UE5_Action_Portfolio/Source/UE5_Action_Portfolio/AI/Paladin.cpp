@@ -3,6 +3,12 @@
 #include "Global/Data/MonsterData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+APaladin::APaladin()
+{
+	Tags.Add(ActorType);
+	Tags.Add(AttackType);
+}
+
 void APaladin::BeginPlay()
 {
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();

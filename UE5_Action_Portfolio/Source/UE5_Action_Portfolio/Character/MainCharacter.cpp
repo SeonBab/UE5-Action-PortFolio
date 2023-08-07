@@ -24,6 +24,7 @@ AMainCharacter::AMainCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	Tags.Add(ActorType);
+	Tags.Add(AttackType);
 }
 
 void AMainCharacter::BeginPlay()

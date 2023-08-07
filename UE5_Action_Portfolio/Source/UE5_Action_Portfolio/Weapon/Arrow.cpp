@@ -10,23 +10,29 @@ AArrow::AArrow()
 	ArrowSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ArrowMesh"));
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 
+	ArrowScene->SetupAttachment(RootComponent);
+
 	ArrowSkeletalMesh->SetupAttachment(ArrowScene);
 	ArrowSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
-
-	ArrowScene->SetupAttachment(RootComponent);
 	ArrowSkeletalMesh->SetRelativeScale3D({ 1.3, 1.3, 1.3 });
+
+	ProjectileMovement->InitialSpeed = 0.f;
+	ProjectileMovement->MaxSpeed = 5000.f;
+	//ProjectileMovement->bRotationFollowsVelocity = true;
+
+	InitialLifeSpan = 5.f;
 }
 
-void AArrow::ArrowBeginOverlap()
+void AArrow::ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//OtherActor->TakeDamage(10.f, );
 
+	Destroy();
 }
 
 void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _DeltaTime)
 {
-	// 화살이 생기고 어떻게 손에 붙어있다가 발사해야하는 타이밍에 날아가게 할 수 있을까
-	// WeaponAction에서 액터 포인터를 저장하고 사용하다 발사하면서 저장한 포인터를 null로 바꿔가면서 써야하나?
-	if (IsRotation == false)
+	if (IsLocationAndRotation == true)
 	{
 		FVector SetPos = _Character->GetMesh()->GetSocketLocation(TEXT("RightHandSoket"));
 		
@@ -35,62 +41,69 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 		FVector Dir = _JointPos - SetPos;
 		Dir.Normalize();
 
-		FVector ForVec = GetActorForwardVector();
-		ForVec.Normalize();
+		//FVector ForVec = GetActorForwardVector();
+		//ForVec.Normalize();
 
-		FVector Cross = FVector::CrossProduct(ForVec, Dir);
-		
-		float DirAngle = Dir.Rotation().Yaw;
-		float ForVecAngle = ForVec.Rotation().Yaw;
+		//FVector Cross = FVector::CrossProduct(ForVec, Dir);
+		//
+		//float DirAngle = Dir.Rotation().Yaw;
+		//float ForVecAngle = ForVec.Rotation().Yaw;
 
-		FRotator SetRot;
+		//FRotator SetRot;
 
-		if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
-		{
-			FRotator AddRot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 200 * _DeltaTime });
-			AddActorWorldRotation(AddRot);
-			SetRot.Yaw = Cross.Z * 200 * _DeltaTime;
-		}
-		else
-		{
-			SetRot.Yaw = Dir.Rotation().Yaw;
-		}
+		//if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
+		//{
+		//	FRotator AddRot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 800 * _DeltaTime });
+		//	AddActorWorldRotation(AddRot);
+		//}
+		//else
+		//{
+		//	SetRot.Yaw = Dir.Rotation().Yaw;
+		//}
 
-		DirAngle = Dir.Rotation().Roll;
-		ForVecAngle = ForVec.Rotation().Roll;
+		//FVector ForVec = GetActorUpVector();
+		//ForVec.Normalize();
 
-		if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
-		{
-			FRotator AddRot = FRotator::MakeFromEuler({ Cross.X * 200 * _DeltaTime, 0, 0 });
-			AddActorWorldRotation(AddRot);
-			SetRot.Roll = Cross.X * 200 * _DeltaTime;
-		}
-		else
-		{
-			SetRot.Roll = Dir.Rotation().Roll;
-		}
+		//FVector Cross = FVector::CrossProduct(ForVec, Dir);
 
 		//DirAngle = Dir.Rotation().Pitch;
 		//ForVecAngle = ForVec.Rotation().Pitch;
 
 		//if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
 		//{
-		//	FRotator AddRot = FRotator::MakeFromEuler({ 0, Cross.Y * 200 * _DeltaTime, 0 });
+		//	FRotator AddRot = FRotator::MakeFromEuler({ 0, Cross.Y * 800 * _DeltaTime, 0 });
 		//	AddActorWorldRotation(AddRot);
-		//	SetRot.Pitch = Cross.Y * 200 * _DeltaTime;
 		//}
 		//else
 		//{
 		//	SetRot.Pitch = Dir.Rotation().Pitch;
 		//}
 
-		SetActorRotation(SetRot);
+		//SetActorRotation(SetRot);
+
+		SetActorRotation(Dir.Rotation());
 	}
 }
 
-void AArrow::SetIsRotation(bool _Value)
+void AArrow::SetIsLocationAndRotation(bool _Value)
 {
-	IsRotation = true;
+	IsLocationAndRotation = false;
+}
+
+void AArrow::ChangeCollision(FName _FName)
+{
+	ArrowSkeletalMesh->SetCollisionProfileName(_FName, true);
+}
+
+void AArrow::FireInDirection()
+{
+	ProjectileMovement->SetUpdatedComponent(ArrowSkeletalMesh);
+	ProjectileMovement->InitialSpeed = 4000.f;
+
+	FVector ShotVector = GetActorForwardVector();
+	ShotVector.Z += 0.1f;
+
+	ProjectileMovement->Velocity = ShotVector * ProjectileMovement->InitialSpeed;
 }
 
 void AArrow::BeginPlay()
@@ -105,6 +118,8 @@ void AArrow::BeginPlay()
 	}
 
 	ArrowSkeletalMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Arrow")));
+
+	ArrowSkeletalMesh->OnComponentBeginOverlap.AddDynamic(this, &AArrow::ArrowBeginOverlap);
 }
 
 void AArrow::Tick(float DeltaTime)

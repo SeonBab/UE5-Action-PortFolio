@@ -14,9 +14,11 @@ public:
 	AArrow();
 
 	UFUNCTION()
-	void ArrowBeginOverlap();
+	void ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	void ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _DeltaTime);
-	void SetIsRotation(bool _Value);
+	void SetIsLocationAndRotation(bool _Value);
+	void ChangeCollision(FName _FName);
+	void FireInDirection();
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,6 +34,6 @@ private:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
-	bool IsRotation = false;
+	bool IsLocationAndRotation = true;
 
 };

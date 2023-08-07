@@ -49,6 +49,7 @@ public:
 
 private:
 	FName ActorType = TEXT("Player");
+	FName AttackType = TEXT("PlayerAttack");
 
 	bool IsLookAtTartget = false;
 

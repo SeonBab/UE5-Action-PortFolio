@@ -31,6 +31,10 @@ public:
 	void AnimNotify_BowFire();
 	UFUNCTION()
 	void AnimNotify_ReRoad();
+	UFUNCTION()
+	void AnimNotify_StartAttack();
+	UFUNCTION()
+	void AnimNotify_EndAttack();
 
 protected:
 	void NativeInitializeAnimation() override;
