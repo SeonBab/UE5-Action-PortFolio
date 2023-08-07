@@ -704,6 +704,11 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 
 		ArrowReady = false;
 		BowAnim->SetBowChordCheck(false);
+		
+		if (nullptr != ReadyArrow)
+		{
+			ReadyArrow->Destroy();
+		}
 
 		return;
 	}
