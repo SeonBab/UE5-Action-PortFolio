@@ -6,12 +6,14 @@ AArrow::AArrow()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	ArrowScene = CreateDefaultSubobject<USceneComponent>(TEXT("Arrowcene"));
 	ArrowSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ArrowMesh"));
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 
-	ArrowSkeletalMesh->SetupAttachment(RootComponent);
+	ArrowSkeletalMesh->SetupAttachment(ArrowScene);
 	ArrowSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
 
+	ArrowScene->SetupAttachment(RootComponent);
 	ArrowSkeletalMesh->SetRelativeScale3D({ 1.3, 1.3, 1.3 });
 }
 
@@ -38,58 +40,51 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 
 		FVector Cross = FVector::CrossProduct(ForVec, Dir);
 		
-		float DirAngle = Dir.Rotation().Roll;
-		float ForVecAngle = ForVec.Rotation().Roll;
+		float DirAngle = Dir.Rotation().Yaw;
+		float ForVecAngle = ForVec.Rotation().Yaw;
 
-		FRotator AddRot;
 		FRotator SetRot;
-
-		if (10.f < FMath::Abs(DirAngle - ForVecAngle))
-		{
-			AddRot += { Cross.X * 250 * _DeltaTime, 0, 0 };
-			//SetRot.Roll = AddRot.Roll;
-		}
-		else
-		{
-			//SetRot.Roll = Dir.X;
-		}
-
-		DirAngle = Dir.Rotation().Pitch;
-		ForVecAngle = ForVec.Rotation().Pitch;
-
-		if (10.f < FMath::Abs(DirAngle - ForVecAngle))
-		{
-			AddRot += { 0, Cross.Y * 250 * _DeltaTime, 0 };
-			//SetRot.Pitch = AddRot.Pitch;
-		}
-		else
-		{
-			//SetRot.Pitch = Dir.Y;
-		}
-
-		DirAngle = Dir.Rotation().Yaw;
-		ForVecAngle = ForVec.Rotation().Yaw;
 
 		if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
 		{
-			AddRot += { 0, 0, Cross.Z * 250 * _DeltaTime };
-			//SetRot.Yaw = AddRot.Yaw;
+			FRotator AddRot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 200 * _DeltaTime });
+			AddActorWorldRotation(AddRot);
+			SetRot.Yaw = Cross.Z * 200 * _DeltaTime;
 		}
 		else
 		{
-			//SetRot.Yaw = Dir.Z;
+			SetRot.Yaw = Dir.Rotation().Yaw;
 		}
 
-		// if에서 SetRot의 회전값을 각각 저장 else에서 if에 저장한 값 + else 해야하는 위치로 저장
-		// 여기서 set하고 난 뒤 add를 하면 회전이 잘 되나??
-		// Dir의 Rotation값을 넣으면 방향이 하늘을 바라본다 왤까?
-		//SetRot = Dir.Rotation();
-		//SetActorRotation(SetRot);
-		
-		AddRot.Euler();
-		AddActorWorldRotation(AddRot);
+		DirAngle = Dir.Rotation().Roll;
+		ForVecAngle = ForVec.Rotation().Roll;
 
-		//FRotator Rot = FRotator::MakeFromEuler({ Cross.X * 250 * _DeltaTime, Cross.Y * 250 * _DeltaTime, Cross.Z * 250 * _DeltaTime });
+		if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
+		{
+			FRotator AddRot = FRotator::MakeFromEuler({ Cross.X * 200 * _DeltaTime, 0, 0 });
+			AddActorWorldRotation(AddRot);
+			SetRot.Roll = Cross.X * 200 * _DeltaTime;
+		}
+		else
+		{
+			SetRot.Roll = Dir.Rotation().Roll;
+		}
+
+		//DirAngle = Dir.Rotation().Pitch;
+		//ForVecAngle = ForVec.Rotation().Pitch;
+
+		//if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
+		//{
+		//	FRotator AddRot = FRotator::MakeFromEuler({ 0, Cross.Y * 200 * _DeltaTime, 0 });
+		//	AddActorWorldRotation(AddRot);
+		//	SetRot.Pitch = Cross.Y * 200 * _DeltaTime;
+		//}
+		//else
+		//{
+		//	SetRot.Pitch = Dir.Rotation().Pitch;
+		//}
+
+		SetActorRotation(SetRot);
 	}
 }
 
