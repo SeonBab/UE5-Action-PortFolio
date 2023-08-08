@@ -41,7 +41,7 @@ public:
 	void ChangeSetBow();
 	void ChangeSetSwordAndSheiled();
 	void PressSpaceBarCkeckAndRoll(float _DeltaTime);
-	bool LockOnAfterRun(float _DeltaTime);
+	bool LockOnAfterRun();
 
 	void WAndSButtonAction(float _Value);
 	void DAndAButtonAction(float _Value);

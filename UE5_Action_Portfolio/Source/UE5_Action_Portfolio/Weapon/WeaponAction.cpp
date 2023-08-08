@@ -36,6 +36,12 @@ void UWeaponAction::Tick(float _DeltaTime)
 		AnimState = CharacterAnimState::Idle;
 	}
 
+	// 락온시 달리고 난 후 다시 회전할 때까지의 시간
+	if (true == LockOnCheck)
+	{
+		LockOnAfterRunTime += _DeltaTime;
+	}
+
 	if (nullptr != ReadyArrow)
 	{
 		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
@@ -349,13 +355,8 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 	}
 }
 
-bool UWeaponAction::LockOnAfterRun(float _DeltaTime)
+bool UWeaponAction::LockOnAfterRun()
 {
-	if (true == LockOnCheck)
-	{
-		LockOnAfterRunTime += _DeltaTime;
-	}
-
 	if (LockOnAfterRunCount < LockOnAfterRunTime)
 	{
 		LockOnCheck = false;

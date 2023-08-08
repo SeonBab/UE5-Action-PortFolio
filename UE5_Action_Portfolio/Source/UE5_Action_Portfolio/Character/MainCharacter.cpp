@@ -50,8 +50,8 @@ void AMainCharacter::Tick(float _DeltaTime)
 		LookAtTarget(_DeltaTime);
 	}
 
-	// 캐릭터가 달리다가 멈추고 일정 시간이 지났는가
-	if (true == CurWeaponAction->LockOnAfterRun(_DeltaTime))
+	// 캐릭터가 달리다가 멈췄다면 일정 시간이 지났는가
+	if (true == CurWeaponAction->LockOnAfterRun())
 	{
 		IsLookAtTartget = true;
 	}
@@ -77,14 +77,14 @@ void AMainCharacter::Tick(float _DeltaTime)
 	EWeaponType CurWeponT = GetCurWeaponAction()->GetWeaponType();
 
 	// 조준시 카메라 확대
-	if (EWeaponType::Bow == CurWeponT && CharacterAnimState::AimOrBlock == *AnimState)
-	{
-		MainCameraComponent->FieldOfView = 40.f;
-	}
-	else
-	{
-		MainCameraComponent->FieldOfView = 90.f;
-	}
+	//if (EWeaponType::Bow == CurWeponT && CharacterAnimState::AimOrBlock == *AnimState)
+	//{
+	//	MainCameraComponent->FieldOfView = 40.f;
+	//}
+	//else
+	//{
+	//	MainCameraComponent->FieldOfView = 90.f;
+	//}
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)
@@ -161,6 +161,12 @@ void AMainCharacter::ZoomOut()
 
 void AMainCharacter::Attack()
 {
+	// 락온 중 다른 방향을 바라보며 공격 할 때 다시 락온 타겟 방향으로 회전 후 공격
+	if (false == GetCurWeaponAction()->LockOnAfterRun())
+	{
+		IsLookAtTartget = true;
+	}
+
 	CurWeaponAction->AttackAction();
 }
 
