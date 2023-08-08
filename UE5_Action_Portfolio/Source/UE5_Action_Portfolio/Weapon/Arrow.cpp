@@ -90,7 +90,7 @@ void AArrow::SetIsLocationAndRotation(bool _Value)
 	IsLocationAndRotation = false;
 }
 
-void AArrow::ChangeCollision(FName _FName)
+void AArrow::ArrowChangeCollision(FName _FName)
 {
 	ArrowSkeletalMesh->SetCollisionProfileName(_FName, true);
 }

@@ -9,6 +9,8 @@ EBTNodeResult::Type UBTTask_Return::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	Blackboard->SetValueAsInt(TEXT("PatrolCount"), 0);
 	Blackboard->SetValueAsBool(TEXT("IsReturn"), false);
 
+	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetLockOnCheck(false);
+
 	return EBTNodeResult::InProgress;
 }
 

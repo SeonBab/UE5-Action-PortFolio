@@ -4,7 +4,7 @@ EBTNodeResult::Type UBTTask_WeaponMove::ExecuteTask(UBehaviorTreeComponent& Owne
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	MoveTime = UGlobalGameInstance::MainRandom.RandRange(1, 2);
+	MoveTime = UGlobalGameInstance::MainRandom.FRandRange(1, 2);
 
     return EBTNodeResult::InProgress;
 }

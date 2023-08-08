@@ -17,7 +17,7 @@ public:
 	void ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	void ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _DeltaTime);
 	void SetIsLocationAndRotation(bool _Value);
-	void ChangeCollision(FName _FName);
+	void ArrowChangeCollision(FName _FName);
 	void FireInDirection(FVector _FVector);
 
 protected:

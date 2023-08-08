@@ -25,9 +25,12 @@ public:
 	void SetLockOnCheck(bool _Value);
 	bool GetLockOnCheck();
 	void SetAttackType(FName _AttackType);
+	void ChangeCollisionAttackType();
+	void ChangeNoCollision();
 	void ArrowSpawn();
 	AArrow* GetReadyArrow();
-
+	UFUNCTION()
+	void AttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 	CharacterAnimState* GetAnimState();

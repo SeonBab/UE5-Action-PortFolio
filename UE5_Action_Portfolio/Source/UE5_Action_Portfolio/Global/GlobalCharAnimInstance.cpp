@@ -250,27 +250,8 @@ void UGlobalCharAnimInstance::AnimNotify_ChordToHand()
 	BowAnim->SetBowChordCheck(true);
 }
 
-void UGlobalCharAnimInstance::AnimNotify_BowFire()
-{
-}
-
 void UGlobalCharAnimInstance::AnimNotify_ReRoad()
 {
-	// 화살 생성
-	
-	//UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
-
-	//if (nullptr == Instance)
-	//{
-	//	return;
-	//}
-
-	//TSubclassOf<UObject> Arrow = Instance->GetSubClass(TEXT("Arrow"))
-
-	//StaticLoadObject();
-	//StaticLoadClass();
-	//UWorld::SpawnActor();
-
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
@@ -289,34 +270,17 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 	{
 		return;
 	}
-
-	// 액터가 가진 태그를 가져올 수 있나?
-	//FName* ActorType = character->Tags.;
-	//character->GetCurWeaponAction()->GetReadyArrow()->ChangeCollision();
 	
-	EWeaponType Weapon = character->GetCurWeaponAction()->GetWeaponType();
-	CharacterAnimState* AnimState = character->GetCurWeaponAction()->GetAnimState();
+	UWeaponAction* WeaponAc = character->GetCurWeaponAction();
 
-	if (EWeaponType::UnArmed == Weapon)
+	if (nullptr == WeaponAc)
 	{
-		
+		return;
 	}
-	else if (EWeaponType::Sword == Weapon)
-	{
-		if (CharacterAnimState::Attack == *AnimState)
-		{
 
-		}
-		else if (CharacterAnimState::AimOrBlock == *AnimState)
-		{
-			//가드는 충돌 변경 없이 불 변수 수정
-		}
-		else if (CharacterAnimState::ParryorFire == *AnimState)
-		{
+	EWeaponType WeaponT = WeaponAc->GetWeaponType();
 
-		}
-	}
-	else if (EWeaponType::Bow == Weapon)
+	if (EWeaponType::Bow == WeaponT)
 	{
 		UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
 
@@ -335,14 +299,32 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 			//CurArrow->FireInDirection();
 
 			// 콜리전 변경
-			//CurArrow->ChangeCollision();
+			character->GetCurWeaponAction()->ChangeCollisionAttackType();
 		}
 	}
-
+	else if (EWeaponType::Sword == WeaponT || EWeaponType::UnArmed == WeaponT)
+	{
+		character->GetCurWeaponAction()->ChangeCollisionAttackType();
+	}
 }
 
 void UGlobalCharAnimInstance::AnimNotify_EndAttack()
 {
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	UWeaponAction* WeaponAc = character->GetCurWeaponAction();
+
+	if (nullptr == WeaponAc)
+	{
+		return;
+	}
+
+	WeaponAc->ChangeNoCollision();
 }
 
 void UGlobalCharAnimInstance::NativeInitializeAnimation()

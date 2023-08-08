@@ -28,8 +28,6 @@ public:
 	UFUNCTION()
 	void AnimNotify_ChordToHand();
 	UFUNCTION()
-	void AnimNotify_BowFire();
-	UFUNCTION()
 	void AnimNotify_ReRoad();
 	UFUNCTION()
 	void AnimNotify_StartAttack();

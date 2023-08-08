@@ -13,11 +13,12 @@ AMainCharacter::AMainCharacter()
 
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
-	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 2));
+	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 1.5f));
 	MainCameraSpringArmComponent->bUsePawnControlRotation = true;
 	MainCameraSpringArmComponent->TargetArmLength = 450.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
+	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 90.f, 0.f));
 	BaseTurnRate = 30.f;
 	BaseLookUpRate = 30.f;
 
@@ -38,13 +39,18 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	// 캐릭터가 달리다가 멈췄나?
+	if (nullptr == GetCurWeaponAction())
+	{
+		return;
+	}
+
+	// 락온 타겟에 고정
 	if (true == CurWeaponAction->GetLockOnCheck())
 	{
 		LookAtTarget(_DeltaTime);
 	}
 
-	// 캐릭터가 달리다가 멈추고 일정 시간이 지났나?
+	// 캐릭터가 달리다가 멈추고 일정 시간이 지났는가
 	if (true == CurWeaponAction->LockOnAfterRun(_DeltaTime))
 	{
 		IsLookAtTartget = true;
@@ -66,6 +72,18 @@ void AMainCharacter::Tick(float _DeltaTime)
 			IsLookAtTartget = false;
 			bUseControllerRotationYaw = true;
 		}
+	}
+
+	EWeaponType CurWeponT = GetCurWeaponAction()->GetWeaponType();
+
+	// 조준시 카메라 확대
+	if (EWeaponType::Bow == CurWeponT && CharacterAnimState::AimOrBlock == *AnimState)
+	{
+		MainCameraComponent->FieldOfView = 40.f;
+	}
+	else
+	{
+		MainCameraComponent->FieldOfView = 90.f;
 	}
 }
 

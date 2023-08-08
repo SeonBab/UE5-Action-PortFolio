@@ -58,9 +58,9 @@ void AGlobalCharacter::BeginPlay()
 	BackSwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
 	BackShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
 
-	//BowWeaponMesh->SetAnimInstanceClass(BowAnimClass);
-
 	AnimState = CurWeaponAction->GetAnimState();
+
+	//UnArmedWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &UWeaponAction::AttackBeginOverlap);
 }
 
 void AGlobalCharacter::Tick(float _DeltaTime)
@@ -97,7 +97,6 @@ void AGlobalCharacter::BowChordMove()
 		if (nullptr != SkeletalMeshComponent)
 		{
 			FVector Vec = SkeletalMeshComponent->GetSocketLocation(TEXT("RightHandSoket"));
-			
 
 			BowAnim->SetHandTransform(Vec);
 		}

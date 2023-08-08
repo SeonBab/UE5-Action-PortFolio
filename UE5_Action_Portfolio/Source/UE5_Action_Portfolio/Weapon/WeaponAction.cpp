@@ -38,7 +38,15 @@ void UWeaponAction::Tick(float _DeltaTime)
 
 	if (nullptr != ReadyArrow)
 	{
-		FVector JointPos = Cast<AGlobalCharacter>(CurCharacter)->GetBowJointLocation();
+		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
+
+		if (nullptr == GlobalChar)
+		{
+			return;
+		}
+
+		FVector JointPos = GlobalChar->GetBowJointLocation();
+
 		ReadyArrow->ArrowReRoad(CurCharacter, JointPos, _DeltaTime);
 	}
 }
@@ -78,6 +86,67 @@ void UWeaponAction::SetAttackType(FName _AttackType)
 	AttackType = _AttackType;
 }
 
+void UWeaponAction::ChangeCollisionAttackType()
+{
+	AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
+
+	if (nullptr == GlobalChar)
+	{
+		return;
+	}
+
+	if (TEXT("") == AttackType)
+	{
+		return;
+	}
+
+	if (EWeaponType::UnArmed == WeaponType)
+	{
+		GlobalChar->UnArmedWeaponMesh->SetCollisionProfileName(AttackType, true);
+	}
+	else if (EWeaponType::Sword == WeaponType)
+	{
+		if (CharacterAnimState::Attack == AnimState || CharacterAnimState::ParryorFire == AnimState)
+		{
+			GlobalChar->SwordWeaponMesh->SetCollisionProfileName(AttackType, true);
+		}
+		else if (CharacterAnimState::AimOrBlock == AnimState)
+		{
+			//가드는 충돌 변경 없이 불 변수 수정
+		}
+	}
+	else if (EWeaponType::Bow == WeaponType)
+	{
+		if (nullptr == ReadyArrow)
+		{
+			return;
+		}
+
+		ReadyArrow->ArrowChangeCollision(AttackType);
+	}
+}
+
+void UWeaponAction::ChangeNoCollision()
+{
+	AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
+
+	if (EWeaponType::UnArmed == WeaponType)
+	{
+		GlobalChar->UnArmedWeaponMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
+	}
+	else if (EWeaponType::Sword == WeaponType)
+	{
+		if (CharacterAnimState::Attack == AnimState || CharacterAnimState::ParryorFire == AnimState)
+		{
+			GlobalChar->SwordWeaponMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
+		}
+		else if (CharacterAnimState::AimOrBlock == AnimState)
+		{
+			//가드는 충돌 변경 없이 불 변수 수정
+		}
+	}
+}
+
 void UWeaponAction::ArrowSpawn()
 {
 	FVector SpawnPos = CurCharacter->GetMesh()->GetSocketLocation(TEXT("RightHandSoket"));
@@ -99,6 +168,11 @@ void UWeaponAction::ArrowSpawn()
 AArrow* UWeaponAction::GetReadyArrow()
 {
 	return ReadyArrow;
+}
+
+void UWeaponAction::AttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//OtherActor->TakeDamage(10.f, );
 }
 
 CharacterAnimState* UWeaponAction::GetAnimState()
@@ -332,7 +406,12 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		case CharacterAnimState::LockOnIdle:
 		case CharacterAnimState::LockOnBackward:
 		case CharacterAnimState::LockOnForward:
-			if (-1.f == _Value)
+			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
+			if (true == LockOnCheck)
+			{
+				AnimState = CharacterAnimState::LockOnForward;
+			}
+			else if (-1.f == _Value)
 			{
 				AnimState = CharacterAnimState::LockOnBackward;
 			}
@@ -428,7 +507,12 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		case CharacterAnimState::LockOnIdle:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
-			if (-1.f == _Value)
+			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
+			if (true == LockOnCheck)
+			{
+				AnimState = CharacterAnimState::LockOnForward;
+			}
+			else if (-1.f == _Value)
 			{
 				AnimState = CharacterAnimState::LockOnLeft;
 			}
