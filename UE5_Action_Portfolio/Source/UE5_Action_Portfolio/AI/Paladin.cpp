@@ -1,12 +1,12 @@
 #include "AI/Paladin.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/Data/MonsterData.h"
+#include "Weapon/WeaponAction.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 APaladin::APaladin()
 {
-	Tags.Add(ActorType);
-	Tags.Add(AttackType);
+	Tags.Add(ActorTag);
 }
 
 void APaladin::BeginPlay()
@@ -35,6 +35,8 @@ void APaladin::BeginPlay()
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
 
 	this->bUseControllerRotationYaw = false;
+
+	GetCurWeaponAction()->SetAttackType(AttackType);
 }
 
 void APaladin::Tick(float _DeltaTime)

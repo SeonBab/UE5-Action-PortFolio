@@ -293,7 +293,7 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 	// 액터가 가진 태그를 가져올 수 있나?
 	//FName* ActorType = character->Tags.;
 	//character->GetCurWeaponAction()->GetReadyArrow()->ChangeCollision();
-
+	
 	EWeaponType Weapon = character->GetCurWeaponAction()->GetWeaponType();
 	CharacterAnimState* AnimState = character->GetCurWeaponAction()->GetAnimState();
 
@@ -330,7 +330,12 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 		if (nullptr != CurArrow)
 		{
 			CurArrow->SetIsLocationAndRotation(false);
-			CurArrow->FireInDirection();
+
+			// 발사 방향
+			//CurArrow->FireInDirection();
+
+			// 콜리전 변경
+			//CurArrow->ChangeCollision();
 		}
 	}
 

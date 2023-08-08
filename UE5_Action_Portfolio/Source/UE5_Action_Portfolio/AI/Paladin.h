@@ -22,6 +22,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName = "Paladin";
 
-	FName ActorType = TEXT("Monster");
+	FName ActorTag = TEXT("Monster");
 	FName AttackType = TEXT("PlayerAttack");
 };

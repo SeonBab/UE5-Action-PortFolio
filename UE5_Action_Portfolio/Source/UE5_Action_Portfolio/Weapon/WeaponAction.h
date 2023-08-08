@@ -24,6 +24,7 @@ public:
 	bool GetAttackCheck();
 	void SetLockOnCheck(bool _Value);
 	bool GetLockOnCheck();
+	void SetAttackType(FName _AttackType);
 	void ArrowSpawn();
 	AArrow* GetReadyArrow();
 
@@ -93,5 +94,5 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AArrow> ArrowClass;
 	AArrow* ReadyArrow = nullptr;
-
+	FName AttackType;
 };

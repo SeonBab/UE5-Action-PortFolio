@@ -48,7 +48,7 @@ public:
 	AActor* LockedOnTargetActor = nullptr;
 
 private:
-	FName ActorType = TEXT("Player");
+	FName ActorTag = TEXT("Player");
 	FName AttackType = TEXT("PlayerAttack");
 
 	bool IsLookAtTartget = false;

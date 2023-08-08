@@ -95,7 +95,7 @@ void AArrow::ChangeCollision(FName _FName)
 	ArrowSkeletalMesh->SetCollisionProfileName(_FName, true);
 }
 
-void AArrow::FireInDirection()
+void AArrow::FireInDirection(FVector _FVector)
 {
 	ProjectileMovement->SetUpdatedComponent(ArrowSkeletalMesh);
 	ProjectileMovement->InitialSpeed = 4000.f;

@@ -23,8 +23,7 @@ AMainCharacter::AMainCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	Tags.Add(ActorType);
-	Tags.Add(AttackType);
+	Tags.Add(ActorTag);
 }
 
 void AMainCharacter::BeginPlay()
@@ -32,6 +31,7 @@ void AMainCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	this->bUseControllerRotationYaw = false;
+	GetCurWeaponAction()->SetAttackType(AttackType);
 }
 
 void AMainCharacter::Tick(float _DeltaTime)

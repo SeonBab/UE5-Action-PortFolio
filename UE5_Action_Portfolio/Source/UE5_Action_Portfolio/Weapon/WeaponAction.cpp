@@ -73,6 +73,11 @@ bool UWeaponAction::GetLockOnCheck()
 	return IsLockOn;
 }
 
+void UWeaponAction::SetAttackType(FName _AttackType)
+{
+	AttackType = _AttackType;
+}
+
 void UWeaponAction::ArrowSpawn()
 {
 	FVector SpawnPos = CurCharacter->GetMesh()->GetSocketLocation(TEXT("RightHandSoket"));
