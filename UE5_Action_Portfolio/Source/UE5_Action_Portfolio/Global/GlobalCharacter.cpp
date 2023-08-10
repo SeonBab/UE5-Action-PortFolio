@@ -32,6 +32,11 @@ UWeaponAction* AGlobalCharacter::GetCurWeaponAction()
 	return CurWeaponAction;
 }
 
+void AGlobalCharacter::WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	
+}
+
 FVector AGlobalCharacter::GetBowJointLocation()
 {
 	FVector Pos = BowWeaponMesh->GetSocketLocation(TEXT("Bow_04_Joint"));
@@ -60,7 +65,9 @@ void AGlobalCharacter::BeginPlay()
 
 	AnimState = CurWeaponAction->GetAnimState();
 
-	//UnArmedWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &UWeaponAction::AttackBeginOverlap);
+	UnArmedWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AGlobalCharacter::WeaponBeginOverlap);
+	BowWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AGlobalCharacter::WeaponBeginOverlap);
+	SwordWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AGlobalCharacter::WeaponBeginOverlap);
 }
 
 void AGlobalCharacter::Tick(float _DeltaTime)
