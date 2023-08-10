@@ -2,12 +2,10 @@
 #include "Global/GlobalCharAnimInstance.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/GlobalCharacter.h"
-#include "Character/MainCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon/WeaponAction.h"
 #include "Weapon/BowAnimInstance.h"
 #include "Weapon/Arrow.h"
-#include "Camera/CameraComponent.h"
 
 void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
@@ -297,12 +295,20 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 		{
 			CurArrow->SetIsLocationAndRotation(false);
 
+			bool IsAim = WeaponAction->GetIsAimOn();
+
 			// 발사 방향
-			if (nullptr != character->GetController())
+			if (false == IsAim)
 			{
 				FVector ControllVector = character->GetController()->GetControlRotation().Vector();
 
 				CurArrow->FireInDirection(ControllVector);
+			}
+			else if (true == IsAim && nullptr != character->GetController())
+			{
+				FVector CharForwardVector = character->GetActorForwardVector();
+
+				CurArrow->FireInDirection(CharForwardVector);
 			}
 
 			// 콜리전 변경

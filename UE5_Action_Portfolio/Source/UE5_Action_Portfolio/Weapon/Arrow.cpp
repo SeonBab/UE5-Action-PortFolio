@@ -14,10 +14,10 @@ AArrow::AArrow()
 
 	ArrowSkeletalMesh->SetupAttachment(ArrowScene);
 	ArrowSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
-	ArrowSkeletalMesh->SetRelativeScale3D({ 1.3, 1.3, 1.3 });
+	ArrowSkeletalMesh->SetRelativeScale3D({ 2.f, 2.f, 1.5f });
 
 	ProjectileMovement->InitialSpeed = 0.f;
-	ProjectileMovement->MaxSpeed = 5000.f;
+	ProjectileMovement->MaxSpeed = 10000.f;
 	//ProjectileMovement->bRotationFollowsVelocity = true;
 
 	InitialLifeSpan = 0.f;
@@ -99,10 +99,7 @@ void AArrow::ArrowChangeCollision(FName _FName)
 void AArrow::FireInDirection(FVector _FVector)
 {
 	ProjectileMovement->SetUpdatedComponent(ArrowSkeletalMesh);
-	ProjectileMovement->InitialSpeed = 4000.f;
-
-	FVector ShotVector = GetActorForwardVector();
-	ShotVector.Z += 0.1f;
+	ProjectileMovement->InitialSpeed = 10000.f;
 
 	ProjectileMovement->Velocity = _FVector * ProjectileMovement->InitialSpeed;
 }

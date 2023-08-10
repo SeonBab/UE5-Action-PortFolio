@@ -17,8 +17,8 @@ AAICon::AAICon()
 	AISenseConfigSight->DetectionByAffiliation.bDetectEnemies = true;
 	AISenseConfigSight->DetectionByAffiliation.bDetectNeutrals = true;
 	AISenseConfigSight->DetectionByAffiliation.bDetectFriendlies = false;
-	AISenseConfigSight->SightRadius = 1500.f;
-	AISenseConfigSight->LoseSightRadius = 2000.f;
+	AISenseConfigSight->SightRadius = 2000.f;
+	AISenseConfigSight->LoseSightRadius = 3000.f;
 	AISenseConfigSight->PeripheralVisionAngleDegrees = 90.f;
 	AISenseConfigSight->SetMaxAge(5.f);
 

@@ -13,16 +13,17 @@ AMainCharacter::AMainCharacter()
 
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
-	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 2.f));
+	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 1.5f));
 	MainCameraSpringArmComponent->bUsePawnControlRotation = true;
-	MainCameraSpringArmComponent->TargetArmLength = 600.f;
+	MainCameraSpringArmComponent->TargetArmLength = 1000.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
 	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 90.f, 0.f));
 	BaseTurnRate = 30.f;
 	BaseLookUpRate = 30.f;
 
-	TimelineUpdateDelegate.BindUFunction(this, FName("AimZoomTimelineUpdate"));
+	FOVUpdateDelegate.BindUFunction(this, FName("AimZoomTimelineUpdate"));
+	ArmUpdateDelegate.BindUFunction(this, FName("ArmTimelineUpdate"));
 	TimelineFinishDelegate.BindUFunction(this, FName("AimZoomOnFinish"));
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -38,19 +39,20 @@ void AMainCharacter::BeginPlay()
 	GetCurWeaponAction()->SetAttackType(AttackType);
 
 	// 타임라인 설정
-	if (nullptr != AimZoomCurveFloat)
+	if (nullptr != FOVCurveFloat && nullptr != CameraSpringArmVector)
 	{
 		// 커브와 커브를 사용할 함수
-		ChangeFovFTimeline.AddInterpFloat(AimZoomCurveFloat, TimelineUpdateDelegate);
+		ChangeViewFTimeline.AddInterpFloat(FOVCurveFloat, FOVUpdateDelegate);
+		ChangeViewFTimeline.AddInterpVector(CameraSpringArmVector, ArmUpdateDelegate);
 
 		// 끝날 때 호출 할 함수
-		ChangeFovFTimeline.SetTimelineFinishedFunc(TimelineFinishDelegate);
+		ChangeViewFTimeline.SetTimelineFinishedFunc(TimelineFinishDelegate);
 
 		// 길이 설정
-		ChangeFovFTimeline.SetTimelineLength(AimZoomTimelineLength);
+		ChangeViewFTimeline.SetTimelineLength(AimZoomTimelineLength);
 
 		// 루프 끄기
-		ChangeFovFTimeline.SetLooping(false);
+		ChangeViewFTimeline.SetLooping(false);
 	}
 }
 
@@ -96,16 +98,22 @@ void AMainCharacter::Tick(float _DeltaTime)
 	EWeaponType CurWeponT = GetCurWeaponAction()->GetWeaponType();
 	bool IsAim = GetCurWeaponAction()->GetIsAimOn();
 
-	ChangeFovFTimeline.TickTimeline(_DeltaTime);
+	ChangeViewFTimeline.TickTimeline(_DeltaTime);
 
 	// 조준시 카메라 확대
 	if (EWeaponType::Bow == CurWeponT && true == IsAim)
 	{
-		ChangeFovFTimeline.Play();
+		ChangeViewFTimeline.Play();
+
+
+		this->bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
-	else
+	else if (EWeaponType::Bow == CurWeponT && false == IsAim && false == CurWeaponAction->GetLockOnCheck())
 	{
-		ChangeFovFTimeline.Reverse();
+		ChangeViewFTimeline.Reverse();
+		this->bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
 	}
 }
 
@@ -261,7 +269,7 @@ void AMainCharacter::LockOnTarget()
 			FVector EndPoint = Start + Direction;
 
 			bool IsHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), Start, EndPoint, 200.f, ObjectType, false, NotTargeting, EDrawDebugTrace::ForDuration, OutHit, true);
-
+			
 			if (true == IsHit && OutHit.Distance < TargetDistance)
 			{
 				TargetDistance = OutHit.Distance;
@@ -301,20 +309,15 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 	GetController()->SetControlRotation(LookAtActor);
 }
 
-UCameraComponent* AMainCharacter::GetCameraComponent()
-{
-	if (nullptr == MainCameraComponent)
-	{
-		return nullptr;
-	}
-
-	return MainCameraComponent;;
-}
-
 void AMainCharacter::AimZoomTimelineUpdate(float _Value)
 {
 	MainCameraComponent->FieldOfView = _Value;
+}
 
+void AMainCharacter::ArmTimelineUpdate(FVector _Value)
+{
+	// 조준시 높이가 낮아지게
+	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * _Value.Z));
 }
 
 void AMainCharacter::AimZoomOnFinish()

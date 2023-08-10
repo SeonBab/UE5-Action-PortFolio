@@ -32,7 +32,6 @@ public:
 	void AimorBlock(float _Value);
 	void LockOnTarget();
 	void LookAtTarget(float _DeltaTime);
-	UCameraComponent* GetCameraComponent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,6 +41,8 @@ protected:
 private:
 	UFUNCTION()
 	void AimZoomTimelineUpdate(float _Value);
+	UFUNCTION()
+	void ArmTimelineUpdate(FVector _Value);
 	UFUNCTION()
 	void AimZoomOnFinish();
 
@@ -55,7 +56,7 @@ public:
 	UCameraComponent* MainCameraComponent;
 	float BaseTurnRate;
 	float BaseLookUpRate;
-	float LockOnTargetRange = 1500.f;
+	float LockOnTargetRange = 2000.f;
 	AActor* LockedOnTargetActor = nullptr;
 
 private:
@@ -63,10 +64,13 @@ private:
 	FName AttackType = TEXT("PlayerAttack");
 	bool IsLookAtTartget = false;
 
-	FTimeline ChangeFovFTimeline;
+	FTimeline ChangeViewFTimeline;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UCurveFloat* AimZoomCurveFloat;
-	FOnTimelineFloat TimelineUpdateDelegate;
+	UCurveFloat* FOVCurveFloat;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UCurveVector* CameraSpringArmVector;
+	FOnTimelineFloat FOVUpdateDelegate;
+	FOnTimelineVector ArmUpdateDelegate;
 	FOnTimelineEvent TimelineFinishDelegate;
 	float AimZoomTimelineLength = 1.f;
 

@@ -18,6 +18,10 @@ AGlobalCharacter::AGlobalCharacter()
 	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSoket"));
 	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
 
+	UnArmedWeaponMesh->SetGenerateOverlapEvents(true);
+	BowWeaponMesh->SetGenerateOverlapEvents(true);
+	SwordWeaponMesh->SetGenerateOverlapEvents(true);
+
 	BackBowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackBowMesh"));
 	BackSwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackSwordMesh"));
 	BackShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackShiedlMesh"));
