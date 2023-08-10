@@ -1,11 +1,13 @@
-#include "Global/GlobalCharAnimInstance.h"
-#include "Global/GlobalCharacter.h"
-#include "Global/GlobalGameInstance.h"
 #include "Global/Data/AnimaitionData.h"
+#include "Global/GlobalCharAnimInstance.h"
+#include "Global/GlobalGameInstance.h"
+#include "Global/GlobalCharacter.h"
+#include "Character/MainCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon/WeaponAction.h"
 #include "Weapon/BowAnimInstance.h"
 #include "Weapon/Arrow.h"
+#include "Camera/CameraComponent.h"
 
 void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
@@ -271,14 +273,14 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 		return;
 	}
 	
-	UWeaponAction* WeaponAc = character->GetCurWeaponAction();
+	UWeaponAction* WeaponAction = character->GetCurWeaponAction();
 
-	if (nullptr == WeaponAc)
+	if (nullptr == WeaponAction)
 	{
 		return;
 	}
 
-	EWeaponType WeaponT = WeaponAc->GetWeaponType();
+	EWeaponType WeaponT = WeaponAction->GetWeaponType();
 
 	if (EWeaponType::Bow == WeaponT)
 	{
@@ -289,7 +291,7 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 			BowAnim->SetBowChordCheck(false);
 		}
 
-		AArrow* CurArrow = character->GetCurWeaponAction()->GetReadyArrow();
+		AArrow* CurArrow = WeaponAction->GetReadyArrow();
 
 		if (nullptr != CurArrow)
 		{

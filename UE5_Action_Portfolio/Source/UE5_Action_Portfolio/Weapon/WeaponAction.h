@@ -24,6 +24,7 @@ public:
 	bool GetAttackCheck();
 	void SetLockOnCheck(bool _Value);
 	bool GetLockOnCheck();
+	bool GetIsAimOn();
 	void SetAttackType(FName _AttackType);
 	void ChangeCollisionAttackType();
 	void ChangeNoCollision();
@@ -79,6 +80,7 @@ public:
 	bool IsWalkJump = false;
 	bool IsRunJump = false;
 	bool IsLockOn = false;
+	bool IsAimOn = false;
 	bool PressSpacebar = false;
 	bool AttackCheck = false;
 	bool ArrowReady = false;

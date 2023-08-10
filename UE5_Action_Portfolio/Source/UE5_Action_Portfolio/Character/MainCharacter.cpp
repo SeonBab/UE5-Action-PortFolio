@@ -13,14 +13,17 @@ AMainCharacter::AMainCharacter()
 
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
-	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 1.5f));
+	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 2.f));
 	MainCameraSpringArmComponent->bUsePawnControlRotation = true;
-	MainCameraSpringArmComponent->TargetArmLength = 450.f;
+	MainCameraSpringArmComponent->TargetArmLength = 600.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
 	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 90.f, 0.f));
 	BaseTurnRate = 30.f;
 	BaseLookUpRate = 30.f;
+
+	TimelineUpdateDelegate.BindUFunction(this, FName("AimZoomTimelineUpdate"));
+	TimelineFinishDelegate.BindUFunction(this, FName("AimZoomOnFinish"));
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -33,6 +36,22 @@ void AMainCharacter::BeginPlay()
 
 	this->bUseControllerRotationYaw = false;
 	GetCurWeaponAction()->SetAttackType(AttackType);
+
+	// 타임라인 설정
+	if (nullptr != AimZoomCurveFloat)
+	{
+		// 커브와 커브를 사용할 함수
+		ChangeFovFTimeline.AddInterpFloat(AimZoomCurveFloat, TimelineUpdateDelegate);
+
+		// 끝날 때 호출 할 함수
+		ChangeFovFTimeline.SetTimelineFinishedFunc(TimelineFinishDelegate);
+
+		// 길이 설정
+		ChangeFovFTimeline.SetTimelineLength(AimZoomTimelineLength);
+
+		// 루프 끄기
+		ChangeFovFTimeline.SetLooping(false);
+	}
 }
 
 void AMainCharacter::Tick(float _DeltaTime)
@@ -75,16 +94,19 @@ void AMainCharacter::Tick(float _DeltaTime)
 	}
 
 	EWeaponType CurWeponT = GetCurWeaponAction()->GetWeaponType();
+	bool IsAim = GetCurWeaponAction()->GetIsAimOn();
+
+	ChangeFovFTimeline.TickTimeline(_DeltaTime);
 
 	// 조준시 카메라 확대
-	//if (EWeaponType::Bow == CurWeponT && CharacterAnimState::AimOrBlock == *AnimState)
-	//{
-	//	MainCameraComponent->FieldOfView = 40.f;
-	//}
-	//else
-	//{
-	//	MainCameraComponent->FieldOfView = 90.f;
-	//}
+	if (EWeaponType::Bow == CurWeponT && true == IsAim)
+	{
+		ChangeFovFTimeline.Play();
+	}
+	else
+	{
+		ChangeFovFTimeline.Reverse();
+	}
 }
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent)
@@ -141,7 +163,6 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	_PlayerInputComponent->BindAction("QuickSlot3", EInputEvent::IE_Pressed, this, &AMainCharacter::ChangeSwordAndSheiled);
 
 }
-
 
 void AMainCharacter::ZoomIn()
 {
@@ -278,4 +299,25 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 	FRotator LookAtActor = FRotator(InterpRotation.Pitch, InterpRotation.Yaw, GetController()->GetControlRotation().Roll);
 
 	GetController()->SetControlRotation(LookAtActor);
+}
+
+UCameraComponent* AMainCharacter::GetCameraComponent()
+{
+	if (nullptr == MainCameraComponent)
+	{
+		return nullptr;
+	}
+
+	return MainCameraComponent;;
+}
+
+void AMainCharacter::AimZoomTimelineUpdate(float _Value)
+{
+	MainCameraComponent->FieldOfView = _Value;
+
+}
+
+void AMainCharacter::AimZoomOnFinish()
+{
+
 }

@@ -4,8 +4,11 @@
 #include "GameFramework/Character.h"
 #include "Global/Enums.h"
 #include "Global/GlobalCharacter.h"
+#include "Components/TimelineComponent.h"
 #include "MainCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AGlobalCharacter
@@ -29,19 +32,27 @@ public:
 	void AimorBlock(float _Value);
 	void LockOnTarget();
 	void LookAtTarget(float _DeltaTime);
+	UCameraComponent* GetCameraComponent();
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* _PlayerInputComponent) override;
 
+private:
+	UFUNCTION()
+	void AimZoomTimelineUpdate(float _Value);
+	UFUNCTION()
+	void AimZoomOnFinish();
+
+
 public:
 	// Ä«¸Þ¶ó
 	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class USpringArmComponent* MainCameraSpringArmComponent;
+	USpringArmComponent* MainCameraSpringArmComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UCameraComponent* MainCameraComponent;
+	UCameraComponent* MainCameraComponent;
 	float BaseTurnRate;
 	float BaseLookUpRate;
 	float LockOnTargetRange = 1500.f;
@@ -50,7 +61,13 @@ public:
 private:
 	FName ActorTag = TEXT("Player");
 	FName AttackType = TEXT("PlayerAttack");
-
 	bool IsLookAtTartget = false;
+
+	FTimeline ChangeFovFTimeline;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UCurveFloat* AimZoomCurveFloat;
+	FOnTimelineFloat TimelineUpdateDelegate;
+	FOnTimelineEvent TimelineFinishDelegate;
+	float AimZoomTimelineLength = 1.f;
 
 };

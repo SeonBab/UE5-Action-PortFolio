@@ -87,6 +87,11 @@ bool UWeaponAction::GetLockOnCheck()
 	return IsLockOn;
 }
 
+bool UWeaponAction::GetIsAimOn()
+{
+	return IsAimOn;
+}
+
 void UWeaponAction::SetAttackType(FName _AttackType)
 {
 	AttackType = _AttackType;
@@ -772,6 +777,8 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	// true일 땐 받는 데미지 감소
 	if (0 == _Value)
 	{
+		IsAimOn = false;
+
 		if (CharacterAnimState::AimOrBlock == AnimState)
 		{
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -781,30 +788,33 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 
 		if (EWeaponType::Bow == WeaponType && CharacterAnimState::Attack == AnimState)
 		{
+			// 쓸모 있나?
 			return;
 		}
 
 		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
 
-		if (nullptr == character && false == character->IsValidLowLevel())
+		UBowAnimInstance* BowAnim;
+
+		if (nullptr != character && false != character->IsValidLowLevel())
 		{
-			return;
+			BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
+		}
+		else
+		{
+			BowAnim = nullptr;
 		}
 
-		UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
-
-		if (nullptr == BowAnim)
+		if (nullptr != BowAnim)
 		{
-			return;
+			BowAnim->SetBowChordCheck(false);
 		}
 		
 		if (nullptr != ReadyArrow)
 		{
+			ArrowReady = false;
 			ReadyArrow->Destroy();
 		}
-
-		ArrowReady = false;
-		BowAnim->SetBowChordCheck(false);
 
 		return;
 	}
@@ -836,6 +846,7 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
 		AnimState = CharacterAnimState::AimOrBlock;
 
+		IsAimOn = true;
 		// 에임 방향으로 회전
 	}
 }
