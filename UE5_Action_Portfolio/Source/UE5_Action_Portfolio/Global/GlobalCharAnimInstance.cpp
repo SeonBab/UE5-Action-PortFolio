@@ -296,10 +296,17 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 			CurArrow->SetIsLocationAndRotation(false);
 
 			// 발사 방향
-			//CurArrow->FireInDirection();
+			if (nullptr != character->GetController())
+			{
+				FVector ControllVector = character->GetController()->GetControlRotation().Vector();
+
+				CurArrow->FireInDirection(ControllVector);
+			}
 
 			// 콜리전 변경
 			character->GetCurWeaponAction()->ChangeCollisionAttackType();
+
+			character->GetCurWeaponAction()->SetnullReadyArrow();
 		}
 	}
 	else if (EWeaponType::Sword == WeaponT || EWeaponType::UnArmed == WeaponT)

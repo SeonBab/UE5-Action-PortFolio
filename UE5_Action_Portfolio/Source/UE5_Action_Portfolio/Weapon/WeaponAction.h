@@ -29,9 +29,9 @@ public:
 	void ChangeNoCollision();
 	void ArrowSpawn();
 	AArrow* GetReadyArrow();
+	void SetnullReadyArrow();
 	UFUNCTION()
 	void AttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 	CharacterAnimState* GetAnimState();
 	void SetAnimState(CharacterAnimState _State);
@@ -56,6 +56,8 @@ public:
 	float GetMoveYValue();
 	UFUNCTION(BlueprintCallable)
 	bool GetIsLockOn();
+	UFUNCTION(BlueprintCallable)
+	bool GetIsMove();
 
 public:
 	// Ä³¸¯ÅÍ
@@ -96,6 +98,7 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AArrow> ArrowClass;
+	UPROPERTY()
 	AArrow* ReadyArrow = nullptr;
 	FName AttackType;
 };

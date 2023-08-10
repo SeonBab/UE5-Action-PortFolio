@@ -176,6 +176,11 @@ AArrow* UWeaponAction::GetReadyArrow()
 	return ReadyArrow;
 }
 
+void UWeaponAction::SetnullReadyArrow()
+{
+	ReadyArrow = nullptr;
+}
+
 void UWeaponAction::AttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//OtherActor->TakeDamage(10.f, );
@@ -672,6 +677,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		{
 			LockOnAfterRunTime = 0.f;
 			CurCharacter->bUseControllerRotationYaw = false;
+			CurCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 		}
 
 		AnimState = CharacterAnimState::Run;
@@ -791,14 +797,14 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		{
 			return;
 		}
-
-		ArrowReady = false;
-		BowAnim->SetBowChordCheck(false);
 		
 		if (nullptr != ReadyArrow)
 		{
 			ReadyArrow->Destroy();
 		}
+
+		ArrowReady = false;
+		BowAnim->SetBowChordCheck(false);
 
 		return;
 	}
@@ -829,6 +835,8 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	{
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
 		AnimState = CharacterAnimState::AimOrBlock;
+
+		// 에임 방향으로 회전
 	}
 }
 
@@ -845,4 +853,25 @@ float UWeaponAction::GetMoveYValue()
 bool UWeaponAction::GetIsLockOn()
 {
 	return IsLockOn;
+}
+
+bool UWeaponAction::GetIsMove()
+{
+	bool IsMove = false;
+
+	switch (AnimState)
+	{
+	case CharacterAnimState::LockOnIdle:
+	case CharacterAnimState::LockOnBackward:
+	case CharacterAnimState::LockOnForward:
+	case CharacterAnimState::LockOnLeft:
+	case CharacterAnimState::LockOnRight:
+		IsMove = true;
+		break;
+	default:
+		IsMove = false;
+		break;
+	}
+
+	return IsMove;
 }

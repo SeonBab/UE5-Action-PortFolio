@@ -162,7 +162,7 @@ void AMainCharacter::ZoomOut()
 void AMainCharacter::Attack()
 {
 	// 락온 중 다른 방향을 바라보며 공격 할 때 다시 락온 타겟 방향으로 회전 후 공격
-	if (false == GetCurWeaponAction()->LockOnAfterRun())
+	if (true == CurWeaponAction->GetLockOnCheck() && false == GetCurWeaponAction()->LockOnAfterRun())
 	{
 		IsLookAtTartget = true;
 	}
@@ -255,6 +255,7 @@ void AMainCharacter::LockOnTarget()
 
 			// 캐릭터가 몬스터에 시점이 고정됨
 			this->bUseControllerRotationYaw = true;
+			GetCharacterMovement()->bOrientRotationToMovement = false;
 		}
 	}
 	else if (true == CurWeaponAction->GetLockOnCheck())
@@ -264,6 +265,7 @@ void AMainCharacter::LockOnTarget()
 		
 		// 캐릭터의 시점 고정이 풀림
 		this->bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
 	}
 }
 

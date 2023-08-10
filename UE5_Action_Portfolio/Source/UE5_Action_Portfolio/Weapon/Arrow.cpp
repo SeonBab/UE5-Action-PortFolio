@@ -10,7 +10,7 @@ AArrow::AArrow()
 	ArrowSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ArrowMesh"));
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 
-	ArrowScene->SetupAttachment(RootComponent);
+	SetRootComponent(ArrowScene);
 
 	ArrowSkeletalMesh->SetupAttachment(ArrowScene);
 	ArrowSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
@@ -103,7 +103,7 @@ void AArrow::FireInDirection(FVector _FVector)
 	FVector ShotVector = GetActorForwardVector();
 	ShotVector.Z += 0.1f;
 
-	ProjectileMovement->Velocity = ShotVector * ProjectileMovement->InitialSpeed;
+	ProjectileMovement->Velocity = _FVector * ProjectileMovement->InitialSpeed;
 }
 
 void AArrow::BeginPlay()
