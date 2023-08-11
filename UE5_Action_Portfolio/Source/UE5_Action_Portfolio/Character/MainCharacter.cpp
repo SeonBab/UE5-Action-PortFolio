@@ -16,7 +16,7 @@ AMainCharacter::AMainCharacter()
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
 	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 1.5f));
 	MainCameraSpringArmComponent->bUsePawnControlRotation = true;
-	MainCameraSpringArmComponent->TargetArmLength = 1000.f;
+	MainCameraSpringArmComponent->TargetArmLength = 500.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
 	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 60.f, 0.f));
@@ -101,12 +101,12 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 	ChangeViewFTimeline.TickTimeline(_DeltaTime);
 
+		CameraLineTrace();
 	// 조준시 카메라 확대
 	if (EWeaponType::Bow == CurWeponT && true == IsAim)
 	{
 		ChangeViewFTimeline.Play();
 
-		CameraLineTrace();
 		this->bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
@@ -335,14 +335,13 @@ void AMainCharacter::CameraLineTrace()
 
 	FHitResult HitActor;
 
-	FVector StartLocationVector = GetActorLocation();
-	// Y는 원하는 위치가 아니다.
-	StartLocationVector.Y += MainCameraComponent->GetComponentLocation().Y;
-	// Z는 원하는 위치가 된다.
-	StartLocationVector.Z = MainCameraSpringArmComponent->GetComponentLocation().Z;
-	// End의 위치가 이상하다.
+	// 시작 지점은 카메라로부터 스프링암 만큼 앞으로 간다.
+	FVector StartLocationVector = MainCameraComponent->GetComponentTransform().GetTranslation();
+	StartLocationVector += MainCameraComponent->GetForwardVector() * MainCameraSpringArmComponent->TargetArmLength;
+
+	// 끝 지점은 카메라로부터 X값으로 직선이다.
 	FVector CameraForwardVector = MainCameraComponent->GetForwardVector();
-	FVector End = CameraForwardVector * 3000.f;
+	FVector End = StartLocationVector + (CameraForwardVector * 3000.f);
 
 	// 라인 트레이스 채널
 	// PlayerAttack이다.
@@ -355,6 +354,15 @@ void AMainCharacter::CameraLineTrace()
 
 	// 라인 트레이스 실행
 	GetWorld()->LineTraceSingleByChannel(HitActor, StartLocationVector, End, Channel, QueryParams);
+
+	if (nullptr == HitActor.GetActor())
+	{
+		// 끝 지점 벡터
+	}
+	else if (nullptr != HitActor.GetActor())
+	{
+		// 라인 트레이스가 충돌한 벡터
+	}
 
 	DrawDebugLine(GetWorld(), StartLocationVector, End, FColor::Red);
 }
