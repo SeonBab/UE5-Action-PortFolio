@@ -1,5 +1,5 @@
-#include "Global/Data/AnimaitionData.h"
 #include "Global/GlobalCharAnimInstance.h"
+#include "Global/Data/AnimaitionData.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/GlobalCharacter.h"
 #include "Components/SkeletalMeshComponent.h"

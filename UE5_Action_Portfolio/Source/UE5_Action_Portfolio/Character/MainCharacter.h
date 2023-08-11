@@ -45,6 +45,7 @@ private:
 	void ArmTimelineUpdate(FVector _Value);
 	UFUNCTION()
 	void AimZoomOnFinish();
+	void CameraLineTrace();
 
 
 public:

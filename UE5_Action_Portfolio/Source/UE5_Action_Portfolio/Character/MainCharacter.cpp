@@ -4,6 +4,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/WeaponAction.h"
+#include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -18,7 +19,7 @@ AMainCharacter::AMainCharacter()
 	MainCameraSpringArmComponent->TargetArmLength = 1000.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
-	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 90.f, 0.f));
+	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 60.f, 0.f));
 	BaseTurnRate = 30.f;
 	BaseLookUpRate = 30.f;
 
@@ -105,7 +106,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 	{
 		ChangeViewFTimeline.Play();
 
-
+		CameraLineTrace();
 		this->bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
@@ -323,4 +324,37 @@ void AMainCharacter::ArmTimelineUpdate(FVector _Value)
 void AMainCharacter::AimZoomOnFinish()
 {
 
+}
+
+void AMainCharacter::CameraLineTrace()
+{
+	if (nullptr == MainCameraSpringArmComponent || nullptr == MainCameraComponent)
+	{
+		return;
+	}
+
+	FHitResult HitActor;
+
+	FVector StartLocationVector = GetActorLocation();
+	// Y는 원하는 위치가 아니다.
+	StartLocationVector.Y += MainCameraComponent->GetComponentLocation().Y;
+	// Z는 원하는 위치가 된다.
+	StartLocationVector.Z = MainCameraSpringArmComponent->GetComponentLocation().Z;
+	// End의 위치가 이상하다.
+	FVector CameraForwardVector = MainCameraComponent->GetForwardVector();
+	FVector End = CameraForwardVector * 3000.f;
+
+	// 라인 트레이스 채널
+	// PlayerAttack이다.
+	ECollisionChannel Channel = ECollisionChannel::ECC_EngineTraceChannel2;
+
+	FCollisionQueryParams QueryParams;
+
+	// 라인 트레이스를 실행하는 메인 캐릭터를 무시한다.
+	QueryParams.AddIgnoredActor(this);
+
+	// 라인 트레이스 실행
+	GetWorld()->LineTraceSingleByChannel(HitActor, StartLocationVector, End, Channel, QueryParams);
+
+	DrawDebugLine(GetWorld(), StartLocationVector, End, FColor::Red);
 }
