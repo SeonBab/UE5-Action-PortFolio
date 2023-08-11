@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -10,6 +9,10 @@ UCLASS()
 class UE5_ACTION_PORTFOLIO_API AGameUIHUD : public AHUD
 {
 	GENERATED_BODY()
+
+public:
+	
+	UMainWidget* GetMainWidget();
 	
 protected:
 	void BeginPlay() override;

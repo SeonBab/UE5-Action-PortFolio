@@ -7,6 +7,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameUI/GameUIHUD.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -101,6 +102,14 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 	ChangeViewFTimeline.TickTimeline(_DeltaTime);
 
+	APlayerController* HUDController = Cast<APlayerController>(GetController());
+	AGameUIHUD* HUD = HUDController->GetHUD<AGameUIHUD>();
+
+	if (nullptr == HUD && false == HUD->IsValidLowLevel())
+	{
+		return;
+	}
+
 	// 조준시 카메라 확대
 	if (EWeaponType::Bow == CurWeponT && true == IsAim)
 	{
@@ -108,12 +117,16 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 		this->bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+
+		HUD->GetMainWidget()->SetCrosshairOnOff(true);
 	}
 	else if (EWeaponType::Bow == CurWeponT && false == IsAim && false == CurWeaponAction->GetIsLockOn())
 	{
 		ChangeViewFTimeline.Reverse();
 		this->bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
+
+		HUD->GetMainWidget()->SetCrosshairOnOff(false);
 	}
 }
 

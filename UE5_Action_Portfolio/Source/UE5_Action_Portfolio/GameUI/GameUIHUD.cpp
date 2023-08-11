@@ -1,4 +1,9 @@
-#include "UI/GameUIHUD.h"
+#include "GameUI/GameUIHUD.h"
+
+UMainWidget* AGameUIHUD::GetMainWidget()
+{
+	return MainWidget;
+}
 
 void AGameUIHUD::BeginPlay()
 {
