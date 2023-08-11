@@ -321,7 +321,7 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 	{
 		// 이렇게 if문 4개가 아닌 FVector로 할 수 있는가???
 		// 방향 돌리기
-		if (true == IsLockOn && false == LockOnCheck)
+		if ((true == IsLockOn && false == LockOnCheck) || (EWeaponType::Bow == WeaponType && CharacterAnimState::AimOrBlock == AnimState))
 		{
 			FRotator Rotation;
 			FVector Angle;
@@ -653,14 +653,17 @@ void UWeaponAction::RollorRunAction(float _Value)
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
 
-		if (true == IsLockOn)
+		if (CharacterAnimState::AimOrBlock != AnimState)
 		{
-			LockOnCheck = false;
-			AnimState = CharacterAnimState::LockOnIdle;
-		}
-		else if (false == IsLockOn)
-		{
-			AnimState = CharacterAnimState::Idle;
+			if (true == IsLockOn)
+			{
+				LockOnCheck = false;
+				AnimState = CharacterAnimState::LockOnIdle;
+			}
+			else if (false == IsLockOn)
+			{
+				AnimState = CharacterAnimState::Idle;
+			}
 		}
 
 		return;

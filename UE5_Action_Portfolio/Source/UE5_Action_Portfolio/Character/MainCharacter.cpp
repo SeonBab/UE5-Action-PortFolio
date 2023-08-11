@@ -342,7 +342,7 @@ FVector AMainCharacter::CameraLineTrace()
 
 	// 끝 지점은 카메라로부터 X값으로 직선이다.
 	FVector CameraForwardVector = MainCameraComponent->GetForwardVector();
-	FVector End = StartLocationVector + (CameraForwardVector * 3000.f);
+	FVector End = StartLocationVector + (CameraForwardVector * 2000.f);
 
 	// 라인 트레이스 채널
 	// PlayerAttack이다.

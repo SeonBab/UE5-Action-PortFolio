@@ -18,7 +18,7 @@ public:
 	void ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _DeltaTime);
 	void SetIsLocationAndRotation(bool _Value);
 	void ArrowChangeCollision(FName _FName);
-	void FireInDirection(FVector _FVector);
+	void FireInDirection(FVector _FVector, FRotator _FRotator);
 
 protected:
 	virtual void BeginPlay() override;
