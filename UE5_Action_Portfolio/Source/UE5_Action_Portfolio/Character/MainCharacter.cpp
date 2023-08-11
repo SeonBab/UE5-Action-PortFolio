@@ -67,7 +67,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 	}
 
 	// 락온 타겟에 고정
-	if (true == CurWeaponAction->GetLockOnCheck())
+	if (true == CurWeaponAction->GetIsLockOn())
 	{
 		LookAtTarget(_DeltaTime);
 	}
@@ -78,7 +78,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 		IsLookAtTartget = true;
 	}
 	// 멈추고 일정 시간이 지났으면 캐릭터를 다시 락온으로 회전시킨다
-	if (true == IsLookAtTartget)
+	if (true == IsLookAtTartget && nullptr != LockedOnTargetActor)
 	{
 		FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
 		FVector CurChar = GetActorLocation();
@@ -101,7 +101,6 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 	ChangeViewFTimeline.TickTimeline(_DeltaTime);
 
-		CameraLineTrace();
 	// 조준시 카메라 확대
 	if (EWeaponType::Bow == CurWeponT && true == IsAim)
 	{
@@ -110,7 +109,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 		this->bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
-	else if (EWeaponType::Bow == CurWeponT && false == IsAim && false == CurWeaponAction->GetLockOnCheck())
+	else if (EWeaponType::Bow == CurWeponT && false == IsAim && false == CurWeaponAction->GetIsLockOn())
 	{
 		ChangeViewFTimeline.Reverse();
 		this->bUseControllerRotationYaw = false;
@@ -192,7 +191,7 @@ void AMainCharacter::ZoomOut()
 void AMainCharacter::Attack()
 {
 	// 락온 중 다른 방향을 바라보며 공격 할 때 다시 락온 타겟 방향으로 회전 후 공격
-	if (true == CurWeaponAction->GetLockOnCheck() && false == GetCurWeaponAction()->LockOnAfterRun())
+	if (true == CurWeaponAction->GetIsLockOn() && false == GetCurWeaponAction()->LockOnAfterRun())
 	{
 		IsLookAtTartget = true;
 	}
@@ -243,14 +242,13 @@ void AMainCharacter::AimorBlock(float _Value)
 void AMainCharacter::LockOnTarget()
 {
 	// 플립/플롭
-	if (false == CurWeaponAction->GetLockOnCheck())
+	if (false == CurWeaponAction->GetIsLockOn())
 	{
 		FVector Start = GetActorLocation(); // 시작 지점
 		FVector End = GetActorForwardVector() * LockOnTargetRange; // 끝 지점
 		End = End.RotateAngleAxis(-50.f, FVector::UpVector); // 왼쪽 방향부터
 
 		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType; // 히트 가능한 오브젝트 유형
-		//ObjectTypeQuery3라고 해야하나?
 		ObjectType.Emplace(EObjectTypeQuery::ObjectTypeQuery3);
 		//TEnumAsByte<EObjectTypeQuery> WorldStatic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic);
 		//TEnumAsByte<EObjectTypeQuery> WorldDynamic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic);
@@ -280,7 +278,7 @@ void AMainCharacter::LockOnTarget()
 
 		if (nullptr != HitActor)
 		{
-			CurWeaponAction->SetLockOnCheck(true);
+			CurWeaponAction->SetIsLockOn(true);
 			LockedOnTargetActor = HitActor;
 
 			// 캐릭터가 몬스터에 시점이 고정됨
@@ -288,9 +286,9 @@ void AMainCharacter::LockOnTarget()
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 		}
 	}
-	else if (true == CurWeaponAction->GetLockOnCheck())
+	else if (true == CurWeaponAction->GetIsLockOn())
 	{
-		CurWeaponAction->SetLockOnCheck(false);
+		CurWeaponAction->SetIsLockOn(false);
 		LockedOnTargetActor = nullptr;
 		
 		// 캐릭터의 시점 고정이 풀림
@@ -312,12 +310,13 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 
 void AMainCharacter::AimZoomTimelineUpdate(float _Value)
 {
+	// FOV의 값이 작아진다
 	MainCameraComponent->FieldOfView = _Value;
 }
 
 void AMainCharacter::ArmTimelineUpdate(FVector _Value)
 {
-	// 조준시 높이가 낮아지게
+	// 조준시 카메라 높이가 살짝 낮아진다
 	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * _Value.Z));
 }
 
@@ -326,14 +325,16 @@ void AMainCharacter::AimZoomOnFinish()
 
 }
 
-void AMainCharacter::CameraLineTrace()
+FVector AMainCharacter::CameraLineTrace()
 {
+	FVector TargetVector = FVector::ZeroVector;
+
 	if (nullptr == MainCameraSpringArmComponent || nullptr == MainCameraComponent)
 	{
-		return;
+		return TargetVector;
 	}
 
-	FHitResult HitActor;
+	FHitResult HitRes;
 
 	// 시작 지점은 카메라로부터 스프링암 만큼 앞으로 간다.
 	FVector StartLocationVector = MainCameraComponent->GetComponentTransform().GetTranslation();
@@ -345,7 +346,7 @@ void AMainCharacter::CameraLineTrace()
 
 	// 라인 트레이스 채널
 	// PlayerAttack이다.
-	ECollisionChannel Channel = ECollisionChannel::ECC_EngineTraceChannel2;
+	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;
 
 	FCollisionQueryParams QueryParams;
 
@@ -353,16 +354,27 @@ void AMainCharacter::CameraLineTrace()
 	QueryParams.AddIgnoredActor(this);
 
 	// 라인 트레이스 실행
-	GetWorld()->LineTraceSingleByChannel(HitActor, StartLocationVector, End, Channel, QueryParams);
+	GetWorld()->LineTraceSingleByChannel(HitRes, StartLocationVector, End, Channel, QueryParams);
 
-	if (nullptr == HitActor.GetActor())
+	if (nullptr == HitRes.GetActor())
 	{
 		// 끝 지점 벡터
+		TargetVector = End;
 	}
-	else if (nullptr != HitActor.GetActor())
+	else if (nullptr != HitRes.GetActor())
 	{
 		// 라인 트레이스가 충돌한 벡터
+		TargetVector = HitRes.ImpactPoint;
 	}
 
 	DrawDebugLine(GetWorld(), StartLocationVector, End, FColor::Red);
+
+	// 화살이 날아갈 방향을 구한다
+	FVector Joint = GetBowJointLocation();
+	FVector ReturnVector = TargetVector - Joint;
+
+	// Normalize 해줘야한다.
+	ReturnVector.Normalize();
+
+	return ReturnVector;
 }

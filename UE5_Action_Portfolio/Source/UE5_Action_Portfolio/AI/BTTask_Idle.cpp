@@ -10,7 +10,7 @@ EBTNodeResult::Type UBTTask_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 	GetGlobalCharacter(OwnerComp)->bUseControllerRotationYaw = false;
 
 	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetUnArmed();
-	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetLockOnCheck(false);
+	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
 	return EBTNodeResult::InProgress;
 }
 

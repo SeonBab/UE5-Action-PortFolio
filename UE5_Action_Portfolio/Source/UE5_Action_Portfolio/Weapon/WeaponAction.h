@@ -22,8 +22,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetWeaponType();
 	bool GetAttackCheck();
-	void SetLockOnCheck(bool _Value);
-	bool GetLockOnCheck();
+	void SetIsLockOn(bool _Value);
 	bool GetIsAimOn();
 	void SetAttackType(FName _AttackType);
 	void ChangeCollisionAttackType();
@@ -59,6 +58,8 @@ public:
 	bool GetIsLockOn();
 	UFUNCTION(BlueprintCallable)
 	bool GetIsMove();
+	UFUNCTION(BlueprintCallable)
+	bool GetLockOnCheck();
 
 public:
 	// Ä³¸¯ÅÍ

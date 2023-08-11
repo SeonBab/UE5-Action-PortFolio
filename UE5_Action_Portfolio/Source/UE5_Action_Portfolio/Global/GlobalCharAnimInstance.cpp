@@ -6,6 +6,7 @@
 #include "Weapon/WeaponAction.h"
 #include "Weapon/BowAnimInstance.h"
 #include "Weapon/Arrow.h"
+#include "Character/MainCharacter.h"
 
 void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
@@ -300,15 +301,16 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 			// 발사 방향
 			if (false == IsAim)
 			{
-				FVector ControllVector = character->GetController()->GetControlRotation().Vector();
-
-				CurArrow->FireInDirection(ControllVector);
-			}
-			else if (true == IsAim && nullptr != character->GetController())
-			{
 				FVector CharForwardVector = character->GetActorForwardVector();
 
 				CurArrow->FireInDirection(CharForwardVector);
+			}
+			else if (true == IsAim && nullptr != character->GetController())
+			{
+				AMainCharacter* MainChar = Cast<AMainCharacter>(character);
+				FVector TraceTarget = MainChar->CameraLineTrace();;
+
+				CurArrow->FireInDirection(TraceTarget);
 			}
 
 			// 콜리전 변경

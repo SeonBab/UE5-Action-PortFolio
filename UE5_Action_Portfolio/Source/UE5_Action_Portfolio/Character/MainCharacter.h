@@ -32,6 +32,7 @@ public:
 	void AimorBlock(float _Value);
 	void LockOnTarget();
 	void LookAtTarget(float _DeltaTime);
+	FVector CameraLineTrace();
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,8 +46,6 @@ private:
 	void ArmTimelineUpdate(FVector _Value);
 	UFUNCTION()
 	void AimZoomOnFinish();
-	void CameraLineTrace();
-
 
 public:
 	// Ä«¸Þ¶ó

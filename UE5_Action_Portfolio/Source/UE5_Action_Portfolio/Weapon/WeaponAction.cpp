@@ -77,14 +77,9 @@ bool UWeaponAction::GetAttackCheck()
 	return AttackCheck;
 }
 
-void UWeaponAction::SetLockOnCheck(bool _Value)
+void UWeaponAction::SetIsLockOn(bool _Value)
 {
 	IsLockOn = _Value;
-}
-
-bool UWeaponAction::GetLockOnCheck()
-{
-	return IsLockOn;
 }
 
 bool UWeaponAction::GetIsAimOn()
@@ -326,7 +321,7 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 	{
 		// 이렇게 if문 4개가 아닌 FVector로 할 수 있는가???
 		// 방향 돌리기
-		if (true == IsLockOn)
+		if (true == IsLockOn && false == LockOnCheck)
 		{
 			FRotator Rotation;
 			FVector Angle;
@@ -360,6 +355,7 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
 
 		DeltaLocation.X = 600 * _DeltaTime;
+		DeltaLocation.Y = 0;
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
 	}
@@ -417,10 +413,13 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		case CharacterAnimState::LockOnIdle:
 		case CharacterAnimState::LockOnBackward:
 		case CharacterAnimState::LockOnForward:
+		case CharacterAnimState::LockOnLeft:
+		case CharacterAnimState::LockOnRight:
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			if (true == LockOnCheck)
 			{
 				AnimState = CharacterAnimState::LockOnForward;
+				LockOnAfterRunTime = 0.f;
 			}
 			else if (-1.f == _Value)
 			{
@@ -430,7 +429,6 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 			{
 				AnimState = CharacterAnimState::LockOnForward;
 			}
-			LockOnAfterRunTime = 0.f;
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
 		case CharacterAnimState::LockOnForwardRun:
@@ -516,12 +514,15 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		case CharacterAnimState::Run:
 			break;
 		case CharacterAnimState::LockOnIdle:
+		case CharacterAnimState::LockOnForward:
+		case CharacterAnimState::LockOnBackward:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			if (true == LockOnCheck)
 			{
 				AnimState = CharacterAnimState::LockOnForward;
+				LockOnAfterRunTime = 0.f;
 			}
 			else if (-1.f == _Value)
 			{
@@ -531,7 +532,6 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 			{
 				AnimState = CharacterAnimState::LockOnRight;
 			}
-			LockOnAfterRunTime = 0.f;
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
 		case CharacterAnimState::LockOnForwardRun:
@@ -655,7 +655,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 
 		if (true == IsLockOn)
 		{
-			LockOnCheck = true;
+			LockOnCheck = false;
 			AnimState = CharacterAnimState::LockOnIdle;
 		}
 		else if (false == IsLockOn)
@@ -885,4 +885,9 @@ bool UWeaponAction::GetIsMove()
 	}
 
 	return IsMove;
+}
+
+bool UWeaponAction::GetLockOnCheck()
+{
+	return LockOnCheck;
 }
