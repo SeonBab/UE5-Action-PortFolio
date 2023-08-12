@@ -113,10 +113,9 @@ void AMainCharacter::Tick(float _DeltaTime)
 	// 조준시 카메라 확대
 	if (EWeaponType::Bow == CurWeponT && true == IsAim)
 	{
-		ChangeViewFTimeline.Play();
+		CharTurnAim(_DeltaTime);
 
-		this->bUseControllerRotationYaw = true;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
+		ChangeViewFTimeline.Play();
 
 		HUD->GetMainWidget()->SetCrosshairOnOff(true);
 	}
@@ -293,10 +292,6 @@ void AMainCharacter::LockOnTarget()
 		{
 			CurWeaponAction->SetIsLockOn(true);
 			LockedOnTargetActor = HitActor;
-
-			// 캐릭터가 몬스터에 시점이 고정됨
-			this->bUseControllerRotationYaw = true;
-			GetCharacterMovement()->bOrientRotationToMovement = false;
 		}
 	}
 	else if (true == CurWeaponAction->GetIsLockOn())
@@ -319,6 +314,61 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 	FRotator LookAtActor = FRotator(InterpRotation.Pitch, InterpRotation.Yaw, GetController()->GetControlRotation().Roll);
 
 	GetController()->SetControlRotation(LookAtActor);
+
+	FVector CurPos = GetActorLocation();
+	CurPos.Z = 0;
+	LockOnLocation.Z = 0;
+
+	FVector Dir = LockOnLocation - CurPos;
+	Dir.Normalize();
+
+	FVector OtherForward = GetActorForwardVector();
+	OtherForward.Normalize();
+
+	float Angle0 = Dir.Rotation().Yaw;
+	float Angle1 = OtherForward.Rotation().Yaw;
+
+	if (10.f <= FMath::Abs(Angle0 - Angle1))
+	{
+		this->bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+
+}
+
+void AMainCharacter::CharTurnAim(float _DeltaTime)
+{
+
+	FVector CurPos = GetActorLocation();
+	FVector ControlPos = GetControlRotation().Vector();
+
+	CurPos.Z = 0;
+	ControlPos.Z = 0;
+
+	FVector Dir = ControlPos - CurPos;
+	Dir.Normalize();
+
+	FVector OtherForward = GetActorForwardVector();
+	OtherForward.Normalize();
+
+	FVector Cross = FVector::CrossProduct(OtherForward, Dir);
+
+	float Angle0 = Dir.Rotation().Yaw;
+	float Angle1 = OtherForward.Rotation().Yaw;
+
+	if (10.f <= FMath::Abs(Angle0 - Angle1))
+	{
+		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * _DeltaTime });
+		AddActorWorldRotation(Rot);
+	}
+	else
+	{
+		FRotator Rot = Dir.Rotation();
+		SetActorRotation(Rot);
+
+		this->bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
 }
 
 void AMainCharacter::AimZoomTimelineUpdate(float _Value)

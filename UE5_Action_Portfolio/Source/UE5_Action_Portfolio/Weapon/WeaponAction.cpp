@@ -415,6 +415,12 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		case CharacterAnimState::LockOnForward:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
+			if (false == IsLockOn)
+			{
+				AnimState = CharacterAnimState::Idle;
+				break;
+			}
+
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			if (true == LockOnCheck)
 			{
@@ -518,6 +524,12 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		case CharacterAnimState::LockOnBackward:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
+			if (false == IsLockOn)
+			{
+				AnimState = CharacterAnimState::Idle;
+				break;
+			}
+
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			if (true == LockOnCheck)
 			{
@@ -791,7 +803,6 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 
 		if (EWeaponType::Bow == WeaponType && CharacterAnimState::Attack == AnimState)
 		{
-			// 쓸모 있나?
 			return;
 		}
 
@@ -799,25 +810,30 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 
 		UBowAnimInstance* BowAnim;
 
-		if (nullptr != character && false != character->IsValidLowLevel())
+		if (nullptr == character && false == character->IsValidLowLevel())
 		{
-			BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
-		}
-		else
-		{
-			BowAnim = nullptr;
+			return;
 		}
 
-		if (nullptr != BowAnim)
+		// 활 장착을 해재 했을 때 Mesh가 널일 수 있으므로 널체크 추가하기
+		BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
+
+		if (nullptr == BowAnim)
 		{
-			BowAnim->SetBowChordCheck(false);
+			return;
 		}
 		
-		if (nullptr != ReadyArrow)
+		BowAnim->SetBowChordCheck(false);
+
+		if (nullptr == ReadyArrow)
 		{
-			ArrowReady = false;
-			ReadyArrow->Destroy();
+			return;
 		}
+
+		ArrowReady = false;
+		ReadyArrow->Destroy();
+
+		return;
 
 		return;
 	}

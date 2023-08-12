@@ -32,7 +32,9 @@ public:
 	void AimorBlock(float _Value);
 	void LockOnTarget();
 	void LookAtTarget(float _DeltaTime);
+	void CharTurnAim(float _DeltaTime);
 	FVector CameraLineTrace();
+
 
 protected:
 	virtual void BeginPlay() override;
