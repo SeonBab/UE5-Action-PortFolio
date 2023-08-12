@@ -18,7 +18,6 @@ AArrow::AArrow()
 
 	ProjectileMovement->InitialSpeed = 0.f;
 	ProjectileMovement->MaxSpeed = 10000.f;
-	//ProjectileMovement->bRotationFollowsVelocity = true;
 
 	InitialLifeSpan = 0.f;
 }
@@ -41,46 +40,6 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 
 		FVector Dir = _JointPos - SetPos;
 		Dir.Normalize();
-
-		//FVector ForVec = GetActorForwardVector();
-		//ForVec.Normalize();
-
-		//FVector Cross = FVector::CrossProduct(ForVec, Dir);
-		//
-		//float DirAngle = Dir.Rotation().Yaw;
-		//float ForVecAngle = ForVec.Rotation().Yaw;
-
-		//FRotator SetRot;
-
-		//if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
-		//{
-		//	FRotator AddRot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 800 * _DeltaTime });
-		//	AddActorWorldRotation(AddRot);
-		//}
-		//else
-		//{
-		//	SetRot.Yaw = Dir.Rotation().Yaw;
-		//}
-
-		//FVector ForVec = GetActorUpVector();
-		//ForVec.Normalize();
-
-		//FVector Cross = FVector::CrossProduct(ForVec, Dir);
-
-		//DirAngle = Dir.Rotation().Pitch;
-		//ForVecAngle = ForVec.Rotation().Pitch;
-
-		//if (10.f <= FMath::Abs(DirAngle - ForVecAngle))
-		//{
-		//	FRotator AddRot = FRotator::MakeFromEuler({ 0, Cross.Y * 800 * _DeltaTime, 0 });
-		//	AddActorWorldRotation(AddRot);
-		//}
-		//else
-		//{
-		//	SetRot.Pitch = Dir.Rotation().Pitch;
-		//}
-
-		//SetActorRotation(SetRot);
 
 		SetActorRotation(Dir.Rotation());
 	}

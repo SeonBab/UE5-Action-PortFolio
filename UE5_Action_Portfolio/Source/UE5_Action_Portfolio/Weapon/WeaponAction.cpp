@@ -405,6 +405,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		{
 		case CharacterAnimState::Idle:
 			AnimState = CharacterAnimState::Walk;
+			break;
 		case CharacterAnimState::Walk:
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 			break;
@@ -514,6 +515,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		{
 		case CharacterAnimState::Idle:
 			AnimState = CharacterAnimState::Walk;
+			break;
 		case CharacterAnimState::Walk:
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 			break;
@@ -866,7 +868,6 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		AnimState = CharacterAnimState::AimOrBlock;
 
 		IsAimOn = true;
-		// 에임 방향으로 회전
 	}
 }
 

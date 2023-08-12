@@ -338,34 +338,25 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 
 void AMainCharacter::CharTurnAim(float _DeltaTime)
 {
+	FRotator CurRot = GetActorRotation();
+	FRotator ControlRot = GetControlRotation();
 
-	FVector CurPos = GetActorLocation();
-	FVector ControlPos = GetControlRotation().Vector();
+	CurRot.Pitch = 0;
+	ControlRot.Pitch = 0;
 
-	CurPos.Z = 0;
-	ControlPos.Z = 0;
-
-	FVector Dir = ControlPos - CurPos;
+	FRotator Dir = ControlRot - CurRot;
 	Dir.Normalize();
 
-	FVector OtherForward = GetActorForwardVector();
-	OtherForward.Normalize();
-
-	FVector Cross = FVector::CrossProduct(OtherForward, Dir);
-
-	float Angle0 = Dir.Rotation().Yaw;
-	float Angle1 = OtherForward.Rotation().Yaw;
+	float Angle0 = Dir.Yaw;
+	float Angle1 = ControlRot.Yaw;
 
 	if (10.f <= FMath::Abs(Angle0 - Angle1))
 	{
-		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * _DeltaTime });
+		FRotator Rot = Dir * 5 * _DeltaTime;
 		AddActorWorldRotation(Rot);
 	}
 	else
 	{
-		FRotator Rot = Dir.Rotation();
-		SetActorRotation(Rot);
-
 		this->bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
