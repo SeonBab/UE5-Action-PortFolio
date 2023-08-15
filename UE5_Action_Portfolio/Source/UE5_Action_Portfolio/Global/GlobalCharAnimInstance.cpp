@@ -18,7 +18,8 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	}
 
 	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || 
-		AllAnimations[CharacterAnimState::Roll] == Anim || AllAnimations[CharacterAnimState::Attack] == Anim)
+		AllAnimations[CharacterAnimState::Roll] == Anim || AllAnimations[CharacterAnimState::Attack] == Anim ||
+		AllAnimations[CharacterAnimState::GotHit] == Anim)
 	{
 		if (false == character->CurWeaponAction->IsLockOn)
 		{
@@ -67,6 +68,35 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 			character->CurWeaponAction->ArrowReady = false;
 			character->CurWeaponAction->EarlyArrowCheck = false;
 		}
+	}
+	else if (AllAnimations[CharacterAnimState::AimOrBlockGotHit] == Anim)
+	{
+		if (EWeaponType::Sword == character->GetCurWeaponAction()->GetWeaponType())
+		{
+			Animstate = CharacterAnimState::AimOrBlock;
+
+			// 다시 블락
+			FName SectionName = "AimorBlock2";
+
+			UAnimMontage* Montage = AllAnimations[Animstate];
+
+			if (nullptr == Montage)
+			{
+				return;
+			}
+
+			Montage_JumpToSection(SectionName, Montage);
+		}
+		else if (false == character->CurWeaponAction->IsLockOn)
+		{
+			Animstate = CharacterAnimState::Idle;
+		}
+		else if (true == character->CurWeaponAction->IsLockOn)
+		{
+			Animstate = CharacterAnimState::LockOnIdle;
+		}
+
+		character->CurWeaponAction->SetAnimState(Animstate);
 	}
 }
 
@@ -326,7 +356,12 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 			character->GetCurWeaponAction()->SetnullReadyArrow();
 		}
 	}
-	else if (EWeaponType::Sword == WeaponT || EWeaponType::UnArmed == WeaponT)
+	else if (EWeaponType::Sword == WeaponT)
+	{
+		character->GetCurWeaponAction()->ChangeCollisionAttackType();
+		WeaponAction->SetIsBlock(true);
+	}
+	else if (EWeaponType::UnArmed == WeaponT)
 	{
 		character->GetCurWeaponAction()->ChangeCollisionAttackType();
 	}
@@ -349,6 +384,18 @@ void UGlobalCharAnimInstance::AnimNotify_EndAttack()
 	}
 
 	WeaponAc->ChangeNoCollision();
+}
+
+void UGlobalCharAnimInstance::AnimNotify_Death()
+{
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	character->Destroy();
 }
 
 void UGlobalCharAnimInstance::NativeInitializeAnimation()

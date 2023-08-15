@@ -30,7 +30,8 @@ AMainCharacter::AMainCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	Tags.Add(ActorTag);
+	SetActorTypeTag(TEXT("Player"));
+	SetAttackTypeTag(TEXT("PlayerAttack"));
 }
 
 void AMainCharacter::BeginPlay()
@@ -38,7 +39,6 @@ void AMainCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	this->bUseControllerRotationYaw = false;
-	GetCurWeaponAction()->SetAttackType(AttackType);
 
 	// 타임라인 설정
 	if (nullptr != FOVCurveFloat && nullptr != CameraSpringArmVector)
@@ -56,6 +56,8 @@ void AMainCharacter::BeginPlay()
 		// 루프 끄기
 		ChangeViewFTimeline.SetLooping(false);
 	}
+
+	SetHP(5000.f);
 }
 
 void AMainCharacter::Tick(float _DeltaTime)
@@ -94,6 +96,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 		{
 			IsLookAtTartget = false;
 			bUseControllerRotationYaw = true;
+			GetCharacterMovement()->bOrientRotationToMovement = false;
 		}
 	}
 
@@ -113,13 +116,13 @@ void AMainCharacter::Tick(float _DeltaTime)
 	// 조준시 카메라 확대
 	if (EWeaponType::Bow == CurWeponT && true == IsAim)
 	{
-		CharTurnAim(_DeltaTime);
-
 		ChangeViewFTimeline.Play();
+
+		CharTurnAim(_DeltaTime);
 
 		HUD->GetMainWidget()->SetCrosshairOnOff(true);
 	}
-	else if (EWeaponType::Bow == CurWeponT && false == IsAim && false == CurWeaponAction->GetIsLockOn())
+	else if (EWeaponType::Bow == CurWeponT && (false == IsAim && false == CurWeaponAction->GetIsLockOn()))
 	{
 		ChangeViewFTimeline.Reverse();
 		this->bUseControllerRotationYaw = false;
@@ -296,17 +299,17 @@ void AMainCharacter::LockOnTarget()
 	}
 	else if (true == CurWeaponAction->GetIsLockOn())
 	{
-		CurWeaponAction->SetIsLockOn(false);
-		LockedOnTargetActor = nullptr;
-		
-		// 캐릭터의 시점 고정이 풀림
-		this->bUseControllerRotationYaw = false;
-		GetCharacterMovement()->bOrientRotationToMovement = true;
+		LostLockedOnTargetActor();
 	}
 }
 
 void AMainCharacter::LookAtTarget(float _DeltaTime)
 {
+	if (nullptr == LockedOnTargetActor)
+	{
+		return;
+	}
+
 	FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
 	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LockOnLocation);
 	FRotator InterpRotation = UKismetMathLibrary::RInterpTo(GetController()->GetControlRotation(), LookAtRotation, _DeltaTime, 10.f);
@@ -315,30 +318,31 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 
 	GetController()->SetControlRotation(LookAtActor);
 
-	FVector CurPos = GetActorLocation();
-	CurPos.Z = 0;
-	LockOnLocation.Z = 0;
+	//FVector CurPos = GetActorLocation();
+	//CurPos.Z = 0;
+	//LockOnLocation.Z = 0;
 
-	FVector Dir = LockOnLocation - CurPos;
-	Dir.Normalize();
+	//FVector Dir = LockOnLocation - CurPos;
+	//Dir.Normalize();
 
-	FVector OtherForward = GetActorForwardVector();
-	OtherForward.Normalize();
+	//FVector OtherForward = GetActorForwardVector();
+	//OtherForward.Normalize();
 
-	float Angle0 = Dir.Rotation().Yaw;
-	float Angle1 = OtherForward.Rotation().Yaw;
+	//float Angle0 = Dir.Rotation().Yaw;
+	//float Angle1 = OtherForward.Rotation().Yaw;
 
-	if (10.f <= FMath::Abs(Angle0 - Angle1))
-	{
-		this->bUseControllerRotationYaw = true;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
-	}
+	//if (10.f <= FMath::Abs(Angle0 - Angle1))
+	//{
+	//	this->bUseControllerRotationYaw = true;
+	//	GetCharacterMovement()->bOrientRotationToMovement = false;
+	//}
 
 }
 
 void AMainCharacter::CharTurnAim(float _DeltaTime)
 {
-	FRotator CurRot = GetActorRotation();
+	// 이동 중 회전 문제가 있음
+	FRotator CurRot = GetTransform().Rotator();
 	FRotator ControlRot = GetControlRotation();
 
 	CurRot.Pitch = 0;
@@ -347,7 +351,10 @@ void AMainCharacter::CharTurnAim(float _DeltaTime)
 	FRotator Dir = ControlRot - CurRot;
 	Dir.Normalize();
 
-	float Angle0 = Dir.Yaw;
+	CurRot.Normalize();
+	ControlRot.Normalize();
+
+	float Angle0 = CurRot.Yaw;
 	float Angle1 = ControlRot.Yaw;
 
 	if (10.f <= FMath::Abs(Angle0 - Angle1))
@@ -431,4 +438,14 @@ FVector AMainCharacter::CameraLineTrace()
 	ReturnVector.Normalize();
 
 	return ReturnVector;
+}
+
+void AMainCharacter::LostLockedOnTargetActor()
+{
+	LockedOnTargetActor = nullptr;
+	IsLookAtTartget = false;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCurWeaponAction()->SetIsLockOn(false);
+	GetCurWeaponAction()->SetLockOnCheck(false);
 }

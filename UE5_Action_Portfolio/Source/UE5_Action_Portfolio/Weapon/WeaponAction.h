@@ -25,13 +25,13 @@ public:
 	void SetIsLockOn(bool _Value);
 	bool GetIsAimOn();
 	void SetAttackType(FName _AttackType);
+	void SetIsBlock(bool _Value);
+	bool GetIsBlock();
 	void ChangeCollisionAttackType();
 	void ChangeNoCollision();
 	void ArrowSpawn();
 	AArrow* GetReadyArrow();
 	void SetnullReadyArrow();
-	UFUNCTION()
-	void AttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	CharacterAnimState* GetAnimState();
 	void SetAnimState(CharacterAnimState _State);
@@ -60,6 +60,10 @@ public:
 	bool GetIsMove();
 	UFUNCTION(BlueprintCallable)
 	bool GetLockOnCheck();
+	void SetLockOnCheck(bool _Value);
+
+	void GotHit();
+	void Death();
 
 public:
 	// Ä³¸¯ÅÍ
@@ -82,6 +86,7 @@ public:
 	bool IsRunJump = false;
 	bool IsLockOn = false;
 	bool IsAimOn = false;
+	bool IsBlock = false;
 	bool PressSpacebar = false;
 	bool AttackCheck = false;
 	bool ArrowReady = false;

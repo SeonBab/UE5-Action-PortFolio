@@ -34,6 +34,7 @@ public:
 	void LookAtTarget(float _DeltaTime);
 	void CharTurnAim(float _DeltaTime);
 	FVector CameraLineTrace();
+	void LostLockedOnTargetActor();
 
 
 protected:
@@ -51,7 +52,6 @@ private:
 
 public:
 	// Ä«¸Þ¶ó
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USpringArmComponent* MainCameraSpringArmComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -62,8 +62,6 @@ public:
 	AActor* LockedOnTargetActor = nullptr;
 
 private:
-	FName ActorTag = TEXT("Player");
-	FName AttackType = TEXT("PlayerAttack");
 	bool IsLookAtTartget = false;
 
 	FTimeline ChangeViewFTimeline;

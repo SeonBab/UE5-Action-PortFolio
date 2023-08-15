@@ -1,6 +1,8 @@
 #include "Weapon/Arrow.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/GlobalCharacter.h"
+#include "Global/Data/WeaponData.h"
+#include "Engine/DamageEvents.h"
 
 AArrow::AArrow()
 {
@@ -19,13 +21,27 @@ AArrow::AArrow()
 	ProjectileMovement->InitialSpeed = 0.f;
 	ProjectileMovement->MaxSpeed = 10000.f;
 
-	InitialLifeSpan = 0.f;
+	InitialLifeSpan = 5.f;
 }
 
 void AArrow::ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// 공격 충돌 처리
-	//OtherActor->TakeDamage(10.f, );
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Instance)
+	{
+		return;
+	}
+
+	FWeaponData* WeaponData = Instance->GetWeaponData(TEXT("Arrow"));
+
+	float CurWeaponDamage = WeaponData->Damage;
+	FPointDamageEvent DamageEvent;
+	//DamageEvent.HitInfo = ;
+
+	// 몬스터도 사용하고 플레이어도 사용하는데 컨트롤러를 어떻게 넘겨줘야 할까?
+	//OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, GetController(), this);
 
 	Destroy();
 }

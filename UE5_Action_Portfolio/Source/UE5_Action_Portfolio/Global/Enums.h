@@ -31,10 +31,11 @@ enum class CharacterAnimState : uint8
 	LockOnForward,
 	LockOnForwardRun,
 	LockOnLeft,
-	LockOnLeftRun,
 	LockOnRight,
-	LockOnRightRun,
 	Attack,
 	AimOrBlock,
 	ParryorFire,
+	GotHit,
+	AimOrBlockGotHit,
+	Death,
 };

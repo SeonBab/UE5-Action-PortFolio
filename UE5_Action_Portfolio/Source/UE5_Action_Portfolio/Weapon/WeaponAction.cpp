@@ -92,6 +92,16 @@ void UWeaponAction::SetAttackType(FName _AttackType)
 	AttackType = _AttackType;
 }
 
+void UWeaponAction::SetIsBlock(bool _Value)
+{
+	IsBlock = _Value;
+}
+
+bool UWeaponAction::GetIsBlock()
+{
+	return IsBlock;
+}
+
 void UWeaponAction::ChangeCollisionAttackType()
 {
 	AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
@@ -179,11 +189,6 @@ AArrow* UWeaponAction::GetReadyArrow()
 void UWeaponAction::SetnullReadyArrow()
 {
 	ReadyArrow = nullptr;
-}
-
-void UWeaponAction::AttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//OtherActor->TakeDamage(10.f, );
 }
 
 CharacterAnimState* UWeaponAction::GetAnimState()
@@ -370,6 +375,13 @@ bool UWeaponAction::LockOnAfterRun()
 
 		return true;
 	}
+	else if (CharacterAnimState::Attack == AnimState)
+	{
+		LockOnCheck = false;
+		LockOnAfterRunTime = 0.f;
+
+		return true;
+	}
 
 	return false;
 }
@@ -385,6 +397,9 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
 	case CharacterAnimState::ParryorFire:
+	case CharacterAnimState::GotHit:
+	case CharacterAnimState::AimOrBlockGotHit:
+	case CharacterAnimState::Death:
 	MoveXValue = 0;
 		return;
 		break;
@@ -495,6 +510,9 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
 	case CharacterAnimState::ParryorFire:
+	case CharacterAnimState::GotHit:
+	case CharacterAnimState::AimOrBlockGotHit:
+	case CharacterAnimState::Death:
 	MoveYValue = 0;
 		return;
 		break;
@@ -622,6 +640,9 @@ void UWeaponAction::RollorRunAction(float _Value)
 			case CharacterAnimState::EquipOrDisArmSwordAndShield:
 			case CharacterAnimState::Attack:
 			case CharacterAnimState::ParryorFire:
+			case CharacterAnimState::GotHit:
+			case CharacterAnimState::AimOrBlockGotHit:
+			case CharacterAnimState::Death:
 				PressSpacebarTime = 0;
 				PressSpacebar = false;
 				return;
@@ -646,6 +667,9 @@ void UWeaponAction::RollorRunAction(float _Value)
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
 	case CharacterAnimState::ParryorFire:
+	case CharacterAnimState::GotHit:
+	case CharacterAnimState::AimOrBlockGotHit:
+	case CharacterAnimState::Death:
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
 		return;
@@ -720,6 +744,9 @@ void UWeaponAction::ShiftButtonAction()
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
 	case CharacterAnimState::ParryorFire:
+	case CharacterAnimState::GotHit:
+	case CharacterAnimState::AimOrBlockGotHit:
+	case CharacterAnimState::Death:
 		return;
 		break;
 	}
@@ -738,11 +765,17 @@ void UWeaponAction::ShiftButtonAction()
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 
+	if (true == LockOnCheck)
+	{
+		LockOnAfterRunTime = 0.f;
+	}
+
 	CurCharacter->GetCharacterMovement()->AirControl = 0.3f;
 }
 
 void UWeaponAction::AttackAction()
 {
+	// 공격 하면 안되는 상태
 	switch (AnimState)
 	{
 	case CharacterAnimState::Roll:
@@ -751,6 +784,9 @@ void UWeaponAction::AttackAction()
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::ParryorFire:
+	case CharacterAnimState::GotHit:
+	case CharacterAnimState::AimOrBlockGotHit:
+	case CharacterAnimState::Death:
 		return;
 		break;
 	}
@@ -796,6 +832,8 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	{
 		IsAimOn = false;
 
+		IsBlock = false;
+
 		if (CharacterAnimState::AimOrBlock == AnimState)
 		{
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -817,8 +855,14 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 			return;
 		}
 
-		// 활 장착을 해재 했을 때 Mesh가 널일 수 있으므로 널체크 추가하기
-		BowAnim = Cast<UBowAnimInstance>(character->BowWeaponMesh->GetAnimInstance());
+		USkeletalMeshComponent* BowMesh = character->BowWeaponMesh;
+
+		if (nullptr == BowMesh)
+		{
+			return;
+		}
+
+		BowAnim = Cast<UBowAnimInstance>(BowMesh->GetAnimInstance());
 
 		if (nullptr == BowAnim)
 		{
@@ -836,8 +880,6 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		ReadyArrow->Destroy();
 
 		return;
-
-		return;
 	}
 
 	switch (AnimState)
@@ -850,6 +892,9 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
 	case CharacterAnimState::ParryorFire:
+	case CharacterAnimState::GotHit:
+	case CharacterAnimState::AimOrBlockGotHit:
+	case CharacterAnimState::Death:
 		return;
 		break;
 	}
@@ -910,4 +955,79 @@ bool UWeaponAction::GetIsMove()
 bool UWeaponAction::GetLockOnCheck()
 {
 	return LockOnCheck;
+}
+
+void UWeaponAction::SetLockOnCheck(bool _Value)
+{
+	LockOnCheck = _Value;
+}
+
+void UWeaponAction::GotHit()
+{
+	//UMaterialInterface* CurMaterial = CurCharacter->GetMesh()->GetMaterial(0);
+
+	switch (AnimState)
+	{
+	case CharacterAnimState::Idle:
+	case CharacterAnimState::Walk:
+	case CharacterAnimState::LockOnIdle:
+	case CharacterAnimState::LockOnBackward:
+	case CharacterAnimState::LockOnForward:
+	case CharacterAnimState::LockOnLeft:
+	case CharacterAnimState::LockOnRight:
+		AnimState = CharacterAnimState::GotHit;
+
+		break;
+	case CharacterAnimState::AimOrBlock:
+		if (EWeaponType::Bow == WeaponType)
+		{
+			AnimState = CharacterAnimState::AimOrBlockGotHit;
+
+			AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
+
+			UBowAnimInstance* BowAnim;
+
+			if (nullptr == character && false == character->IsValidLowLevel())
+			{
+				return;
+			}
+
+			USkeletalMeshComponent* BowMesh = character->BowWeaponMesh;
+
+			if (nullptr == BowMesh)
+			{
+				return;
+			}
+
+			BowAnim = Cast<UBowAnimInstance>(BowMesh->GetAnimInstance());
+
+			if (nullptr == BowAnim)
+			{
+				return;
+			}
+
+			BowAnim->SetBowChordCheck(false);
+
+			if (nullptr == ReadyArrow)
+			{
+				return;
+			}
+
+			ArrowReady = false;
+			ReadyArrow->Destroy();
+		}
+		else if (EWeaponType::Sword == WeaponType)
+		{
+			AnimState = CharacterAnimState::AimOrBlockGotHit;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void UWeaponAction::Death()
+{
+		AnimState = CharacterAnimState::Death;
+
 }

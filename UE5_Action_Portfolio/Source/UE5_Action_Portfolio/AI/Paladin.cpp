@@ -6,7 +6,8 @@
 
 APaladin::APaladin()
 {
-	Tags.Add(ActorTag);
+	SetActorTypeTag(TEXT("Monster"));
+	SetAttackTypeTag(TEXT("MonsterAttack"));
 }
 
 void APaladin::BeginPlay()
@@ -26,17 +27,16 @@ void APaladin::BeginPlay()
 	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("PatrolRange"), 800.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), 100.f);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), 150.f);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("PatrolCount"), 0);
 	GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
 	GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPos"), GetActorLocation());
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), false);
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), false);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
+	//GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
+	SetHP(CurMonsterData->HP);
 
 	this->bUseControllerRotationYaw = false;
-
-	GetCurWeaponAction()->SetAttackType(AttackType);
 }
 
 void APaladin::Tick(float _DeltaTime)

@@ -21,7 +21,4 @@ private:
 	const struct FMonsterData* CurMonsterData;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName = "Paladin";
-
-	FName ActorTag = TEXT("Monster");
-	FName AttackType = TEXT("PlayerAttack");
 };

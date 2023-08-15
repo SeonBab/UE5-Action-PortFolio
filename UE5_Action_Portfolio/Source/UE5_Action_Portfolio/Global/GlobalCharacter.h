@@ -17,11 +17,18 @@ public:
 	UFUNCTION()
 	void WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	FVector GetBowJointLocation();
+	void SetActorTypeTag(FName _Tag);
+	void SetAttackTypeTag(FName _Tag);
+	FName GetAttackTypeTag();
+	void SetHP(float _HP);
+	float GetHP();
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* _PlayerInputComponent) override;
+	UFUNCTION()
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 private:
 	void BowChordMove();
@@ -53,4 +60,9 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	USkeletalMeshComponent* BackShieldWeaponMesh;
+
+private:
+	FName ActorTypeTag;
+	FName AttackTypeTag;
+	float HP;
 };

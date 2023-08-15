@@ -99,7 +99,7 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 			{
 				GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(-1);
 			}
-			else if (1050.f <= Dis.Size())
+			else if (1500.f <= Dis.Size())
 			{
 				GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 			}
