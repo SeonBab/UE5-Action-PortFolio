@@ -189,15 +189,20 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 			HP -= FinalDamage;
 		}
 		
-		if (0.f <= HP)
+		if (0.f < HP)
 		{
 			GetCurWeaponAction()->GotHit();
 		}
 		else if (0.f >= HP)
 		{
+			// 죽고 난 후 락온이 풀리지만 다시 걸리지 않게 해줘야한다.
+			// 지금은 락온이 시체에 다시 걸림
 			GetCurWeaponAction()->Death();
 
-			
+			if (nullptr == EventInstigator)
+			{
+				return FinalDamage;
+			}
 
 			bool PlayerCheck = EventInstigator->GetPawn()->ActorHasTag("Player");
 			

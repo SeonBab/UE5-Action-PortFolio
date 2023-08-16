@@ -38,10 +38,9 @@ void AArrow::ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 
 	float CurWeaponDamage = WeaponData->Damage;
 	FPointDamageEvent DamageEvent;
-	//DamageEvent.HitInfo = ;
 
 	// 몬스터도 사용하고 플레이어도 사용하는데 컨트롤러를 어떻게 넘겨줘야 할까?
-	//OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, GetController(), this);
+	OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, CurController, this);
 
 	Destroy();
 }
@@ -71,13 +70,22 @@ void AArrow::ArrowChangeCollision(FName _FName)
 	ArrowSkeletalMesh->SetCollisionProfileName(_FName, true);
 }
 
-void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator)
+void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator, AController* _Controller)
 {
 	ProjectileMovement->SetUpdatedComponent(ArrowSkeletalMesh);
 	ProjectileMovement->InitialSpeed = 10000.f;
 
 	SetActorRotation(_FRotator);
 	ProjectileMovement->Velocity = _FVector * ProjectileMovement->InitialSpeed;
+
+	ArrowSkeletalMesh->SetGenerateOverlapEvents(true);
+
+	if (nullptr == _Controller)
+	{
+		return;
+	}
+
+	CurController = _Controller;
 }
 
 void AArrow::BeginPlay()

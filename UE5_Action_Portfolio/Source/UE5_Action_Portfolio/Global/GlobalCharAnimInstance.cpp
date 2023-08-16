@@ -335,19 +335,26 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 
 			FRotator ArrowRotationValue = character->GetControlRotation();
 
+			AController* CharController = character->GetController();
+
+			if (nullptr == CharController)
+			{
+				return;
+			}
+
 			// 발사 방향
 			if (false == IsAim)
 			{
 				FVector CharForwardVector = character->GetActorForwardVector();
 
-				CurArrow->FireInDirection(CharForwardVector, ArrowRotationValue);
+				CurArrow->FireInDirection(CharForwardVector, ArrowRotationValue, CharController);
 			}
 			else if (true == IsAim && nullptr != character->GetController())
 			{
 				AMainCharacter* MainChar = Cast<AMainCharacter>(character);
 				FVector TraceTarget = MainChar->CameraLineTrace();
 
-				CurArrow->FireInDirection(TraceTarget, ArrowRotationValue);
+				CurArrow->FireInDirection(TraceTarget, ArrowRotationValue, CharController);
 			}
 
 			// 콜리전 변경

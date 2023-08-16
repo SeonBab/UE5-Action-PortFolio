@@ -18,7 +18,7 @@ public:
 	void ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _DeltaTime);
 	void SetIsLocationAndRotation(bool _Value);
 	void ArrowChangeCollision(FName _FName);
-	void FireInDirection(FVector _FVector, FRotator _FRotator);
+	void FireInDirection(FVector _FVector, FRotator _FRotator, AController* _Controller);
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,5 +35,5 @@ private:
 	class UProjectileMovementComponent* ProjectileMovement;
 
 	bool IsLocationAndRotation = true;
-
+	AController* CurController = nullptr;
 };

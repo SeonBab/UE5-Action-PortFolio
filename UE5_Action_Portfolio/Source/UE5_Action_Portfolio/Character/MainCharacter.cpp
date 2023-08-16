@@ -70,10 +70,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 	}
 
 	// 락온 타겟에 고정
-	if (true == CurWeaponAction->GetIsLockOn())
-	{
-		LookAtTarget(_DeltaTime);
-	}
+	LookAtTarget(_DeltaTime);
 
 	// 캐릭터가 달리다가 멈췄다면 일정 시간이 지났는가
 	if (true == CurWeaponAction->LockOnAfterRun())
@@ -264,7 +261,7 @@ void AMainCharacter::LockOnTarget()
 		End = End.RotateAngleAxis(-50.f, FVector::UpVector); // 왼쪽 방향부터
 
 		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType; // 히트 가능한 오브젝트 유형
-		ObjectType.Emplace(EObjectTypeQuery::ObjectTypeQuery3);
+		ObjectType.Emplace(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
 		//TEnumAsByte<EObjectTypeQuery> WorldStatic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic);
 		//TEnumAsByte<EObjectTypeQuery> WorldDynamic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic);
 		//ObjectTypes.Add(WorldStatic);
@@ -305,7 +302,18 @@ void AMainCharacter::LockOnTarget()
 
 void AMainCharacter::LookAtTarget(float _DeltaTime)
 {
+	// 달리고 난 후에 실행되지 않게 해야된다.
 	if (nullptr == LockedOnTargetActor)
+	{
+		return;
+	}
+
+	if (nullptr == GetCurWeaponAction())
+	{
+		return;
+	}
+
+	if (false == GetCurWeaponAction()->GetIsLockOn())
 	{
 		return;
 	}
@@ -318,24 +326,24 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 
 	GetController()->SetControlRotation(LookAtActor);
 
-	//FVector CurPos = GetActorLocation();
-	//CurPos.Z = 0;
-	//LockOnLocation.Z = 0;
+	FVector CurPos = GetActorLocation();
+	CurPos.Z = 0;
+	LockOnLocation.Z = 0;
 
-	//FVector Dir = LockOnLocation - CurPos;
-	//Dir.Normalize();
+	FVector Dir = LockOnLocation - CurPos;
+	Dir.Normalize();
 
-	//FVector OtherForward = GetActorForwardVector();
-	//OtherForward.Normalize();
+	FVector OtherForward = GetActorForwardVector();
+	OtherForward.Normalize();
 
-	//float Angle0 = Dir.Rotation().Yaw;
-	//float Angle1 = OtherForward.Rotation().Yaw;
+	float Angle0 = Dir.Rotation().Yaw;
+	float Angle1 = OtherForward.Rotation().Yaw;
 
-	//if (10.f <= FMath::Abs(Angle0 - Angle1))
-	//{
-	//	this->bUseControllerRotationYaw = true;
-	//	GetCharacterMovement()->bOrientRotationToMovement = false;
-	//}
+	if (10.f <= FMath::Abs(Angle0 - Angle1))
+	{
+		this->bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
 
 }
 
