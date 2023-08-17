@@ -62,7 +62,7 @@ public:
 	bool GetLockOnCheck();
 	void SetLockOnCheck(bool _Value);
 
-	void GotHit();
+	void GotHit(FVector _Value);
 	void Death();
 
 public:

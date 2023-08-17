@@ -18,6 +18,7 @@ public:
 	void WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	FVector GetBowJointLocation();
 	void SetActorTypeTag(FName _Tag);
+	FName GetActorTypeTag();
 	void SetAttackTypeTag(FName _Tag);
 	FName GetAttackTypeTag();
 	void SetHP(float _HP);

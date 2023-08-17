@@ -846,6 +846,11 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 			return;
 		}
 
+		if (nullptr == CurCharacter)
+		{
+			return;
+		}
+
 		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
 
 		UBowAnimInstance* BowAnim;
@@ -962,7 +967,7 @@ void UWeaponAction::SetLockOnCheck(bool _Value)
 	LockOnCheck = _Value;
 }
 
-void UWeaponAction::GotHit()
+void UWeaponAction::GotHit(FVector _Value)
 {
 	//UMaterialInterface* CurMaterial = CurCharacter->GetMesh()->GetMaterial(0);
 
@@ -977,15 +982,26 @@ void UWeaponAction::GotHit()
 	case CharacterAnimState::LockOnRight:
 		AnimState = CharacterAnimState::GotHit;
 
+		if (true == IsLockOn)
+		{
+			break;
+		}
+
+		CurCharacter->SetActorRotation(_Value.ToOrientationQuat());
 		break;
 	case CharacterAnimState::AimOrBlock:
 		if (EWeaponType::Bow == WeaponType)
 		{
 			AnimState = CharacterAnimState::AimOrBlockGotHit;
 
-			AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
-
 			UBowAnimInstance* BowAnim;
+
+			if (nullptr == CurCharacter)
+			{
+				return;
+			}
+
+			AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
 
 			if (nullptr == character && false == character->IsValidLowLevel())
 			{
@@ -1028,6 +1044,44 @@ void UWeaponAction::GotHit()
 
 void UWeaponAction::Death()
 {
-		AnimState = CharacterAnimState::Death;
+	// 검으로 공격중이면 안죽는다.
+	AnimState = CharacterAnimState::Death;
 
+	if (EWeaponType::Bow == WeaponType)
+	{
+		AnimState = CharacterAnimState::AimOrBlockGotHit;
+
+		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
+
+		UBowAnimInstance* BowAnim;
+
+		if (nullptr == character && false == character->IsValidLowLevel())
+		{
+			return;
+		}
+
+		USkeletalMeshComponent* BowMesh = character->BowWeaponMesh;
+
+		if (nullptr == BowMesh)
+		{
+			return;
+		}
+
+		BowAnim = Cast<UBowAnimInstance>(BowMesh->GetAnimInstance());
+
+		if (nullptr == BowAnim)
+		{
+			return;
+		}
+
+		BowAnim->SetBowChordCheck(false);
+
+		if (nullptr == ReadyArrow)
+		{
+			return;
+		}
+
+		ArrowReady = false;
+		ReadyArrow->Destroy();
+	}
 }

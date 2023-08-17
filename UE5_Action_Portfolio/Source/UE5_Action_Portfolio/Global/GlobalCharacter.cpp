@@ -33,10 +33,17 @@ AGlobalCharacter::AGlobalCharacter()
 	BackBowWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackBow"));
 	BackSwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackSword"));
 	BackShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackShield"));
+
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 }
 
 UWeaponAction* AGlobalCharacter::GetCurWeaponAction()
 {
+	if (nullptr == CurWeaponAction)
+	{
+		return nullptr;
+	}
+
 	return CurWeaponAction;
 }
 
@@ -79,6 +86,11 @@ FVector AGlobalCharacter::GetBowJointLocation()
 void AGlobalCharacter::SetActorTypeTag(FName _Tag)
 {
 	ActorTypeTag = _Tag;
+}
+
+FName AGlobalCharacter::GetActorTypeTag()
+{
+	return ActorTypeTag;
 }
 
 void AGlobalCharacter::SetAttackTypeTag(FName _Tag)
@@ -157,21 +169,22 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	// PointDamage를 전달 받았다.
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
-		FPointDamageEvent const* PointDamageEvent = (FPointDamageEvent*)(&DamageEvent);
+		if (nullptr == EventInstigator)
+		{
+			return 0.f;
+		}
 
-		FVector HitDir = PointDamageEvent->ShotDirection;
-		HitDir.Normalize();
+		FVector HitDir = EventInstigator->GetPawn()->GetActorLocation();
+		HitDir.Z = 0;
 
 		FVector CurPos = GetActorLocation();
-		CurPos.Normalize();
+		CurPos.Z = 0;
 
 		FVector Dir = HitDir - CurPos;
 		Dir.Normalize();
 
 		FVector CurForward = GetActorForwardVector();
 		CurForward.Normalize();
-
-		FVector Cross = FVector::CrossProduct(CurForward, Dir);
 
 		float Angle0 = Dir.Rotation().Yaw;
 		float Angle1 = CurForward.Rotation().Yaw;
@@ -191,17 +204,18 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		
 		if (0.f < HP)
 		{
-			GetCurWeaponAction()->GotHit();
+			GetCurWeaponAction()->GotHit(Dir);
 		}
 		else if (0.f >= HP)
 		{
-			// 죽고 난 후 락온이 풀리지만 다시 걸리지 않게 해줘야한다.
-			// 지금은 락온이 시체에 다시 걸림
+			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
+			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
+
 			GetCurWeaponAction()->Death();
 
 			if (nullptr == EventInstigator)
 			{
-				return FinalDamage;
+				return 0.f;
 			}
 
 			bool PlayerCheck = EventInstigator->GetPawn()->ActorHasTag("Player");
