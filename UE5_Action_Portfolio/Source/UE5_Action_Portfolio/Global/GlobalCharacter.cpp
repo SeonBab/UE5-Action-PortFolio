@@ -190,12 +190,26 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		float Angle1 = CurForward.Rotation().Yaw;
 
 		bool BlockCheck = GetCurWeaponAction()->GetIsBlock();
+		bool ParryState = GetCurWeaponAction()->GetIsParry();
 
 		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
 		{
 			FinalDamage *= 0.1f;
 		}
+		else if (160.f >= FMath::Abs(Angle0 - Angle1) && true == ParryState)
+		{
+			FinalDamage = 0.f;
 
+			AGlobalCharacter* EnemyChar = Cast<AGlobalCharacter>(EventInstigator->GetPawn());
+
+			UWeaponAction* EnemyWeaponAction = EnemyChar->GetCurWeaponAction();
+
+			EnemyWeaponAction->ChangeNoCollision();
+			// 애니메이션이 정상적으로 재생 안됨
+			EnemyWeaponAction->SetAnimState(CharacterAnimState::Dizzy);
+			
+			return FinalDamage;
+		}
 
 		if (0.f < HP && 0.f < FinalDamage)
 		{
@@ -228,9 +242,7 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 				{
 					MainChar->LostLockedOnTargetActor();
 				}
-
 			}
-
 		}
 	}
 	

@@ -35,6 +35,8 @@ public:
 	void AnimNotify_EndAttack();
 	UFUNCTION()
 	void AnimNotify_Death();
+	UFUNCTION()
+	void AnimNotify_ParryOnOff();
 
 protected:
 	void NativeInitializeAnimation() override;

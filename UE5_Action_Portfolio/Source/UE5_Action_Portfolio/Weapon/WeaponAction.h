@@ -27,6 +27,8 @@ public:
 	void SetAttackType(FName _AttackType);
 	void SetIsBlock(bool _Value);
 	bool GetIsBlock();
+	void SetIsParry(bool _Value);
+	bool GetIsParry();
 	void ChangeCollisionAttackType();
 	void ChangeNoCollision();
 	void ArrowSpawn();
@@ -49,6 +51,7 @@ public:
 	void ShiftButtonAction();
 	void AttackAction();
 	void AimorBlockAtion(float _Value);
+	void ParryAction();
 
 	UFUNCTION(BlueprintCallable)
 	float GetMoveXValue();
@@ -87,6 +90,7 @@ public:
 	bool IsLockOn = false;
 	bool IsAimOn = false;
 	bool IsBlock = false;
+	bool IsParry = false;
 	bool PressSpacebar = false;
 	bool AttackCheck = false;
 	bool ArrowReady = false;

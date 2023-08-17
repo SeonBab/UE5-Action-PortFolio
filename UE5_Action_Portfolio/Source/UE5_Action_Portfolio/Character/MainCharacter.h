@@ -29,6 +29,7 @@ public:
 	void ChangeUnArmed();
 	void ChangeBow();
 	void ChangeSwordAndSheiled();
+	void Parry();
 	void AimorBlock(float _Value);
 	void LockOnTarget();
 	void LookAtTarget(float _DeltaTime);

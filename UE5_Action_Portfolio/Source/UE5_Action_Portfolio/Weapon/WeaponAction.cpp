@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Weapon/WeaponAction.h"
 #include "Global/Data/AnimaitionData.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -102,6 +100,16 @@ bool UWeaponAction::GetIsBlock()
 	return IsBlock;
 }
 
+void UWeaponAction::SetIsParry(bool _Value)
+{
+	IsParry = _Value;
+}
+
+bool UWeaponAction::GetIsParry()
+{
+	return IsParry;
+}
+
 void UWeaponAction::ChangeCollisionAttackType()
 {
 	AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
@@ -128,7 +136,7 @@ void UWeaponAction::ChangeCollisionAttackType()
 		}
 		else if (CharacterAnimState::AimOrBlock == AnimState)
 		{
-			//가드는 충돌 변경 없이 불 변수 수정
+			IsBlock = true;
 		}
 	}
 	else if (EWeaponType::Bow == WeaponType)
@@ -152,14 +160,8 @@ void UWeaponAction::ChangeNoCollision()
 	}
 	else if (EWeaponType::Sword == WeaponType)
 	{
-		if (CharacterAnimState::Attack == AnimState || CharacterAnimState::ParryorFire == AnimState)
-		{
-			GlobalChar->SwordWeaponMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
-		}
-		else if (CharacterAnimState::AimOrBlock == AnimState)
-		{
-			//가드는 충돌 변경 없이 불 변수 수정
-		}
+		GlobalChar->SwordWeaponMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
+		IsBlock = false;
 	}
 }
 
@@ -400,6 +402,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 	case CharacterAnimState::GotHit:
 	case CharacterAnimState::AimOrBlockGotHit:
 	case CharacterAnimState::Death:
+	case CharacterAnimState::Dizzy:
 	MoveXValue = 0;
 		return;
 		break;
@@ -513,6 +516,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 	case CharacterAnimState::GotHit:
 	case CharacterAnimState::AimOrBlockGotHit:
 	case CharacterAnimState::Death:
+	case CharacterAnimState::Dizzy:
 	MoveYValue = 0;
 		return;
 		break;
@@ -643,6 +647,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 			case CharacterAnimState::GotHit:
 			case CharacterAnimState::AimOrBlockGotHit:
 			case CharacterAnimState::Death:
+			case CharacterAnimState::Dizzy:
 				PressSpacebarTime = 0;
 				PressSpacebar = false;
 				return;
@@ -670,6 +675,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 	case CharacterAnimState::GotHit:
 	case CharacterAnimState::AimOrBlockGotHit:
 	case CharacterAnimState::Death:
+	case CharacterAnimState::Dizzy:
 		PressSpacebarTime = 0;
 		PressSpacebar = false;
 		return;
@@ -747,6 +753,7 @@ void UWeaponAction::ShiftButtonAction()
 	case CharacterAnimState::GotHit:
 	case CharacterAnimState::AimOrBlockGotHit:
 	case CharacterAnimState::Death:
+	case CharacterAnimState::Dizzy:
 		return;
 		break;
 	}
@@ -787,6 +794,7 @@ void UWeaponAction::AttackAction()
 	case CharacterAnimState::GotHit:
 	case CharacterAnimState::AimOrBlockGotHit:
 	case CharacterAnimState::Death:
+	case CharacterAnimState::Dizzy:
 		return;
 		break;
 	}
@@ -801,6 +809,7 @@ void UWeaponAction::AttackAction()
 		if (CharacterAnimState::AimOrBlock == AnimState && true == ArrowReady)
 		{
 			AnimState = CharacterAnimState::ParryorFire;
+			ArrowReady = false;
 		}
 		// 조준 중이며 화살이 준비 안된 상태
 		else if (CharacterAnimState::AimOrBlock == AnimState && false == EarlyArrowCheck)
@@ -826,8 +835,6 @@ void UWeaponAction::AttackAction()
 
 void UWeaponAction::AimorBlockAtion(float _Value)
 {
-	// 가드 불 변수 설정 입력 없을 땐 false 입력 있을 땐 true
-	// true일 땐 받는 데미지 감소
 	if (0 == _Value)
 	{
 		IsAimOn = false;
@@ -900,6 +907,7 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	case CharacterAnimState::GotHit:
 	case CharacterAnimState::AimOrBlockGotHit:
 	case CharacterAnimState::Death:
+	case CharacterAnimState::Dizzy:
 		return;
 		break;
 	}
@@ -919,6 +927,34 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 
 		IsAimOn = true;
 	}
+}
+
+void UWeaponAction::ParryAction()
+{
+	switch (AnimState)
+	{
+	case CharacterAnimState::Roll:
+	case CharacterAnimState::WalkJump:
+	case CharacterAnimState::RunJump:
+	case CharacterAnimState::EquipOrDisArmBow:
+	case CharacterAnimState::EquipOrDisArmSwordAndShield:
+	case CharacterAnimState::Attack:
+	case CharacterAnimState::ParryorFire:
+	case CharacterAnimState::GotHit:
+	case CharacterAnimState::AimOrBlockGotHit:
+	case CharacterAnimState::Death:
+	case CharacterAnimState::Dizzy:
+		return;
+		break;
+	}
+
+	if (EWeaponType::Sword != WeaponType)
+	{
+		return;
+	}
+
+	AnimState = CharacterAnimState::ParryorFire;
+
 }
 
 float UWeaponAction::GetMoveXValue()

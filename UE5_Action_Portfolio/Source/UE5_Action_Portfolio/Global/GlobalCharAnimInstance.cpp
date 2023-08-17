@@ -19,7 +19,8 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || 
 		AllAnimations[CharacterAnimState::Roll] == Anim || AllAnimations[CharacterAnimState::Attack] == Anim ||
-		AllAnimations[CharacterAnimState::GotHit] == Anim)
+		AllAnimations[CharacterAnimState::GotHit] == Anim || AllAnimations[CharacterAnimState::ParryorFire] == Anim ||
+		AllAnimations[CharacterAnimState::Dizzy] == Anim)
 	{
 		if (false == character->CurWeaponAction->IsLockOn)
 		{
@@ -250,7 +251,7 @@ void UGlobalCharAnimInstance::AnimNotify_ArrowReadyCheck()
 		return;
 	}
 
-	// 미리 공격 입력을 눌렀을 때
+	// 발사가 준비되기 전에 미리 공격 입력을 눌렀을 때
 	if (true == character->CurWeaponAction->EarlyArrowCheck && CharacterAnimState::AimOrBlock == Animstate)
 	{
 		character->CurWeaponAction->ArrowReady = false;
@@ -260,8 +261,8 @@ void UGlobalCharAnimInstance::AnimNotify_ArrowReadyCheck()
 		character->CurWeaponAction->SetAnimState(Animstate);
 		Montage_Play(AllAnimations[Animstate], 1.f);
 	}
-	// 준비된 후 입력을 받으려 할 때
-	else if (false == character->CurWeaponAction->EarlyArrowCheck)
+	// 발사가 준비된 후 입력을 확인할 때
+	else if (false == character->CurWeaponAction->EarlyArrowCheck && CharacterAnimState::AimOrBlock == Animstate)
 	{
 		character->CurWeaponAction->ArrowReady = true;
 	}
@@ -363,12 +364,7 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 			character->GetCurWeaponAction()->SetnullReadyArrow();
 		}
 	}
-	else if (EWeaponType::Sword == WeaponT)
-	{
-		character->GetCurWeaponAction()->ChangeCollisionAttackType();
-		WeaponAction->SetIsBlock(true);
-	}
-	else if (EWeaponType::UnArmed == WeaponT)
+	else if (EWeaponType::Sword == WeaponT || EWeaponType::UnArmed == WeaponT)
 	{
 		character->GetCurWeaponAction()->ChangeCollisionAttackType();
 	}
@@ -383,14 +379,14 @@ void UGlobalCharAnimInstance::AnimNotify_EndAttack()
 		return;
 	}
 
-	UWeaponAction* WeaponAc = character->GetCurWeaponAction();
+	UWeaponAction* WeaponAction = character->GetCurWeaponAction();
 
-	if (nullptr == WeaponAc)
+	if (nullptr == WeaponAction)
 	{
 		return;
 	}
 
-	WeaponAc->ChangeNoCollision();
+	WeaponAction->ChangeNoCollision();
 }
 
 void UGlobalCharAnimInstance::AnimNotify_Death()
@@ -403,6 +399,36 @@ void UGlobalCharAnimInstance::AnimNotify_Death()
 	}
 
 	character->Destroy();
+}
+
+void UGlobalCharAnimInstance::AnimNotify_ParryOnOff()
+{
+	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (nullptr == character && false == character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	character->GetCurWeaponAction();
+
+	UWeaponAction* WeaponAction = character->GetCurWeaponAction();
+
+	if (nullptr == WeaponAction)
+	{
+		return;
+	}
+
+	bool ParryState = WeaponAction->GetIsParry();
+
+	if (false == ParryState)
+	{
+		WeaponAction->SetIsParry(true);
+	}
+	else
+	{
+		WeaponAction->SetIsParry(false);
+	}
 }
 
 void UGlobalCharAnimInstance::NativeInitializeAnimation()

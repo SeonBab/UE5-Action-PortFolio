@@ -38,4 +38,5 @@ enum class CharacterAnimState : uint8
 	GotHit,
 	AimOrBlockGotHit,
 	Death,
+	Dizzy,
 };
