@@ -33,3 +33,9 @@ void AGlobalAICharacter::Tick(float _DeltaTime)
 {
     Super::Tick(_DeltaTime);
 }
+
+float AGlobalAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    return FinalDamage;
+}

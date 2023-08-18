@@ -25,13 +25,13 @@ void UWeaponAction::Tick(float _DeltaTime)
 {
 	PressSpaceBarCkeckAndRoll(_DeltaTime);
 
-	if (true == IsLockOn && (CharacterAnimState::Idle == AnimState || CharacterAnimState::Walk == AnimState))
+	if ((true == IsLockOn || true == IsAimOn) && (CharacterAnimState::Idle == AnimState || CharacterAnimState::Walk == AnimState))
 	{
-		AnimState = CharacterAnimState::LockOnIdle;
+		SetAnimState(CharacterAnimState::LockOnIdle);
 	}
-	else if (false == IsLockOn && CharacterAnimState::LockOnIdle == AnimState)
+	else if ((false == IsLockOn && false == IsAimOn) && CharacterAnimState::LockOnIdle == AnimState)
 	{
-		AnimState = CharacterAnimState::Idle;
+		SetAnimState(CharacterAnimState::Idle);
 	}
 
 	// 락온시 달리고 난 후 다시 회전할 때까지의 시간
@@ -250,13 +250,13 @@ void UWeaponAction::ChangeSetUnArmed()
 	if (EWeaponType::Bow == WeaponType)
 	{
 		Ptr->AnimSpeed = -1.f;
-		AnimState = CharacterAnimState::EquipOrDisArmBow;
+		SetAnimState(CharacterAnimState::EquipOrDisArmBow);
 	}
 	// 착용하고 있던 장비가 칼일 때
 	else if (EWeaponType::Sword == WeaponType)
 	{
 		Ptr->AnimSpeed = -1.f;
-		AnimState = CharacterAnimState::EquipOrDisArmSwordAndShield;
+		SetAnimState(CharacterAnimState::EquipOrDisArmSwordAndShield);
 	}
 
 	ChangeWeapon(TEXT("UnArmed"));
@@ -284,7 +284,7 @@ void UWeaponAction::ChangeSetBow()
 		return;
 	}
 
-	AnimState = CharacterAnimState::EquipOrDisArmBow;
+	SetAnimState(CharacterAnimState::EquipOrDisArmBow);
 
 	ChangeWeapon(TEXT("Bow"));
 }
@@ -311,7 +311,7 @@ void UWeaponAction::ChangeSetSwordAndSheiled()
 		return;
 	}
 
-	AnimState = CharacterAnimState::EquipOrDisArmSwordAndShield;
+	SetAnimState(CharacterAnimState::EquipOrDisArmSwordAndShield);
 
 	ChangeWeapon(TEXT("SwordAndShield"));
 }
@@ -422,7 +422,7 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		switch (AnimState)
 		{
 		case CharacterAnimState::Idle:
-			AnimState = CharacterAnimState::Walk;
+			SetAnimState(CharacterAnimState::Walk);
 			break;
 		case CharacterAnimState::Walk:
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -434,25 +434,19 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		case CharacterAnimState::LockOnForward:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
-			if (false == IsLockOn)
-			{
-				AnimState = CharacterAnimState::Idle;
-				break;
-			}
-
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			if (true == LockOnCheck)
 			{
-				AnimState = CharacterAnimState::LockOnForward;
+				SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;
 			}
 			else if (-1.f == _Value)
 			{
-				AnimState = CharacterAnimState::LockOnBackward;
+				SetAnimState(CharacterAnimState::LockOnBackward);
 			}
 			else if (1.f == _Value)
 			{
-				AnimState = CharacterAnimState::LockOnForward;
+				SetAnimState(CharacterAnimState::LockOnForward);
 			}
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
@@ -492,11 +486,11 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		{
 			if (false == IsLockOn)
 			{
-				AnimState = CharacterAnimState::Idle;
+				SetAnimState(CharacterAnimState::Idle);
 			}
 			else if (true == IsLockOn)
 			{
-				AnimState = CharacterAnimState::LockOnIdle;
+				SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 		}
 	}
@@ -536,7 +530,7 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		switch (AnimState)
 		{
 		case CharacterAnimState::Idle:
-			AnimState = CharacterAnimState::Walk;
+			SetAnimState(CharacterAnimState::Walk);
 			break;
 		case CharacterAnimState::Walk:
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -548,25 +542,19 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		case CharacterAnimState::LockOnBackward:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
-			if (false == IsLockOn)
-			{
-				AnimState = CharacterAnimState::Idle;
-				break;
-			}
-
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			if (true == LockOnCheck)
 			{
-				AnimState = CharacterAnimState::LockOnForward;
+				SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;
 			}
 			else if (-1.f == _Value)
 			{
-				AnimState = CharacterAnimState::LockOnLeft;
+				SetAnimState(CharacterAnimState::LockOnLeft);
 			}
 			else if (1.f == _Value)
 			{
-				AnimState = CharacterAnimState::LockOnRight;
+				SetAnimState(CharacterAnimState::LockOnRight);
 			}
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
@@ -604,11 +592,11 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		{
 			if (false == IsLockOn)
 			{
-				AnimState = CharacterAnimState::Idle;
+				SetAnimState(CharacterAnimState::Idle);
 			}
 			else if (true == IsLockOn)
 			{
-				AnimState = CharacterAnimState::LockOnIdle;
+				SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 		}
 	}
@@ -623,11 +611,11 @@ void UWeaponAction::RollorRunAction(float _Value)
 			if (true == IsLockOn)
 			{
 				LockOnCheck = true;
-				AnimState = CharacterAnimState::LockOnIdle;
+				SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 			else if (false == IsLockOn)
 			{
-				AnimState = CharacterAnimState::Idle;
+				SetAnimState(CharacterAnimState::Idle);
 			}
 		}
 
@@ -655,7 +643,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 			
 			// 구른다
 			IsRollMove = true;
-			AnimState = CharacterAnimState::Roll;
+			SetAnimState(CharacterAnimState::Roll);
 		}
 
 		// 입력이 멈추면 누른 시간 0
@@ -702,11 +690,11 @@ void UWeaponAction::RollorRunAction(float _Value)
 			if (true == IsLockOn)
 			{
 				LockOnCheck = false;
-				AnimState = CharacterAnimState::LockOnIdle;
+				SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 			else if (false == IsLockOn)
 			{
-				AnimState = CharacterAnimState::Idle;
+				SetAnimState(CharacterAnimState::Idle);
 			}
 		}
 
@@ -732,7 +720,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 			CurCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 		}
 
-		AnimState = CharacterAnimState::Run;
+		SetAnimState(CharacterAnimState::Run);
 
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 	}
@@ -761,14 +749,14 @@ void UWeaponAction::ShiftButtonAction()
 	// 달릴 때 점프
 	if (CharacterAnimState::Run == AnimState)
 	{
-		AnimState = CharacterAnimState::RunJump;
+		SetAnimState(CharacterAnimState::RunJump);
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 		CurCharacter->Jump();
 	}
 	// 걸을 때, 가만히 있을 때 점프
 	else
 	{
-		AnimState = CharacterAnimState::WalkJump;
+		SetAnimState(CharacterAnimState::WalkJump);
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 
@@ -801,14 +789,14 @@ void UWeaponAction::AttackAction()
 
 	if (EWeaponType::UnArmed == WeaponType)
 	{
-		AnimState = CharacterAnimState::Attack;
+		SetAnimState(CharacterAnimState::Attack);
 	}
 	else if (EWeaponType::Bow == WeaponType)
 	{
 		// 조준 중이며 화살이 준비 된 상태
 		if (CharacterAnimState::AimOrBlock == AnimState && true == ArrowReady)
 		{
-			AnimState = CharacterAnimState::ParryorFire;
+			SetAnimState(CharacterAnimState::ParryorFire);
 			ArrowReady = false;
 		}
 		// 조준 중이며 화살이 준비 안된 상태
@@ -819,7 +807,7 @@ void UWeaponAction::AttackAction()
 		// 조준이 아닌 일반 공격인 상태
 		else if (CharacterAnimState::AimOrBlock != AnimState && false == ArrowReady)
 		{
-			AnimState = CharacterAnimState::Attack;
+			SetAnimState(CharacterAnimState::Attack);
 		}
 	}
 	else if (EWeaponType::Sword == WeaponType)
@@ -829,7 +817,7 @@ void UWeaponAction::AttackAction()
 			AttackCheck = true;
 		}
 
-		AnimState = CharacterAnimState::Attack;
+		SetAnimState(CharacterAnimState::Attack);
 	}
 }
 
@@ -845,7 +833,7 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 		{
 			CurCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
-			AnimState = CharacterAnimState::Idle;
+			SetAnimState(CharacterAnimState::Idle);
 		}
 
 		if (EWeaponType::Bow == WeaponType && CharacterAnimState::Attack == AnimState)
@@ -918,12 +906,12 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	}
 	else if (EWeaponType::Sword == WeaponType)
 	{
-		AnimState = CharacterAnimState::AimOrBlock;
+		SetAnimState(CharacterAnimState::AimOrBlock);
 	}
 	else if (EWeaponType::Bow == WeaponType)
 	{
 		CurCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
-		AnimState = CharacterAnimState::AimOrBlock;
+		SetAnimState(CharacterAnimState::AimOrBlock);
 
 		IsAimOn = true;
 	}
@@ -953,7 +941,7 @@ void UWeaponAction::ParryAction()
 		return;
 	}
 
-	AnimState = CharacterAnimState::ParryorFire;
+	SetAnimState(CharacterAnimState::ParryorFire);
 
 }
 
@@ -1016,7 +1004,7 @@ void UWeaponAction::GotHit(FVector _Value)
 	case CharacterAnimState::LockOnForward:
 	case CharacterAnimState::LockOnLeft:
 	case CharacterAnimState::LockOnRight:
-		AnimState = CharacterAnimState::GotHit;
+		SetAnimState(CharacterAnimState::GotHit);
 
 		if (true == IsLockOn)
 		{
@@ -1028,7 +1016,7 @@ void UWeaponAction::GotHit(FVector _Value)
 	case CharacterAnimState::AimOrBlock:
 		if (EWeaponType::Bow == WeaponType)
 		{
-			AnimState = CharacterAnimState::AimOrBlockGotHit;
+			SetAnimState(CharacterAnimState::AimOrBlockGotHit);
 
 			UBowAnimInstance* BowAnim;
 
@@ -1070,7 +1058,7 @@ void UWeaponAction::GotHit(FVector _Value)
 		}
 		else if (EWeaponType::Sword == WeaponType)
 		{
-			AnimState = CharacterAnimState::AimOrBlockGotHit;
+			SetAnimState(CharacterAnimState::AimOrBlockGotHit);
 		}
 		break;
 	default:
@@ -1081,12 +1069,10 @@ void UWeaponAction::GotHit(FVector _Value)
 void UWeaponAction::Death()
 {
 	// 검으로 공격중이면 안죽는다.
-	AnimState = CharacterAnimState::Death;
+	SetAnimState(CharacterAnimState::Death);
 
 	if (EWeaponType::Bow == WeaponType)
 	{
-		AnimState = CharacterAnimState::AimOrBlockGotHit;
-
 		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
 
 		UBowAnimInstance* BowAnim;

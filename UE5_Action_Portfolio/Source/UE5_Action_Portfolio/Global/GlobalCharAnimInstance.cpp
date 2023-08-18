@@ -10,6 +10,15 @@
 
 void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
+	if (CharacterAnimState::Death == Animstate)
+	{
+		return;
+	}
+	else if (CharacterAnimState::Dizzy == Animstate && AllAnimations[CharacterAnimState::Dizzy] != Anim)
+	{
+		return;
+	}
+
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
@@ -19,8 +28,7 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || 
 		AllAnimations[CharacterAnimState::Roll] == Anim || AllAnimations[CharacterAnimState::Attack] == Anim ||
-		AllAnimations[CharacterAnimState::GotHit] == Anim || AllAnimations[CharacterAnimState::ParryorFire] == Anim ||
-		AllAnimations[CharacterAnimState::Dizzy] == Anim)
+		AllAnimations[CharacterAnimState::GotHit] == Anim || AllAnimations[CharacterAnimState::Dizzy] == Anim)
 	{
 		if (false == character->CurWeaponAction->IsLockOn)
 		{
@@ -68,6 +76,20 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 			Montage_Play(AllAnimations[Animstate], 1.f);
 			character->CurWeaponAction->ArrowReady = false;
 			character->CurWeaponAction->EarlyArrowCheck = false;
+		}
+		else if (EWeaponType::Sword == character->CurWeaponAction->WeaponType)
+		{
+			if (false == character->CurWeaponAction->IsLockOn)
+			{
+				Animstate = CharacterAnimState::Idle;
+			}
+			else if (true == character->CurWeaponAction->IsLockOn)
+			{
+				Animstate = CharacterAnimState::LockOnIdle;
+			}
+			character->CurWeaponAction->SetAnimState(Animstate);
+			Montage_Play(AllAnimations[Animstate], 1.f);
+			character->CurWeaponAction->SetCharacterAirControl(1.f);
 		}
 	}
 	else if (AllAnimations[CharacterAnimState::AimOrBlockGotHit] == Anim)

@@ -18,6 +18,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")

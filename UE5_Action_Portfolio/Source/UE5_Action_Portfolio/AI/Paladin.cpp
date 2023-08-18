@@ -43,3 +43,16 @@ void APaladin::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 }
+
+float APaladin::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (0.f >= GetHP())
+	{
+		GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), true);
+	}
+
+
+	return FinalDamage;
+}

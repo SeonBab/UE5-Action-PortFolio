@@ -19,8 +19,6 @@ EBTNodeResult::Type UBTTask_EquipWeapon::ExecuteTask(UBehaviorTreeComponent& Own
 
 	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(true);
 
-	// 거리가 멀거나 가까워도 랜덤으로 변경 할지 안할지 만들자
-
 	if (600 <= Dir.Size())
 	{
 		if (EWeaponType::Bow != CurWeaponType)

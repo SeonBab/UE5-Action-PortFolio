@@ -372,15 +372,15 @@ void AMainCharacter::CharTurnAim(float _DeltaTime)
 	float Angle0 = CurRot.Yaw;
 	float Angle1 = ControlRot.Yaw;
 
-	if (10.f <= FMath::Abs(Angle0 - Angle1))
+	if (5.f <= FMath::Abs(Angle0 - Angle1))
 	{
-		FRotator Rot = Dir * 5 * _DeltaTime;
+		FRotator Rot = Dir * 7 * _DeltaTime;
 		AddActorWorldRotation(Rot);
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 	else
 	{
 		this->bUseControllerRotationYaw = true;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 }
 

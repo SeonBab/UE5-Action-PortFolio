@@ -39,11 +39,6 @@ AGlobalCharacter::AGlobalCharacter()
 
 UWeaponAction* AGlobalCharacter::GetCurWeaponAction()
 {
-	if (nullptr == CurWeaponAction)
-	{
-		return nullptr;
-	}
-
 	return CurWeaponAction;
 }
 
@@ -243,6 +238,8 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 					MainChar->LostLockedOnTargetActor();
 				}
 			}
+
+			return FinalDamage;
 		}
 	}
 	
