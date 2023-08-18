@@ -29,7 +29,7 @@ AMainCharacter::AMainCharacter()
 	TimelineFinishDelegate.BindUFunction(this, FName("AimZoomOnFinish"));
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
+	
 	SetActorTypeTag(TEXT("Player"));
 	SetAttackTypeTag(TEXT("PlayerAttack"));
 }
@@ -421,7 +421,6 @@ FVector AMainCharacter::CameraLineTrace()
 	FVector End = StartLocationVector + (CameraForwardVector * 2000.f);
 
 	// 라인 트레이스 채널
-	// PlayerAttack이다.
 	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;
 
 	FCollisionQueryParams QueryParams;
@@ -431,6 +430,8 @@ FVector AMainCharacter::CameraLineTrace()
 
 	// 라인 트레이스 실행
 	GetWorld()->LineTraceSingleByChannel(HitRes, StartLocationVector, End, Channel, QueryParams);
+
+	DrawDebugLine(GetWorld(), StartLocationVector, End, FColor::Red);
 
 	if (nullptr == HitRes.GetActor())
 	{
@@ -442,8 +443,6 @@ FVector AMainCharacter::CameraLineTrace()
 		// 라인 트레이스가 충돌한 벡터
 		TargetVector = HitRes.ImpactPoint;
 	}
-
-	DrawDebugLine(GetWorld(), StartLocationVector, End, FColor::Red);
 
 	// 화살이 날아갈 방향을 구한다
 	FVector Joint = GetBowJointLocation();

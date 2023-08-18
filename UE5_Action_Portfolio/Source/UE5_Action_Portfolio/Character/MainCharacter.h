@@ -37,7 +37,6 @@ public:
 	FVector CameraLineTrace();
 	void LostLockedOnTargetActor();
 
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;

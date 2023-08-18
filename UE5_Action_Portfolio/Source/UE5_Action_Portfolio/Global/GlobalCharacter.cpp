@@ -7,6 +7,9 @@
 #include "Weapon/Arrow.h"
 #include "Character/MainCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AGlobalCharacter::AGlobalCharacter()
 {
@@ -35,6 +38,10 @@ AGlobalCharacter::AGlobalCharacter()
 	BackShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackShield"));
 
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+
+	CurWeaponAction = nullptr;
+	AnimState = nullptr;
+	HP = 0.f;
 }
 
 UWeaponAction* AGlobalCharacter::GetCurWeaponAction()
@@ -108,6 +115,106 @@ float AGlobalCharacter::GetHP()
 	return HP;
 }
 
+TTuple<float, FVector> AGlobalCharacter::IKFootLineTrace(FName _Socket, float _TraceDis)
+{
+	TTuple<float, FVector> ReturnValue;
+
+	if (nullptr == GetCapsuleComponent())
+	{
+		return ReturnValue;
+	}
+
+	FVector SocketLocation = GetMesh()->GetSocketLocation(_Socket);
+	FVector LineTraceStart = FVector(SocketLocation.X, SocketLocation.Y, GetActorLocation().Z - 40.f);
+	FVector LineTraceEnd = FVector(SocketLocation.X, SocketLocation.Y, GetActorLocation().Z - GetCapsuleComponent()->GetScaledCapsuleHalfHeight() - _TraceDis);
+
+	FHitResult HitResult;
+	TArray<AActor*> ToIgnore;
+
+	ToIgnore.Emplace(GetOwner());
+
+	bool DebugCheck = true;
+	EDrawDebugTrace::Type DebugType = EDrawDebugTrace::None;
+	
+	if (true == DebugCheck)
+	{
+		DebugType = EDrawDebugTrace::ForOneFrame;
+	}
+
+	ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_Visibility);
+
+	bool bResult = UKismetSystemLibrary::LineTraceSingle(GetWorld(), LineTraceStart, LineTraceEnd, TraceType, true, ToIgnore, DebugType, HitResult, true);
+
+	float ImpactLength;
+	FVector ImpactLocation(HitResult.ImpactNormal);
+
+	if (true == HitResult.IsValidBlockingHit())
+	{
+		ImpactLength = (HitResult.ImpactPoint - HitResult.TraceEnd).Size();
+		ImpactLength -= _TraceDis;
+		ImpactLength += 5.f;
+	}
+	else
+	{
+		ImpactLength = 0.f;
+	}
+
+
+	ReturnValue.Key = ImpactLength;
+	ReturnValue.Value = ImpactLocation;
+
+	return ReturnValue;
+}
+
+FRotator AGlobalCharacter::NormalToRotator(FVector _Vector)
+{
+	float FootAtan2_1 = UKismetMathLibrary::DegAtan2(_Vector.Y, _Vector.Z);
+	float FootAtan2_2 = UKismetMathLibrary::DegAtan2(_Vector.X, _Vector.Z);
+	
+	// 값을 음수로
+	FootAtan2_2 *= -1.f;
+
+	FRotator ReturnRotator = FRotator(FootAtan2_2, 0.0f, FootAtan2_1);
+
+	return ReturnRotator;
+}
+
+void AGlobalCharacter::UpdateFootRotation(float _DeltaTime, FRotator _NormalToRotatorValue, FRotator* _FootRotatorValue, float _InterpSpeed)
+{
+	FRotator InterpRotator = UKismetMathLibrary::RInterpTo(*_FootRotatorValue, _NormalToRotatorValue, _DeltaTime, _InterpSpeed);
+	*_FootRotatorValue = InterpRotator;
+}
+
+void AGlobalCharacter::UpdateCapsuleHalfHeight(float _DeltaTime, float _HipsShifs, bool _ResetDefault)
+{
+	if (nullptr == GetCapsuleComponent())
+	{
+		return;
+	}
+
+	float CapsuleHalf = 0.0f;
+
+	if (true == _ResetDefault)
+	{
+		CapsuleHalf = CurCapsuleSize;
+	}
+	else
+	{
+		float HalfAbsSize = UKismetMathLibrary::Abs(_HipsShifs);
+		CapsuleHalf = CurCapsuleSize - HalfAbsSize;
+	}
+
+	float InterpValue = UKismetMathLibrary::FInterpTo(GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CapsuleHalf, _DeltaTime, 13.f);
+
+	GetCapsuleComponent()->SetCapsuleHalfHeight(InterpValue, true);
+}
+
+void AGlobalCharacter::UpdateFootOffset(float _DeltaTime, float _TargetValue, float* _EffectorValue, float _InterpSpeed)
+{
+	float InterpValue = UKismetMathLibrary::FInterpTo(*_EffectorValue, _TargetValue, _DeltaTime, _InterpSpeed);
+	*_EffectorValue = InterpValue;
+}
+
 void AGlobalCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -137,6 +244,8 @@ void AGlobalCharacter::BeginPlay()
 	Tags.Add(ActorTypeTag);
 	Tags.Add(AttackTypeTag);
 	GetCurWeaponAction()->SetAttackType(AttackTypeTag);
+
+	CurCapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 }
 
 void AGlobalCharacter::Tick(float _DeltaTime)
@@ -149,6 +258,25 @@ void AGlobalCharacter::Tick(float _DeltaTime)
 	{
 		BowChordMove();
 	}
+
+	TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 55.f);
+	TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 55.f);
+
+	UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
+	UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
+
+	float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
+
+	if (0.f < HipOffsetValue)
+	{
+		HipOffsetValue = 0.f;
+	}
+
+	UpdateFootOffset(_DeltaTime, HipOffsetValue, &HipOffset, 20.f);
+	UpdateCapsuleHalfHeight(_DeltaTime, HipOffsetValue, false);
+
+	UpdateFootOffset(_DeltaTime, LeftTrace.Get<0>() - HipOffsetValue, &FootOffsetLeft, 20.f);
+	UpdateFootOffset(_DeltaTime, RightTrace.Get<0>() - HipOffsetValue, &FootOffsetRight, 20.f);
 }
 
 void AGlobalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

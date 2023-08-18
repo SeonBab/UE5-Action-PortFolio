@@ -23,6 +23,11 @@ public:
 	FName GetAttackTypeTag();
 	void SetHP(float _HP);
 	float GetHP();
+	TTuple<float, FVector> IKFootLineTrace(FName _Socket, float _TraceDis);
+	FRotator NormalToRotator(FVector _Vector);
+	void UpdateFootRotation(float _DeltaTime, FRotator _NormalToRotatorValue, FRotator* _FootRotatorValue, float _InterpSpeed);
+	void UpdateCapsuleHalfHeight(float _DeltaTime, float _HipsShifs, bool _ResetDefault);
+	void UpdateFootOffset(float _DeltaTime, float _TargetValue, float* _EffectorValue, float _InterpSpeed);
 
 protected:
 	virtual void BeginPlay() override;
@@ -66,4 +71,15 @@ private:
 	FName ActorTypeTag;
 	FName AttackTypeTag;
 	float HP;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FRotator FootRotatorLeft;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FRotator FootRotatorRight;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float HipOffset;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float FootOffsetLeft;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float FootOffsetRight;
+	float CurCapsuleSize;
 };
