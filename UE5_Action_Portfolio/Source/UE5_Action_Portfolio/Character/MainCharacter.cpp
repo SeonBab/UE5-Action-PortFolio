@@ -20,7 +20,7 @@ AMainCharacter::AMainCharacter()
 	MainCameraSpringArmComponent->TargetArmLength = 500.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
-	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 60.f, 0.f));
+	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 55.f, 0.f));
 	BaseTurnRate = 30.f;
 	BaseLookUpRate = 30.f;
 
@@ -29,6 +29,7 @@ AMainCharacter::AMainCharacter()
 	TimelineFinishDelegate.BindUFunction(this, FName("AimZoomOnFinish"));
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate.Yaw = 720.f;
 	
 	SetActorTypeTag(TEXT("Player"));
 	SetAttackTypeTag(TEXT("PlayerAttack"));
@@ -58,6 +59,7 @@ void AMainCharacter::BeginPlay()
 	}
 
 	SetHP(5000.f);
+	SetMaxHP(GetHP());
 }
 
 void AMainCharacter::Tick(float _DeltaTime)

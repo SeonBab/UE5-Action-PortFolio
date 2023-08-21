@@ -6,8 +6,6 @@ EBTNodeResult::Type UBTTask_EquipWeapon::ExecuteTask(UBehaviorTreeComponent& Own
 
 	GetGlobalCharacter(OwnerComp)->bUseControllerRotationYaw = true;
 
-	ResetStateTime(OwnerComp);
-
 	EWeaponType CurWeaponType = GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));

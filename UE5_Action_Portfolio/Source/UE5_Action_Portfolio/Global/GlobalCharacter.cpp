@@ -74,7 +74,6 @@ void AGlobalCharacter::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 	int CurWeaponDamage = WeaponData->Damage;
 	FPointDamageEvent DamageEvent;
-	//DamageEvent.HitInfo = ;
 
 	OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, GetController(), this);
 }
@@ -113,6 +112,16 @@ void AGlobalCharacter::SetHP(float _HP)
 float AGlobalCharacter::GetHP()
 {
 	return HP;
+}
+
+void AGlobalCharacter::SetMaxHP(float _MaxHP)
+{
+	MaxHP = _MaxHP;
+}
+
+float AGlobalCharacter::GetMaxHP()
+{
+	return MaxHP;
 }
 
 TTuple<float, FVector> AGlobalCharacter::IKFootLineTrace(FName _Socket, float _TraceDis)
@@ -313,13 +322,20 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		float Angle1 = CurForward.Rotation().Yaw;
 
 		bool BlockCheck = GetCurWeaponAction()->GetIsBlock();
-		bool ParryState = GetCurWeaponAction()->GetIsParry();
+		bool ParryCheck = GetCurWeaponAction()->GetIsParry();
+		bool IsInvincibilityCheck = GetCurWeaponAction()->GetIsInvincibility();
 
 		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
 		{
 			FinalDamage *= 0.1f;
 		}
-		else if (160.f >= FMath::Abs(Angle0 - Angle1) && true == ParryState)
+		else if (true == IsInvincibilityCheck)
+		{
+			FinalDamage = 0.f;
+
+			return FinalDamage;
+		}
+		else if (160.f >= FMath::Abs(Angle0 - Angle1) && true == ParryCheck)
 		{
 			FinalDamage = 0.f;
 
@@ -366,6 +382,8 @@ float AGlobalCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 					MainChar->LostLockedOnTargetActor();
 				}
 			}
+
+			HP = 0.f;
 
 			return FinalDamage;
 		}

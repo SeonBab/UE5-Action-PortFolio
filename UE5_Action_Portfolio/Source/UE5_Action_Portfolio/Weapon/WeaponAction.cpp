@@ -110,6 +110,11 @@ bool UWeaponAction::GetIsParry()
 	return IsParry;
 }
 
+bool UWeaponAction::GetIsInvincibility()
+{
+	return IsInvincibility;
+}
+
 void UWeaponAction::ChangeCollisionAttackType()
 {
 	AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
@@ -206,6 +211,7 @@ void UWeaponAction::SetAnimState(CharacterAnimState _State)
 void UWeaponAction::IsRollMoveToFalse()
 {
 	IsRollMove = false;
+	IsInvincibility = false;
 }
 
 void UWeaponAction::ChangeWeapon(FName _Weapon)
@@ -365,6 +371,7 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 		DeltaLocation.Y = 0;
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
+		IsInvincibility = true;
 	}
 }
 

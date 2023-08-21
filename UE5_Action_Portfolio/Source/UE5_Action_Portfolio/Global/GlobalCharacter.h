@@ -22,7 +22,11 @@ public:
 	void SetAttackTypeTag(FName _Tag);
 	FName GetAttackTypeTag();
 	void SetHP(float _HP);
+	UFUNCTION(BlueprintCallable)
 	float GetHP();
+	void SetMaxHP(float _MaxHP);
+	UFUNCTION(BlueprintCallable)
+	float GetMaxHP();
 	TTuple<float, FVector> IKFootLineTrace(FName _Socket, float _TraceDis);
 	FRotator NormalToRotator(FVector _Vector);
 	void UpdateFootRotation(float _DeltaTime, FRotator _NormalToRotatorValue, FRotator* _FootRotatorValue, float _InterpSpeed);
@@ -71,6 +75,7 @@ private:
 	FName ActorTypeTag;
 	FName AttackTypeTag;
 	float HP;
+	float MaxHP;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FRotator FootRotatorLeft;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

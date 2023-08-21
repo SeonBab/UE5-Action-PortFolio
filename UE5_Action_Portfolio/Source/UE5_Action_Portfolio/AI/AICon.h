@@ -31,6 +31,7 @@ private:
 	TObjectPtr<class UAISenseConfig_Sight> AISenseConfigSight = nullptr;
 	//TObjectPtr<class UAISenseConfig_Hearing> AISenseConfigHearing = nullptr;
 
+	UPROPERTY()
 	AActor* PerceivedActor = nullptr;
 	bool TargetLost = false;
 	float LostTimer = 0.f;

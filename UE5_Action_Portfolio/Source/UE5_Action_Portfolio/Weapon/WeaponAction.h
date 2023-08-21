@@ -29,6 +29,7 @@ public:
 	bool GetIsBlock();
 	void SetIsParry(bool _Value);
 	bool GetIsParry();
+	bool GetIsInvincibility();
 	void ChangeCollisionAttackType();
 	void ChangeNoCollision();
 	void ArrowSpawn();
@@ -85,6 +86,7 @@ public:
 	bool IsLeftWalk = false;
 	bool IsRightWalk = false;
 	bool IsRollMove = false;
+	bool IsInvincibility = false;
 	bool IsWalkJump = false;
 	bool IsRunJump = false;
 	bool IsLockOn = false;

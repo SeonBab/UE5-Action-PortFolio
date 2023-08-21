@@ -25,6 +25,8 @@ public:
 	float GetStateTime(UBehaviorTreeComponent& OwnerComp);
 	void ResetStateTime(UBehaviorTreeComponent& OwnerComp);
 	class UBlackboardComponent* GetBlackboardComponent(UBehaviorTreeComponent& OwnerComp);
+	TArray<FVector> PathFind(UBehaviorTreeComponent& _OwnerComp, AActor* _Actor);
+	TArray<FVector> PathFind(UBehaviorTreeComponent& _OwnerComp, FVector _Pos);
 
 protected:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);

@@ -18,51 +18,53 @@ void UBTTask_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
+	FVector ReturnPos = GetBlackboardComponent(OwnerComp)->GetValueAsVector(TEXT("SpawnPos"));
+	FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+	FVector PathPos;
+
+	TArray<FVector> PathPoint = PathFind(OwnerComp, ReturnPos);
+
+	if (0 != PathPoint.Num())
 	{
-		FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
-		FVector ReturnPos = GetBlackboardComponent(OwnerComp)->GetValueAsVector(TEXT("SpawnPos"));
+		PathPos = PathPoint[1];
+	}
 
-		CurPos.Z = 0.f;
-		ReturnPos.Z = 0.f;
+	ReturnPos.Z = 0.f;
+	CurPos.Z = 0.f;
+	PathPos.Z = 0.f;
 
-		FVector Dir = ReturnPos - CurPos;
-		Dir.Normalize();
+	// 회전
+	FVector Dir = PathPos - CurPos;
+	Dir.Normalize();
 
-		FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
-		OtherForward.Normalize();
+	FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
+	OtherForward.Normalize();
 
-		FVector Cross = FVector::CrossProduct(OtherForward, Dir);
+	FVector Cross = FVector::CrossProduct(OtherForward, Dir);
 
-		float Angle0 = Dir.Rotation().Yaw;
-		float Angle1 = OtherForward.Rotation().Yaw;
+	float Angle0 = Dir.Rotation().Yaw;
+	float Angle1 = OtherForward.Rotation().Yaw;
 
-		if (10.f <= FMath::Abs(Angle0 - Angle1))
-		{
-			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 500.f * DeltaSeconds });
-			GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
-		}
-		else
-		{
-			FRotator Rot = Dir.Rotation();
-			GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
-		}
+	if (10.f <= FMath::Abs(Angle0 - Angle1))
+	{
+		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
+		GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+	}
+	else
+	{
+		FRotator Rot = Dir.Rotation();
+		GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
 	}
 
 	// 이동
+	GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+
+	FVector Dis = ReturnPos - CurPos;
+
+	float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
+
+	if (AttackRange >= Dis.Size())
 	{
-		FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
-		FVector ReturnPos = GetBlackboardComponent(OwnerComp)->GetValueAsVector(TEXT("SpawnPos"));
-
-		FVector Dis = ReturnPos - CurPos;
-
-		GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
-
-		float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
-
-		if (AttackRange >= Dis.Size())
-		{
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
-
 }
