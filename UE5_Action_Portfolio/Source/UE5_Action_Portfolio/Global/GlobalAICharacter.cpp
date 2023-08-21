@@ -1,6 +1,6 @@
 #include "Global/GlobalAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "AI/AICon.h"
+#include "AI/Monster/AICon.h"
 
 UBehaviorTree* AGlobalAICharacter::GetBehaviorTree()
 {
