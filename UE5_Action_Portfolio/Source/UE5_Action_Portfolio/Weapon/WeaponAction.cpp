@@ -441,8 +441,12 @@ void UWeaponAction::WAndSButtonAction(float _Value)
 		case CharacterAnimState::LockOnForward:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
+			if (false == IsLockOn && false == IsAimOn)
+			{
+				SetAnimState(CharacterAnimState::Walk);
+			}
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
-			if (true == LockOnCheck)
+			else if (true == LockOnCheck)
 			{
 				SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;
@@ -549,8 +553,12 @@ void UWeaponAction::DAndAButtonAction(float _Value)
 		case CharacterAnimState::LockOnBackward:
 		case CharacterAnimState::LockOnLeft:
 		case CharacterAnimState::LockOnRight:
+			if (false == IsLockOn && false == IsAimOn)
+			{
+				SetAnimState(CharacterAnimState::Walk);
+			}
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
-			if (true == LockOnCheck)
+			else if (true == LockOnCheck)
 			{
 				SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;

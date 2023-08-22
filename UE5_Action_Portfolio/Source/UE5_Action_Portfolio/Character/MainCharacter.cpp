@@ -121,13 +121,16 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 		HUD->GetMainWidget()->SetCrosshairOnOff(true);
 	}
-	else if (EWeaponType::Bow == CurWeponT && (false == IsAim && false == CurWeaponAction->GetIsLockOn()))
+	else if (EWeaponType::Bow == CurWeponT && false == IsAim)
 	{
 		ChangeViewFTimeline.Reverse();
-		this->bUseControllerRotationYaw = false;
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-
 		HUD->GetMainWidget()->SetCrosshairOnOff(false);
+
+		if (false == CurWeaponAction->GetIsLockOn())
+		{
+			this->bUseControllerRotationYaw = false;
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+		}
 	}
 }
 
