@@ -30,7 +30,7 @@ AMainCharacter::AMainCharacter()
 	TimelineFinishDelegate.BindUFunction(this, FName("AimZoomOnFinish"));
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate.Yaw = 720.f;
+	GetCharacterMovement()->RotationRate.Yaw = 360.f;
 	
 	SetActorTypeTag(TEXT("Player"));
 	SetAttackTypeTag(TEXT("PlayerAttack"));
@@ -74,31 +74,6 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 	// 락온 타겟에 고정
 	LookAtTarget(_DeltaTime);
-
-	// 캐릭터가 달리다가 멈췄다면 일정 시간이 지났는가
-	if (true == CurWeaponAction->LockOnAfterRun())
-	{
-		IsLookAtTartget = true;
-	}
-	// 멈추고 일정 시간이 지났으면 캐릭터를 다시 락온으로 회전시킨다
-	if (true == IsLookAtTartget && nullptr != LockedOnTargetActor)
-	{
-		FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
-		FVector CurChar = GetActorLocation();
-
-		LockOnLocation.Z = 0.0f;
-		CurChar.Z = 0.0f;
-
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(CurChar, LockOnLocation);
-		SetActorRotation(UKismetMathLibrary::RInterpTo(GetActorRotation(), LookAtRotation, _DeltaTime, 10.f));
-
-		if (5.f >= FMath::Abs(LookAtRotation.Yaw - GetActorRotation().Yaw))
-		{
-			IsLookAtTartget = false;
-			bUseControllerRotationYaw = true;
-			GetCharacterMovement()->bOrientRotationToMovement = false;
-		}
-	}
 
 	EWeaponType CurWeponT = GetCurWeaponAction()->GetWeaponType();
 	bool IsAim = GetCurWeaponAction()->GetIsAimOn();
@@ -210,11 +185,8 @@ void AMainCharacter::ZoomOut()
 
 void AMainCharacter::Attack()
 {
-	// 락온 중 다른 방향을 바라보며 공격 할 때 다시 락온 타겟 방향으로 회전 후 공격
-	if (true == CurWeaponAction->GetIsLockOn() && false == GetCurWeaponAction()->LockOnAfterRun())
-	{
-		IsLookAtTartget = true;
-	}
+	// 락온일 때 회전 시작
+	//if (true == CurWeaponAction->GetIsLockOn() && false == GetCurWeaponAction()->LockOnAfterRun())
 
 	CurWeaponAction->AttackAction();
 }
@@ -315,85 +287,118 @@ void AMainCharacter::LockOnTarget()
 
 void AMainCharacter::LookAtTarget(float _DeltaTime)
 {
-	// 달리고 난 후에 실행되지 않게 해야된다.
+	// 일정 시간 후 MouseInput는 false가 되며 화면 고정
+	if (true == MouseInput)
+	{
+		MouseTimeCheck += _DeltaTime;
+	}
+
+	if (3.f <= MouseTimeCheck)
+	{
+		MouseInput = false;
+		MouseTimeCheck = 0.f;
+		MouseX = 0.f;
+		MouseY = 0.f;
+	}
+
 	if (nullptr == LockedOnTargetActor)
 	{
 		return;
 	}
-	else if (nullptr == GetCurWeaponAction())
+	if (nullptr == GetCurWeaponAction())
 	{
 		return;
 	}
-	else if (false == GetCurWeaponAction()->GetIsLockOn())
+	if (false == GetCurWeaponAction()->GetIsLockOn())
+	{
+		return;
+	}
+	
+	bool IsAim = GetCurWeaponAction()->GetIsAimOn();
+	if (true == IsAim)
+	{
+		return;
+	}
+	if (true == GetCurWeaponAction()->GetLockOnCheck())
 	{
 		return;
 	}
 
-	// 회전 했을 때 바라보지 않게 하는 것은
-	// getplayercontroller
-	// 캐스트해서?
-	// get mouse position
 	APlayerController* PlayerCon = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-
 	if (nullptr == PlayerCon)
 	{
 		return;
 	}
 
-	float MouseX = 0.f;
-	float MouseY = 0.f;
+	float MouseDeltaX = 0.f;
+	float MouseDeltaY = 0.f;
 
-	//PlayerCon->GetMousePosition(MouseX, MouseY);
-	PlayerCon->GetInputMouseDelta(MouseX, MouseY);
-	if (0.f != MouseX || 0.f != MouseY)
+	// 마우스의 이동을 받아옴
+	PlayerCon->GetInputMouseDelta(MouseDeltaX, MouseDeltaY);
+
+	// 절대값으로 얼만큼 이동했는지 확인
+	MouseDeltaX = FMath::Abs(MouseDeltaX);
+	MouseDeltaY = FMath::Abs(MouseDeltaY);
+	
+
+	// 마우스가 움직였다면
+	if (0.f != MouseDeltaX || 0.f != MouseDeltaY)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Mouse Location: %f, %f"), MouseX, MouseY);
-	}
+		MouseX += MouseDeltaX;
+		MouseY += MouseDeltaY;
 
-	// 마우스 인풋이 항상 절대값이 되게 만들어야한다.
-	if (3.f <= MouseX || 3.f <= MouseY)
+		MouseTimeCheck = 0.f;
+
+		// 마우스가 일정 수치 이상 움직였다면
+		if ((8.f <= MouseX || 8.f <= MouseY) && false == MouseInput)
+		{
+			MouseInput = true;
+			MouseX = 0.f;
+			MouseY = 0.f;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Mouse Delta: %f, %f"), MouseDeltaX, MouseDeltaY);
+		UE_LOG(LogTemp, Warning, TEXT("Mouse: %f, %f"), MouseX, MouseY);
+	}
+	// 마우스가 움직이지 않았고, 마우스가 일정 수치 이상 움직이지 않았었다면
+	else if ((0.f == MouseDeltaX && 0.f == MouseDeltaY) && false == MouseInput)
 	{
-		MouseInput = true;
+		MouseX = 0.f;
+		MouseY = 0.f;
+
+		FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
+
+		FVector CurPos = GetActorLocation();
+		CurPos.Z = 0;
+		LockOnLocation.Z = 0;
+
+		FVector Dir = LockOnLocation - CurPos;
+		Dir.Normalize();
+
+		FVector OtherForward = GetActorForwardVector();
+		OtherForward.Normalize();
+
+		float Angle0 = Dir.Rotation().Yaw;
+		float Angle1 = OtherForward.Rotation().Yaw;
+
+		if (10.f >= FMath::Abs(Angle0 - Angle1))
+		{
+			this->bUseControllerRotationYaw = true;
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+		}
+
+		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(CurPos, LockOnLocation);
+		FRotator InterpRotation = UKismetMathLibrary::RInterpTo(GetController()->GetControlRotation(), LookAtRotation, _DeltaTime, 5.f);
+
+		FRotator LookAtActor = FRotator(InterpRotation.Pitch, InterpRotation.Yaw, GetController()->GetControlRotation().Roll);
+
+		GetController()->SetControlRotation(LookAtActor);
+		SetActorRotation(UKismetMathLibrary::RInterpTo(GetActorRotation(), LookAtRotation, _DeltaTime, 5.f));
 	}
-
-	// 일정 시간 후 false가 되어야 한다.
-	if (true == MouseInput)
-	{
-		return;
-	}
-
-
-	FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LockOnLocation);
-	FRotator InterpRotation = UKismetMathLibrary::RInterpTo(GetController()->GetControlRotation(), LookAtRotation, _DeltaTime, 10.f);
-
-	FRotator LookAtActor = FRotator(InterpRotation.Pitch, InterpRotation.Yaw, GetController()->GetControlRotation().Roll);
-
-	FVector CurPos = GetActorLocation();
-	CurPos.Z = 0;
-	LockOnLocation.Z = 0;
-
-	FVector Dir = LockOnLocation - CurPos;
-	Dir.Normalize();
-
-	FVector OtherForward = GetActorForwardVector();
-	OtherForward.Normalize();
-
-	float Angle0 = Dir.Rotation().Yaw;
-	float Angle1 = OtherForward.Rotation().Yaw;
-
-	if (10.f <= FMath::Abs(Angle0 - Angle1))
-	{
-		this->bUseControllerRotationYaw = true;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
-	}
-
-	GetController()->SetControlRotation(LookAtActor);
 }
 
 void AMainCharacter::CharTurnAim(float _DeltaTime)
 {
-	// 이동 중 회전 문제가 있음
 	FRotator CurRot = GetTransform().Rotator();
 	FRotator ControlRot = GetControlRotation();
 
@@ -496,6 +501,9 @@ void AMainCharacter::LostLockedOnTargetActor()
 	LockedOnTargetActor = nullptr;
 	IsLookAtTartget = false;
 	MouseInput = false;
+	MouseX = 0.f;
+	MouseY = 0.f;
+	MouseTimeCheck = 0.f;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCurWeaponAction()->SetIsLockOn(false);

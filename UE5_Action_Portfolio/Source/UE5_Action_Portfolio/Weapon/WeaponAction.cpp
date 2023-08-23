@@ -38,6 +38,12 @@ void UWeaponAction::Tick(float _DeltaTime)
 	if (true == LockOnCheck)
 	{
 		LockOnAfterRunTime += _DeltaTime;
+
+		if (LockOnAfterRunCount <= LockOnAfterRunTime)
+		{
+			LockOnAfterRunTime = 0.f;
+			LockOnCheck = false;
+		}
 	}
 
 	if (nullptr != ReadyArrow)
@@ -377,7 +383,7 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 bool UWeaponAction::LockOnAfterRun()
 {
-	if (LockOnAfterRunCount < LockOnAfterRunTime)
+	if (LockOnAfterRunCount <= LockOnAfterRunTime)
 	{
 		LockOnCheck = false;
 		LockOnAfterRunTime = 0.f;
@@ -625,7 +631,6 @@ void UWeaponAction::RollorRunAction(float _Value)
 		{
 			if (true == IsLockOn)
 			{
-				LockOnCheck = true;
 				SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 			else if (false == IsLockOn)
@@ -705,6 +710,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 			if (true == IsLockOn)
 			{
 				LockOnCheck = false;
+				LockOnAfterRunTime = 0.f;
 				SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 			else if (false == IsLockOn)
@@ -730,6 +736,7 @@ void UWeaponAction::RollorRunAction(float _Value)
 		// ´Þ¸°´Ù
 		if (true == IsLockOn)
 		{
+			LockOnCheck = true;
 			LockOnAfterRunTime = 0.f;
 			CurCharacter->bUseControllerRotationYaw = false;
 			CurCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;

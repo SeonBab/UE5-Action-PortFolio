@@ -64,6 +64,10 @@ public:
 private:
 	bool IsLookAtTartget = false;
 	bool MouseInput = false;
+	float MouseX = 0.f;
+	float MouseY = 0.f;
+	float MouseTimeCheck = 0.f;
+
 
 	FTimeline ChangeViewFTimeline;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
