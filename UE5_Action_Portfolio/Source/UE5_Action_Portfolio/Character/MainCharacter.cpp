@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/WeaponAction.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameUI/GameUIHUD.h"
@@ -319,24 +320,54 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 	{
 		return;
 	}
-
-	if (nullptr == GetCurWeaponAction())
+	else if (nullptr == GetCurWeaponAction())
+	{
+		return;
+	}
+	else if (false == GetCurWeaponAction()->GetIsLockOn())
 	{
 		return;
 	}
 
-	if (false == GetCurWeaponAction()->GetIsLockOn())
+	// 회전 했을 때 바라보지 않게 하는 것은
+	// getplayercontroller
+	// 캐스트해서?
+	// get mouse position
+	APlayerController* PlayerCon = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	if (nullptr == PlayerCon)
 	{
 		return;
 	}
+
+	float MouseX = 0.f;
+	float MouseY = 0.f;
+
+	//PlayerCon->GetMousePosition(MouseX, MouseY);
+	PlayerCon->GetInputMouseDelta(MouseX, MouseY);
+	if (0.f != MouseX || 0.f != MouseY)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Mouse Location: %f, %f"), MouseX, MouseY);
+	}
+
+	// 마우스 인풋이 항상 절대값이 되게 만들어야한다.
+	if (3.f <= MouseX || 3.f <= MouseY)
+	{
+		MouseInput = true;
+	}
+
+	// 일정 시간 후 false가 되어야 한다.
+	if (true == MouseInput)
+	{
+		return;
+	}
+
 
 	FVector LockOnLocation = LockedOnTargetActor->GetActorLocation();
 	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LockOnLocation);
 	FRotator InterpRotation = UKismetMathLibrary::RInterpTo(GetController()->GetControlRotation(), LookAtRotation, _DeltaTime, 10.f);
 
 	FRotator LookAtActor = FRotator(InterpRotation.Pitch, InterpRotation.Yaw, GetController()->GetControlRotation().Roll);
-
-	GetController()->SetControlRotation(LookAtActor);
 
 	FVector CurPos = GetActorLocation();
 	CurPos.Z = 0;
@@ -357,6 +388,7 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 
+	GetController()->SetControlRotation(LookAtActor);
 }
 
 void AMainCharacter::CharTurnAim(float _DeltaTime)
@@ -463,6 +495,7 @@ void AMainCharacter::LostLockedOnTargetActor()
 {
 	LockedOnTargetActor = nullptr;
 	IsLookAtTartget = false;
+	MouseInput = false;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCurWeaponAction()->SetIsLockOn(false);

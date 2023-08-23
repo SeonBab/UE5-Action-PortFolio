@@ -22,44 +22,45 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
 	FVector PathPos;
 
-	TArray<FVector> PathPoint = PathFind(OwnerComp, TargetPos);
-
-	if (0 != PathPoint.Num())
-	{
-		PathPos = PathPoint[1];
-	}
-
-	TargetPos.Z = 0.f;
 	CurPos.Z = 0.f;
-	PathPos.Z = 0.f;
-
-	// 회전
-	FVector Dir = PathPos - CurPos;
-	Dir.Normalize();
-
-	FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
-	OtherForward.Normalize();
-
-	FVector Cross = FVector::CrossProduct(OtherForward, Dir);
-
-	float Angle0 = Dir.Rotation().Yaw;
-	float Angle1 = OtherForward.Rotation().Yaw;
-
-	if (10.f <= FMath::Abs(Angle0 - Angle1))
-	{
-		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-		GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
-	}
-	else
-	{
-		FRotator Rot = Dir.Rotation();
-		GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
-	}
-
-	// 무기 별 이동
-	// 검 이동
+	
+	// 무기 별 회전과 이동
+	// 검
 	if (EWeaponType::Sword == CurWeaponType)
 	{
+		TArray<FVector> PathPoint = PathFind(OwnerComp, TargetPos);
+
+		if (0 != PathPoint.Num())
+		{
+			PathPos = PathPoint[1];
+		}
+
+		TargetPos.Z = 0.f;
+		PathPos.Z = 0.f;
+
+		// 회전
+		FVector Dir = PathPos - CurPos;
+		Dir.Normalize();
+
+		FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
+		OtherForward.Normalize();
+
+		FVector Cross = FVector::CrossProduct(OtherForward, Dir);
+
+		float Angle0 = Dir.Rotation().Yaw;
+		float Angle1 = OtherForward.Rotation().Yaw;
+
+		if (10.f <= FMath::Abs(Angle0 - Angle1))
+		{
+			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
+			GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+		}
+		else
+		{
+			FRotator Rot = Dir.Rotation();
+			GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
+		}
+
 		FVector Dis = TargetPos - CurPos;
 
 		float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
@@ -79,9 +80,37 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 			GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
 		}
 	}
-	// 활 이동
+	// 활
 	else if (EWeaponType::Bow == CurWeaponType)
 	{
+		// 회전
+
+		TargetPos.Z = 0.f;
+		PathPos.Z = 0.f;
+
+		FVector Dir = TargetPos - CurPos;
+		Dir.Normalize();
+
+		FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
+		OtherForward.Normalize();
+
+		FVector Cross = FVector::CrossProduct(OtherForward, Dir);
+
+		float Angle0 = Dir.Rotation().Yaw;
+		float Angle1 = OtherForward.Rotation().Yaw;
+
+		if (10.f <= FMath::Abs(Angle0 - Angle1))
+		{
+			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
+			GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+		}
+		else
+		{
+			FRotator Rot = Dir.Rotation();
+			GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
+		}
+
+		// 이동
 		FVector Dis = TargetPos - CurPos;
 
 		if (1000.f >= Dis.Size())

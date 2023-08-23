@@ -63,6 +63,7 @@ public:
 
 private:
 	bool IsLookAtTartget = false;
+	bool MouseInput = false;
 
 	FTimeline ChangeViewFTimeline;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
