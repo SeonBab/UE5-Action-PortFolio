@@ -9,18 +9,15 @@
 #include "Global/GlobalGameInstance.h"
 #include "Weapon/WeaponAction.h"
 #include "NavigationSystem.h"
-#include "BTTask_AIBase.generated.h"
+#include "BTTask_MonsterBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UBTTask_AIBase : public UBTTask_BlackboardBase
+class UE5_ACTION_PORTFOLIO_API UBTTask_MonsterBase : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
-	UBTTask_AIBase();
+	UBTTask_MonsterBase();
 	class AGlobalCharacter* GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp);
 	float GetStateTime(UBehaviorTreeComponent& OwnerComp);
 	void ResetStateTime(UBehaviorTreeComponent& OwnerComp);

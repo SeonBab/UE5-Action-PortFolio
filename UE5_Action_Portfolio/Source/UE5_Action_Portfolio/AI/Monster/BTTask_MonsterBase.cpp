@@ -1,18 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "AI/Monster/BTTask_AIBase.h"
+#include "AI/Monster/BTTask_MonsterBase.h"
 #include "Kismet/GamePlayStatics.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 
-UBTTask_AIBase::UBTTask_AIBase()
+UBTTask_MonsterBase::UBTTask_MonsterBase()
 {
 	bNotifyTick = true;
 	bNotifyTaskFinished = true;
 }
 
-AGlobalCharacter* UBTTask_AIBase::GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp)
+AGlobalCharacter* UBTTask_MonsterBase::GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp)
 {
 	AAICon* AICon = OwnerComp.GetOwner<AAICon>();
 
@@ -33,7 +30,7 @@ AGlobalCharacter* UBTTask_AIBase::GetGlobalCharacter(UBehaviorTreeComponent& Own
 	return Character;
 }
 
-float UBTTask_AIBase::GetStateTime(UBehaviorTreeComponent& OwnerComp)
+float UBTTask_MonsterBase::GetStateTime(UBehaviorTreeComponent& OwnerComp)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 
@@ -48,7 +45,7 @@ float UBTTask_AIBase::GetStateTime(UBehaviorTreeComponent& OwnerComp)
 	return StateTime;
 }
 
-void UBTTask_AIBase::ResetStateTime(UBehaviorTreeComponent& OwnerComp)
+void UBTTask_MonsterBase::ResetStateTime(UBehaviorTreeComponent& OwnerComp)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 
@@ -61,7 +58,7 @@ void UBTTask_AIBase::ResetStateTime(UBehaviorTreeComponent& OwnerComp)
 	Blackboard->SetValueAsFloat(TEXT("StateTime"), 0.f);
 }
 
-UBlackboardComponent* UBTTask_AIBase::GetBlackboardComponent(UBehaviorTreeComponent& OwnerComp)
+UBlackboardComponent* UBTTask_MonsterBase::GetBlackboardComponent(UBehaviorTreeComponent& OwnerComp)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 
@@ -74,12 +71,12 @@ UBlackboardComponent* UBTTask_AIBase::GetBlackboardComponent(UBehaviorTreeCompon
 	return Blackboard;
 }
 
-TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& _OwnerComp, AActor* _Actor)
+TArray<FVector> UBTTask_MonsterBase::PathFind(UBehaviorTreeComponent& _OwnerComp, AActor* _Actor)
 {
 	return PathFind(_OwnerComp, _Actor->GetActorLocation());
 }
 
-TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& _OwnerComp, FVector _Pos)
+TArray<FVector> UBTTask_MonsterBase::PathFind(UBehaviorTreeComponent& _OwnerComp, FVector _Pos)
 {
 	// 경로 저장
 	UNavigationPath* PathObject = nullptr;
@@ -100,7 +97,7 @@ TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& _OwnerComp, FVe
 	return PathObject->PathPoints;
 }
 
-EBTNodeResult::Type UBTTask_AIBase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_MonsterBase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	ResetStateTime(OwnerComp);
 
@@ -112,12 +109,12 @@ EBTNodeResult::Type UBTTask_AIBase::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_AIBase::OnGameplayTaskActivated(UGameplayTask& _Task)
+void UBTTask_MonsterBase::OnGameplayTaskActivated(UGameplayTask& _Task)
 {
 	
 }
 
-void UBTTask_AIBase::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_MonsterBase::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 

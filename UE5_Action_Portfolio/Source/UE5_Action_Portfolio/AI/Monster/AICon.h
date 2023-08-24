@@ -28,6 +28,7 @@ private:
 	class UBlackboardComponent* BlackboardComponent = nullptr;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent = nullptr;
+	UPROPERTY()
 	TObjectPtr<class UAISenseConfig_Sight> AISenseConfigSight = nullptr;
 	//TObjectPtr<class UAISenseConfig_Hearing> AISenseConfigHearing = nullptr;
 

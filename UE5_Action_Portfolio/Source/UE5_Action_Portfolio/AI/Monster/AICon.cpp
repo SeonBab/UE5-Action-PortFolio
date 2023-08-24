@@ -129,7 +129,18 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 			else if (nullptr != PerceivedActor)
 			{
 				UObject* TargetObject = BlackboardComponent->GetValueAsObject(TEXT("TargetActor"));
+
+				if (nullptr == TargetObject)
+				{
+					return;
+				}
+
 				AActor* TargetActor = Cast<AActor>(TargetObject);
+
+				if (nullptr == TargetActor)
+				{
+					return;
+				}
 
 				// 인식 했던 적이 타겟과 같다
 				if (_Actor == TargetActor)
