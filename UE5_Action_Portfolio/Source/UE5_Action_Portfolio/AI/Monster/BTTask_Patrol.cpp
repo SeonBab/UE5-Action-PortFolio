@@ -1,4 +1,6 @@
 #include "AI/Monster/BTTask_Patrol.h"
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
 
 EBTNodeResult::Type UBTTask_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {

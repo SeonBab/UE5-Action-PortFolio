@@ -39,7 +39,7 @@ void UWeaponAction::Tick(float _DeltaTime)
 	{
 		LockOnAfterRunTime += _DeltaTime;
 
-		if (LockOnAfterRunCount <= LockOnAfterRunTime)
+		if (LockOnAfterRunCount <= LockOnAfterRunTime || CharacterAnimState::Attack == AnimState)
 		{
 			LockOnAfterRunTime = 0.f;
 			LockOnCheck = false;

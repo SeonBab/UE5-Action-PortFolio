@@ -161,7 +161,11 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 				// ex) 다른 타겟이 새로 들어오거나 나갈때
 				else
 				{
-					FVector CurLocation = GetOwner()->GetActorLocation();
+					if (nullptr == GetPawn() && false == GetPawn()->IsValidLowLevel())
+					{
+						return;
+					}
+					FVector CurLocation = GetPawn()->GetActorLocation();
 
 					FVector PerceivedActorDis = PerceivedActor->GetActorLocation() - CurLocation;
 					FVector TargetdActorDis = _Actor->GetActorLocation() - CurLocation;
