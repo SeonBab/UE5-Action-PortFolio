@@ -1,4 +1,4 @@
-#include "Global/GlobalCharAnimInstance.h"
+#include "Character/MainCharAnimInstance.h"
 #include "Global/Data/AnimaitionData.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/GlobalCharacter.h"
@@ -8,13 +8,15 @@
 #include "Weapon/Arrow.h"
 #include "Character/MainCharacter.h"
 
-void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
+void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
-	if (CharacterAnimState::Death == Animstate)
+	CharacterAnimState CurAnim = GetAnimState<CharacterAnimState>();
+
+	if (CharacterAnimState::Death == CurAnim)
 	{
 		return;
 	}
-	else if (CharacterAnimState::Dizzy == Animstate && AllAnimations[CharacterAnimState::Dizzy] != Anim)
+	else if (CharacterAnimState::Dizzy == CurAnim && GetAnimMontage(CharacterAnimState::Dizzy) != Anim)
 	{
 		return;
 	}
@@ -26,33 +28,33 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		return;
 	}
 
-	if (AllAnimations[CharacterAnimState::WalkJump] == Anim || AllAnimations[CharacterAnimState::RunJump] == Anim || 
-		AllAnimations[CharacterAnimState::Roll] == Anim || AllAnimations[CharacterAnimState::Attack] == Anim ||
-		AllAnimations[CharacterAnimState::GotHit] == Anim || AllAnimations[CharacterAnimState::Dizzy] == Anim)
+	if (GetAnimMontage(CharacterAnimState::WalkJump) == Anim || GetAnimMontage(CharacterAnimState::RunJump) == Anim ||
+		GetAnimMontage(CharacterAnimState::Roll) == Anim || GetAnimMontage(CharacterAnimState::Attack) == Anim ||
+		GetAnimMontage(CharacterAnimState::GotHit) == Anim || GetAnimMontage(CharacterAnimState::Dizzy) == Anim)
 	{
 		if (false == character->CurWeaponAction->IsLockOn)
 		{
-			Animstate = CharacterAnimState::Idle;
+			SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 		}
 		else if (true == character->CurWeaponAction->IsLockOn)
 		{
-			Animstate = CharacterAnimState::LockOnIdle;
+			SetAnimState<CharacterAnimState>(CharacterAnimState::LockOnIdle);
 		}
-		character->CurWeaponAction->SetAnimState(Animstate);
+		character->CurWeaponAction->SetAnimState(GetAnimState<CharacterAnimState>());
 		Montage_Play(AllAnimations[Animstate], 1.f);
 		character->CurWeaponAction->SetCharacterAirControl(1.f);
 	}
-	else if (AllAnimations[CharacterAnimState::EquipOrDisArmBow] == Anim || AllAnimations[CharacterAnimState::EquipOrDisArmSwordAndShield] == Anim)
+	else if (GetAnimMontage(CharacterAnimState::EquipOrDisArmBow) == Anim || GetAnimMontage(CharacterAnimState::EquipOrDisArmSwordAndShield) == Anim)
 	{
 		if (false == character->CurWeaponAction->IsLockOn)
 		{
-			Animstate = CharacterAnimState::Idle;
+			SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 		}
 		else if (true == character->CurWeaponAction->IsLockOn)
 		{
-			Animstate = CharacterAnimState::LockOnIdle;
+			SetAnimState<CharacterAnimState>(CharacterAnimState::LockOnIdle);
 		}
-		character->CurWeaponAction->SetAnimState(Animstate);
+		character->CurWeaponAction->SetAnimState(GetAnimState<CharacterAnimState>());
 		Montage_Play(AllAnimations[Animstate], 1.f);
 		AnimSpeed = 1.f;
 
@@ -67,12 +69,12 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 			character->CurWeaponAction->BowToSwordAndSheiled = false;
 		}
 	}
-	else if (AllAnimations[CharacterAnimState::ParryorFire] == Anim)
+	else if (GetAnimMontage(CharacterAnimState::ParryorFire) == Anim)
 	{
 		if (EWeaponType::Bow == character->CurWeaponAction->WeaponType)
 		{
-			Animstate = CharacterAnimState::Idle;
-			character->CurWeaponAction->SetAnimState(Animstate);
+			SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
+			character->CurWeaponAction->SetAnimState(GetAnimState<CharacterAnimState>());
 			Montage_Play(AllAnimations[Animstate], 1.f);
 			character->CurWeaponAction->ArrowReady = false;
 			character->CurWeaponAction->EarlyArrowCheck = false;
@@ -81,22 +83,22 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		{
 			if (false == character->CurWeaponAction->IsLockOn)
 			{
-				Animstate = CharacterAnimState::Idle;
+				SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 			}
 			else if (true == character->CurWeaponAction->IsLockOn)
 			{
-				Animstate = CharacterAnimState::LockOnIdle;
+				SetAnimState<CharacterAnimState>(CharacterAnimState::LockOnIdle);
 			}
-			character->CurWeaponAction->SetAnimState(Animstate);
+			character->CurWeaponAction->SetAnimState(GetAnimState<CharacterAnimState>());
 			Montage_Play(AllAnimations[Animstate], 1.f);
 			character->CurWeaponAction->SetCharacterAirControl(1.f);
 		}
 	}
-	else if (AllAnimations[CharacterAnimState::AimOrBlockGotHit] == Anim)
+	else if (GetAnimMontage(CharacterAnimState::AimOrBlockGotHit) == Anim)
 	{
 		if (EWeaponType::Sword == character->GetCurWeaponAction()->GetWeaponType())
 		{
-			Animstate = CharacterAnimState::AimOrBlock;
+			SetAnimState<CharacterAnimState>(CharacterAnimState::AimOrBlock);
 
 			// 다시 블락
 			FName SectionName = "AimorBlock2";
@@ -112,18 +114,18 @@ void UGlobalCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		}
 		else if (false == character->CurWeaponAction->IsLockOn)
 		{
-			Animstate = CharacterAnimState::Idle;
+			SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 		}
 		else if (true == character->CurWeaponAction->IsLockOn)
 		{
-			Animstate = CharacterAnimState::LockOnIdle;
+			SetAnimState<CharacterAnimState>(CharacterAnimState::LockOnIdle);
 		}
 
-		character->CurWeaponAction->SetAnimState(Animstate);
+		character->CurWeaponAction->SetAnimState(GetAnimState<CharacterAnimState>());
 	}
 }
 
-void UGlobalCharAnimInstance::AnimNotify_RollStop()
+void UMainCharAnimInstance::AnimNotify_RollStop()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -135,7 +137,7 @@ void UGlobalCharAnimInstance::AnimNotify_RollStop()
 	character->CurWeaponAction->IsRollMoveToFalse();
 }
 
-void UGlobalCharAnimInstance::AnimNotify_JumpStart()
+void UMainCharAnimInstance::AnimNotify_JumpStart()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -147,7 +149,7 @@ void UGlobalCharAnimInstance::AnimNotify_JumpStart()
 	character->Jump();
 }
 
-void UGlobalCharAnimInstance::AnimNotify_ChangeWeapon()
+void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -155,7 +157,7 @@ void UGlobalCharAnimInstance::AnimNotify_ChangeWeapon()
 	{
 		return;
 	}
-	
+
 	EWeaponType CurWeaponType = character->CurWeaponAction->WeaponType;
 	CharacterAnimState CurAnimState = character->CurWeaponAction->AnimState;
 
@@ -206,7 +208,7 @@ void UGlobalCharAnimInstance::AnimNotify_ChangeWeapon()
 	}
 }
 
-void UGlobalCharAnimInstance::AnimNotify_AttackCheck()
+void UMainCharAnimInstance::AnimNotify_AttackCheck()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -223,13 +225,13 @@ void UGlobalCharAnimInstance::AnimNotify_AttackCheck()
 		{
 			if (false == character->CurWeaponAction->IsLockOn)
 			{
-				Animstate = CharacterAnimState::Idle;
+				SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 			}
 			else if (true == character->CurWeaponAction->IsLockOn)
 			{
-				Animstate = CharacterAnimState::LockOnIdle;
+				SetAnimState<CharacterAnimState>(CharacterAnimState::LockOnIdle);
 			}
-			character->CurWeaponAction->SetAnimState(Animstate);
+			character->CurWeaponAction->SetAnimState(GetAnimState<CharacterAnimState>());
 			Montage_Play(AllAnimations[Animstate], 1.0f);
 		}
 		else
@@ -239,7 +241,7 @@ void UGlobalCharAnimInstance::AnimNotify_AttackCheck()
 	}
 }
 
-void UGlobalCharAnimInstance::AnimNotify_AimorBlockCheck()
+void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -264,7 +266,7 @@ void UGlobalCharAnimInstance::AnimNotify_AimorBlockCheck()
 	}
 }
 
-void UGlobalCharAnimInstance::AnimNotify_ArrowReadyCheck()
+void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -274,23 +276,23 @@ void UGlobalCharAnimInstance::AnimNotify_ArrowReadyCheck()
 	}
 
 	// 발사가 준비되기 전에 미리 공격 입력을 눌렀을 때
-	if (true == character->CurWeaponAction->EarlyArrowCheck && CharacterAnimState::AimOrBlock == Animstate)
+	if (true == character->CurWeaponAction->EarlyArrowCheck && CharacterAnimState::AimOrBlock == GetAnimState<CharacterAnimState>())
 	{
 		character->CurWeaponAction->ArrowReady = false;
 		character->CurWeaponAction->EarlyArrowCheck = false;
 
-		Animstate = CharacterAnimState::ParryorFire;
-		character->CurWeaponAction->SetAnimState(Animstate);
+		SetAnimState<CharacterAnimState>(CharacterAnimState::ParryorFire);
+		character->CurWeaponAction->SetAnimState(GetAnimState<CharacterAnimState>());
 		Montage_Play(AllAnimations[Animstate], 1.f);
 	}
 	// 발사가 준비된 후 입력을 확인할 때
-	else if (false == character->CurWeaponAction->EarlyArrowCheck && CharacterAnimState::AimOrBlock == Animstate)
+	else if (false == character->CurWeaponAction->EarlyArrowCheck && CharacterAnimState::AimOrBlock == GetAnimState<CharacterAnimState>())
 	{
 		character->CurWeaponAction->ArrowReady = true;
 	}
 }
 
-void UGlobalCharAnimInstance::AnimNotify_ChordToHand()
+void UMainCharAnimInstance::AnimNotify_ChordToHand()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -304,7 +306,7 @@ void UGlobalCharAnimInstance::AnimNotify_ChordToHand()
 	BowAnim->SetBowChordCheck(true);
 }
 
-void UGlobalCharAnimInstance::AnimNotify_ReRoad()
+void UMainCharAnimInstance::AnimNotify_ReRoad()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -316,7 +318,7 @@ void UGlobalCharAnimInstance::AnimNotify_ReRoad()
 	character->GetCurWeaponAction()->ArrowSpawn();
 }
 
-void UGlobalCharAnimInstance::AnimNotify_StartAttack()
+void UMainCharAnimInstance::AnimNotify_StartAttack()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -324,7 +326,7 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 	{
 		return;
 	}
-	
+
 	UWeaponAction* WeaponAction = character->GetCurWeaponAction();
 
 	if (nullptr == WeaponAction)
@@ -392,7 +394,7 @@ void UGlobalCharAnimInstance::AnimNotify_StartAttack()
 	}
 }
 
-void UGlobalCharAnimInstance::AnimNotify_EndAttack()
+void UMainCharAnimInstance::AnimNotify_EndAttack()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -411,7 +413,7 @@ void UGlobalCharAnimInstance::AnimNotify_EndAttack()
 	WeaponAction->ChangeNoCollision();
 }
 
-void UGlobalCharAnimInstance::AnimNotify_Death()
+void UMainCharAnimInstance::AnimNotify_Death()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -423,7 +425,7 @@ void UGlobalCharAnimInstance::AnimNotify_Death()
 	character->Destroy();
 }
 
-void UGlobalCharAnimInstance::AnimNotify_ParryOnOff()
+void UMainCharAnimInstance::AnimNotify_ParryOnOff()
 {
 	AGlobalCharacter* character = Cast<AGlobalCharacter>(GetOwningActor());
 
@@ -453,15 +455,15 @@ void UGlobalCharAnimInstance::AnimNotify_ParryOnOff()
 	}
 }
 
-void UGlobalCharAnimInstance::NativeInitializeAnimation()
+void UMainCharAnimInstance::NativeInitializeAnimation()
 {
 }
 
-void UGlobalCharAnimInstance::NativeBeginPlay()
+void UMainCharAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	OnMontageBlendingOut.AddDynamic(this, &UGlobalCharAnimInstance::MontageBlendingOut);
+	OnMontageBlendingOut.AddDynamic(this, &UMainCharAnimInstance::MontageBlendingOut);
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
@@ -477,10 +479,10 @@ void UGlobalCharAnimInstance::NativeBeginPlay()
 		return;
 	}
 
-	AllAnimations = FindAnimaitionData->AllAnimations;
+	SetAllAnimation<CharacterAnimState>(FindAnimaitionData->AllAnimations);
 }
 
-void UGlobalCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
+void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 {
 	Super::NativeUpdateAnimation(DeltaTime);
 
@@ -496,7 +498,7 @@ void UGlobalCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		return;
 	}
 
-	Animstate = *character->AnimState;
+	Animstate = static_cast<int>(*character->AnimState);
 
 	if (false == AllAnimations.Contains(Animstate))
 	{
@@ -513,7 +515,7 @@ void UGlobalCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	if (false == Montage_IsPlaying(Montage))
 	{
 		// 무기가 있는 상태에서 없는 상태로 갈 땐 역재생
-		if (EWeaponType::UnArmed == character->CurWeaponAction->WeaponType && (CharacterAnimState::EquipOrDisArmBow == Animstate || CharacterAnimState::EquipOrDisArmSwordAndShield == Animstate))
+		if (EWeaponType::UnArmed == character->CurWeaponAction->WeaponType && (CharacterAnimState::EquipOrDisArmBow == GetAnimState<CharacterAnimState>() || CharacterAnimState::EquipOrDisArmSwordAndShield == GetAnimState<CharacterAnimState>()))
 		{
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, static_cast<int>(Animstate));
 			Montage_Play(Montage, AnimSpeed, EMontagePlayReturnType::MontageLength, 1.f);

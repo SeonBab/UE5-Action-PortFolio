@@ -1,16 +1,11 @@
-#include "AI/Monster/AICon.h"
-#include "BehaviorTree/BehaviorTreeComponent.h"
-#include "BehaviorTree/BlackboardComponent.h"
-#include "BehaviorTree/BehaviorTree.h"
+#include "AI/Monster/AIPlayerCloneCon.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "Character/PlayerCon.h"
-#include "Global/GlobalAICharacter.h"
+#include "AI/Monster/AIPlayerCloneCharacter.h"
 
-AAICon::AAICon()
+
+AAIPlayerCloneCon::AAIPlayerCloneCon()
 {
-	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
-	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 	AISenseConfigSight = CreateDefaultSubobject<UAISenseConfig_Sight>("SenseSight");
 	
@@ -29,7 +24,7 @@ AAICon::AAICon()
 	AAIController::SetGenericTeamId(FGenericTeamId(1));
 }
 
-void AAICon::Tick(float _DeltaTime)
+void AAIPlayerCloneCon::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
@@ -43,22 +38,22 @@ void AAICon::Tick(float _DeltaTime)
 		LostTimer = 0.f;
 		TargetLost = false;
 		PerceivedActor = nullptr;
-		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
-		BlackboardComponent->SetValueAsBool(TEXT("IsReturn"), true);
+		GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
+		GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), true);
 	}
 }
 
-void AAICon::OnPossess(APawn* _InPawn)
+void AAIPlayerCloneCon::OnPossess(APawn* _InPawn)
 {
 	Super::OnPossess(_InPawn);
 
-	if (nullptr == BehaviorTreeComponent && false == BehaviorTreeComponent->IsValidLowLevel())
+	if (nullptr == GetBehaviorTreeComponent() && false == GetBehaviorTreeComponent()->IsValidLowLevel())
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == BehaviorTreeComponent && false == BehaviorTreeComponent->IsValidLowLevel())"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	AGlobalAICharacter* AIPawn = Cast<AGlobalAICharacter>(_InPawn);
+	AAIPlayerCloneCharacter* AIPawn = Cast<AAIPlayerCloneCharacter>(_InPawn);
 
 	UBehaviorTree* BehaviorTree = AIPawn->GetBehaviorTree();
 
@@ -67,20 +62,20 @@ void AAICon::OnPossess(APawn* _InPawn)
 		return;
 	}
 
-	BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	BlackboardComponent->SetValueAsObject(TEXT("SelfActor"), _InPawn);
+	GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), _InPawn);
 
-	BehaviorTreeComponent->StartTree(*BehaviorTree);
+	GetBehaviorTreeComponent()->StartTree(*BehaviorTree);
 }
 
-void AAICon::BeginPlay()
+void AAIPlayerCloneCon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAICon::OnTargetPerceptionUpdated);
+	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIPlayerCloneCon::OnTargetPerceptionUpdated);
 }
 
-ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
+ETeamAttitude::Type AAIPlayerCloneCon::GetTeamAttitudeTowards(const AActor& Other) const
 {
 	APawn const* OtherPawn = Cast<APawn>(&Other);
 
@@ -106,7 +101,7 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 	return ETeamAttitude::Neutral;
 }
 
-void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
+void AAIPlayerCloneCon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 {
 	switch (_Stimulus.Type)
 	{
@@ -128,7 +123,7 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 			// ex) 인식 범위를 나갔던 타겟이 다시 들어올 때
 			else if (nullptr != PerceivedActor)
 			{
-				UObject* TargetObject = BlackboardComponent->GetValueAsObject(TEXT("TargetActor"));
+				UObject* TargetObject = GetBlackboardComponent()->GetValueAsObject(TEXT("TargetActor"));
 
 				if (nullptr == TargetObject)
 				{
@@ -181,12 +176,12 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 				}
 			}
 
-			BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
+			GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
 		}
 		break;
 	case _Stimulus.SensingFailed: // 타깃 인식 실패
 		PerceivedActor = nullptr;
-		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
+		GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 		break;
 	default:
 		return;

@@ -4,6 +4,8 @@ ALich::ALich()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	ActorTypeTag = TEXT("");
+	AttackTypeTag = TEXT("");
 }
 
 void ALich::BeginPlay()

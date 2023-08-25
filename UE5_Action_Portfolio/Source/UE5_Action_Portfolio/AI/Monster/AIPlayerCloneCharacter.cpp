@@ -1,13 +1,13 @@
-#include "Global/GlobalAICharacter.h"
+#include "AI/Monster/AIPlayerCloneCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/AICon.h"
 
-UBehaviorTree* AGlobalAICharacter::GetBehaviorTree()
+UBehaviorTree* AAIPlayerCloneCharacter::GetBehaviorTree()
 {
     return BehaviorTree;
 }
 
-UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
+UBlackboardComponent* AAIPlayerCloneCharacter::GetBlackboardComponent()
 {
     if (nullptr == BlackboardComponent)
     {
@@ -24,19 +24,18 @@ UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
     return BlackboardComponent;
 }
 
-void AGlobalAICharacter::BeginPlay()
+void AAIPlayerCloneCharacter::BeginPlay()
 {
     Super::BeginPlay();
 }
 
-void AGlobalAICharacter::Tick(float _DeltaTime)
+void AAIPlayerCloneCharacter::Tick(float _DeltaTime)
 {
     Super::Tick(_DeltaTime);
 }
 
-float AGlobalAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AAIPlayerCloneCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
     return FinalDamage;
 }

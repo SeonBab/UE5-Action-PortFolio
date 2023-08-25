@@ -1,15 +1,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AIController.h"
-#include "AICon.generated.h"
+#include "AI/AICon.h"
+#include "AIPlayerCloneCon.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API AAICon : public AAIController
+class UE5_ACTION_PORTFOLIO_API AAIPlayerCloneCon : public AAICon
 {
 	GENERATED_BODY()
 public:
-	AAICon();
+	AAIPlayerCloneCon();
 	virtual void Tick(float _DeltaTime) override;
 
 protected:
@@ -22,10 +22,6 @@ protected:
 	void OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus);
 
 private:
-	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UBehaviorTreeComponent* BehaviorTreeComponent = nullptr;
-	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UBlackboardComponent* BlackboardComponent = nullptr;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent = nullptr;
 	UPROPERTY()

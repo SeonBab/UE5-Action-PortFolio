@@ -2,7 +2,7 @@
 #include "Global/Data/AnimaitionData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Global/GlobalGameInstance.h"
-#include "Global/GlobalCharAnimInstance.h"
+#include "Character/MainCharAnimInstance.h"
 #include "Global/GlobalCharacter.h"
 #include "Weapon/BowAnimInstance.h"
 #include "Weapon/Arrow.h"
@@ -222,7 +222,7 @@ void UWeaponAction::IsRollMoveToFalse()
 
 void UWeaponAction::ChangeWeapon(FName _Weapon)
 {
-	UGlobalCharAnimInstance* Ptr = Cast<UGlobalCharAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
+	UMainCharAnimInstance* Ptr = Cast<UMainCharAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
 
 	if (nullptr == Ptr)
 	{
@@ -238,7 +238,7 @@ void UWeaponAction::ChangeWeapon(FName _Weapon)
 		return;
 	}
 
-	Ptr->AllAnimations = FindAnimationData->AllAnimations;
+	Ptr->SetAllAnimation(FindAnimationData->AllAnimations);
 	WeaponType = FindAnimationData->Type;
 }
 
@@ -251,7 +251,7 @@ void UWeaponAction::ChangeSetUnArmed()
 	}
 
 	// 역재생을 위한 AnimInstance
-	UGlobalCharAnimInstance* Ptr = Cast<UGlobalCharAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
+	UMainCharAnimInstance* Ptr = Cast<UMainCharAnimInstance>(CurCharacter->GetMesh()->GetAnimInstance());
 
 	if (nullptr == Ptr)
 	{

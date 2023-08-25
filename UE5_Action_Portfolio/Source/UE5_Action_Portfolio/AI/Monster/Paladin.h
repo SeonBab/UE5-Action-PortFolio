@@ -1,12 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Global/GlobalAICharacter.h"
+#include "AI/Monster/AIPlayerCloneCharacter.h"
 #include "Global/Data/MonsterData.h"
 #include "Paladin.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API APaladin : public AGlobalAICharacter
+class UE5_ACTION_PORTFOLIO_API APaladin : public AAIPlayerCloneCharacter
 {
 	GENERATED_BODY()
 

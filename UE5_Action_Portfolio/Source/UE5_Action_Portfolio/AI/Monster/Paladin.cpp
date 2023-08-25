@@ -20,7 +20,6 @@ void APaladin::BeginPlay()
 	}
 
 	CurMonsterData = Inst->GetMonsterData(DataName);
-	// 비헤이비어 트리 Set하기
 
 	Super::BeginPlay();
 

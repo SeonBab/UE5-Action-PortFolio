@@ -1,11 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Global/GlobalAICharacter.h"
 #include "Lich.generated.h"
-// 상속 AI글로벌로 변경하기
+
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API ALich : public ACharacter
+class UE5_ACTION_PORTFOLIO_API ALich : public AGlobalAICharacter
 {
 	GENERATED_BODY()
 
@@ -18,7 +18,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	//const struct FMonsterData* CurMonsterData;
+	//const struct FBossData* CurBossData;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName = "Lich";
 
