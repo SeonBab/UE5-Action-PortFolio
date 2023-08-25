@@ -22,6 +22,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetWeaponType();
 	bool GetAttackCheck();
+	void SetAttackCheck(bool _Value);
 	void SetIsLockOn(bool _Value);
 	bool GetIsAimOn();
 	void SetAttackType(FName _AttackType);
@@ -36,7 +37,10 @@ public:
 	AArrow* GetReadyArrow();
 	void SetnullReadyArrow();
 
-	CharacterAnimState* GetAnimState();
+	UFUNCTION(BlueprintCallable)
+	CharacterAnimState GetAnimState();
+	UFUNCTION(BlueprintCallable)
+	int GetAnimStateToInt();
 	void SetAnimState(CharacterAnimState _State);
 	void IsRollMoveToFalse();
 	void ChangeWeapon(FName _Weapon);

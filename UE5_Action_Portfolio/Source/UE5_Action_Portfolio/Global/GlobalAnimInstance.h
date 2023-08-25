@@ -14,18 +14,6 @@ public:
 	virtual void MontageBlendingOut(UAnimMontage* Anim, bool Inter);
 
 	template<typename EnumType>
-	EnumType GetAnimState()
-	{
-		return static_cast<EnumType>(Animstate);
-	}
-	template<typename EnumType>
-	void SetAnimState(EnumType _AnimState)
-	{
-		Animstate = static_cast<int>(_AnimState);
-
-	}
-	void SetAnimState(int _AnimState);
-	template<typename EnumType>
 	UAnimMontage* GetAnimMontage(EnumType _Index)
 	{
 		return GetAnimMontage(static_cast<int>(_Index));
@@ -41,13 +29,11 @@ public:
 	}
 
 protected:
-	void NativeInitializeAnimation() override;
-	void NativeBeginPlay() override;
-	void NativeUpdateAnimation(float DeltaTime) override;
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float DeltaTime) override;
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		int Animstate = 0;
 	UPROPERTY()
 		TMap<int, UAnimMontage*> AllAnimations;
 };

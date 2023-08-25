@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Global/Enums.h"
-#include "Global/GlobalCharacter.h"
+#include "Character/WeaponCharacter.h"
 #include "Components/TimelineComponent.h"
 #include "MainCharacter.generated.h"
 
@@ -11,7 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AGlobalCharacter
+class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AWeaponCharacter
 {
 	GENERATED_BODY()
 

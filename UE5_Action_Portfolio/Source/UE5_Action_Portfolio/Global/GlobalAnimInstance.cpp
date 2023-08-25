@@ -5,11 +5,6 @@ void UGlobalAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 }
 
-void UGlobalAnimInstance::SetAnimState(int _AnimState)
-{
-	Animstate = _AnimState;
-}
-
 UAnimMontage* UGlobalAnimInstance::GetAnimMontage(int _Index)
 {
 	if (false == AllAnimations.Contains(_Index))

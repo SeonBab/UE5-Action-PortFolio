@@ -56,13 +56,13 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 		GetGlobalCharacter(OwnerComp)->CurWeaponAction->AttackAction();
 	}
 
-	CharacterAnimState* CharAnim = (GetGlobalCharacter(OwnerComp)->CurWeaponAction->GetAnimState());
+	CharacterAnimState CharAnim = (GetGlobalCharacter(OwnerComp)->CurWeaponAction->GetAnimState());
 
-	if (CharacterAnimState::Dizzy == *CharAnim || CharacterAnimState::Death == *CharAnim)
+	if (CharacterAnimState::Dizzy == CharAnim || CharacterAnimState::Death == CharAnim)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 	}
-	else if (CharacterAnimState::LockOnIdle == *CharAnim)
+	else if (CharacterAnimState::LockOnIdle == CharAnim)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}

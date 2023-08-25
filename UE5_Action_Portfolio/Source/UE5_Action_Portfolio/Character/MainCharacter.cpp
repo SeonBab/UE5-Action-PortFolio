@@ -293,7 +293,7 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 		MouseTimeCheck += _DeltaTime;
 	}
 
-	if (3.f <= MouseTimeCheck || CharacterAnimState::Attack == *AnimState)
+	if (3.f <= MouseTimeCheck || CharacterAnimState::Attack == GetAnimState<CharacterAnimState>())
 	{
 		MouseInput = false;
 		MouseTimeCheck = 0.f;

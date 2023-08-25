@@ -11,4 +11,5 @@ class UE5_ACTION_PORTFOLIO_API UBTTask_EquipWeapon : public UBTTask_MonsterBase
 	
 protected:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
+	void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds);
 };

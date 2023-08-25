@@ -3,7 +3,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Global/GlobalGameInstance.h"
 #include "Character/MainCharAnimInstance.h"
-#include "Global/GlobalCharacter.h"
+#include "Character/WeaponCharacter.h"
 #include "Weapon/BowAnimInstance.h"
 #include "Weapon/Arrow.h"
 
@@ -48,7 +48,7 @@ void UWeaponAction::Tick(float _DeltaTime)
 
 	if (nullptr != ReadyArrow)
 	{
-		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
+		AWeaponCharacter* GlobalChar = Cast<AWeaponCharacter>(CurCharacter);
 
 		if (nullptr == GlobalChar)
 		{
@@ -79,6 +79,11 @@ EWeaponType UWeaponAction::GetWeaponType()
 bool UWeaponAction::GetAttackCheck()
 {
 	return AttackCheck;
+}
+
+void UWeaponAction::SetAttackCheck(bool _Value)
+{
+	AttackCheck = _Value;
 }
 
 void UWeaponAction::SetIsLockOn(bool _Value)
@@ -123,7 +128,7 @@ bool UWeaponAction::GetIsInvincibility()
 
 void UWeaponAction::ChangeCollisionAttackType()
 {
-	AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
+	AWeaponCharacter* GlobalChar = Cast<AWeaponCharacter>(CurCharacter);
 
 	if (nullptr == GlobalChar)
 	{
@@ -163,7 +168,7 @@ void UWeaponAction::ChangeCollisionAttackType()
 
 void UWeaponAction::ChangeNoCollision()
 {
-	AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(CurCharacter);
+	AWeaponCharacter* GlobalChar = Cast<AWeaponCharacter>(CurCharacter);
 
 	if (EWeaponType::UnArmed == WeaponType)
 	{
@@ -204,9 +209,14 @@ void UWeaponAction::SetnullReadyArrow()
 	ReadyArrow = nullptr;
 }
 
-CharacterAnimState* UWeaponAction::GetAnimState()
+CharacterAnimState UWeaponAction::GetAnimState()
 {
-	return &AnimState;
+	return AnimState;
+}
+
+int UWeaponAction::GetAnimStateToInt()
+{
+	return static_cast<int>(AnimState);
 }
 
 void UWeaponAction::SetAnimState(CharacterAnimState _State)
@@ -868,7 +878,7 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 			return;
 		}
 
-		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
+		AWeaponCharacter* character = Cast<AWeaponCharacter>(CurCharacter);
 
 		UBowAnimInstance* BowAnim;
 
@@ -1047,7 +1057,7 @@ void UWeaponAction::GotHit(FVector _Value)
 				return;
 			}
 
-			AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
+			AWeaponCharacter* character = Cast<AWeaponCharacter>(CurCharacter);
 
 			if (nullptr == character && false == character->IsValidLowLevel())
 			{
@@ -1095,7 +1105,7 @@ void UWeaponAction::Death()
 
 	if (EWeaponType::Bow == WeaponType)
 	{
-		AGlobalCharacter* character = Cast<AGlobalCharacter>(CurCharacter);
+		AWeaponCharacter* character = Cast<AWeaponCharacter>(CurCharacter);
 
 		UBowAnimInstance* BowAnim;
 

@@ -8,7 +8,7 @@ UBTTask_MonsterBase::UBTTask_MonsterBase()
 	bNotifyTaskFinished = true;
 }
 
-AGlobalCharacter* UBTTask_MonsterBase::GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp)
+AWeaponCharacter* UBTTask_MonsterBase::GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp)
 {
 	ACharacter* CurCharacter = GetCurCharacter(OwnerComp);
 
@@ -18,7 +18,7 @@ AGlobalCharacter* UBTTask_MonsterBase::GetGlobalCharacter(UBehaviorTreeComponent
 		return nullptr;
 	}
 
-	AGlobalCharacter* Character = Cast<AGlobalCharacter>(CurCharacter);
+	AWeaponCharacter* Character = Cast<AWeaponCharacter>(CurCharacter);
 
 	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
