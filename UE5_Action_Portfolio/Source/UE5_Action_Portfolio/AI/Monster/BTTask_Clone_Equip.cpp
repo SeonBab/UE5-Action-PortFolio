@@ -1,48 +1,48 @@
-#include "AI/Monster/BTTask_EquipWeapon.h"
+#include "AI/Monster/BTTask_Clone_Equip.h"
 
-EBTNodeResult::Type UBTTask_EquipWeapon::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Clone_Equip::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	GetGlobalCharacter(OwnerComp)->bUseControllerRotationYaw = true;
+	GetWeaponCharacter(OwnerComp)->bUseControllerRotationYaw = true;
 
-	EWeaponType CurWeaponType = GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 	FVector TargetPos = TargetActor->GetActorLocation();
-	FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
 
 	FVector Dir = TargetPos - CurPos;
 
-	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(true);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(true);
 
 	if (600 <= Dir.Size())
 	{
 		if (EWeaponType::Bow != CurWeaponType)
 		{
-			GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetBow();
+			GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetBow();
 		}
 	}
 	else
 	{
 		if (EWeaponType::Sword != CurWeaponType)
 		{
-			GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetSwordAndSheiled();
+			GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetSwordAndSheiled();
 		}
 	}
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_EquipWeapon::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Clone_Equip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	EWeaponType CurWeaponType = GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 	FVector TargetPos = TargetActor->GetActorLocation();
-	FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
 
 	FVector Dir = TargetPos - CurPos;
 

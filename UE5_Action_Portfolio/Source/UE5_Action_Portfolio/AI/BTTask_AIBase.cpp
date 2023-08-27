@@ -2,9 +2,15 @@
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
-#include "GameFramework/Character.h"
+#include "Global/GlobalCharacter.h"
 
-ACharacter* UBTTask_AIBase::GetCurCharacter(UBehaviorTreeComponent& OwnerComp)
+UBTTask_AIBase::UBTTask_AIBase()
+{
+	bNotifyTick = true;
+	bNotifyTaskFinished = true;
+}
+
+AGlobalCharacter* UBTTask_AIBase::GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp)
 {
 	AAIController* AICon = OwnerComp.GetOwner<AAIController>();
 
@@ -14,7 +20,7 @@ ACharacter* UBTTask_AIBase::GetCurCharacter(UBehaviorTreeComponent& OwnerComp)
 		return nullptr;
 	}
 
-	ACharacter* Character = AICon->GetPawn<ACharacter>();
+	AGlobalCharacter* Character = AICon->GetPawn<AGlobalCharacter>();
 
 	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
@@ -36,7 +42,7 @@ TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& _OwnerComp, FVe
 	UNavigationPath* PathObject = nullptr;
 
 	// 경로 시작할 위치
-	FVector StartPos = GetCurCharacter(_OwnerComp)->GetActorLocation();
+	FVector StartPos = GetGlobalCharacter(_OwnerComp)->GetActorLocation();
 
 	// 경로 탐색
 	PathObject = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), StartPos, _Pos);
@@ -95,10 +101,10 @@ UBlackboardComponent* UBTTask_AIBase::GetBlackboardComponent(UBehaviorTreeCompon
 
 EBTNodeResult::Type UBTTask_AIBase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	return EBTNodeResult::Type();
+	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_AIBase::OnGameplayTaskActivated(UGameplayTask& _Task)
+void UBTTask_AIBase::OnGameplayTaskActivated(UGameplayTask&)
 {
 }
 

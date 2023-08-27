@@ -9,7 +9,7 @@ EBTNodeResult::Type UBTTask_Return::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	Blackboard->SetValueAsInt(TEXT("PatrolCount"), 0);
 	Blackboard->SetValueAsBool(TEXT("IsReturn"), false);
 
-	GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
 
 	return EBTNodeResult::InProgress;
 }
@@ -19,7 +19,7 @@ void UBTTask_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 	FVector ReturnPos = GetBlackboardComponent(OwnerComp)->GetValueAsVector(TEXT("SpawnPos"));
-	FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
 	FVector PathPos;
 
 	TArray<FVector> PathPoint = PathFind(OwnerComp, ReturnPos);
@@ -37,7 +37,7 @@ void UBTTask_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	FVector Dir = PathPos - CurPos;
 	Dir.Normalize();
 
-	FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
+	FVector OtherForward = GetWeaponCharacter(OwnerComp)->GetActorForwardVector();
 	OtherForward.Normalize();
 
 	FVector Cross = FVector::CrossProduct(OtherForward, Dir);
@@ -48,16 +48,16 @@ void UBTTask_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	if (10.f <= FMath::Abs(Angle0 - Angle1))
 	{
 		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-		GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+		GetWeaponCharacter(OwnerComp)->AddActorWorldRotation(Rot);
 	}
 	else
 	{
 		FRotator Rot = Dir.Rotation();
-		GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
+		GetWeaponCharacter(OwnerComp)->SetActorRotation(Rot);
 	}
 
 	// ÀÌµ¿
-	GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+	GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 
 	FVector Dis = ReturnPos - CurPos;
 

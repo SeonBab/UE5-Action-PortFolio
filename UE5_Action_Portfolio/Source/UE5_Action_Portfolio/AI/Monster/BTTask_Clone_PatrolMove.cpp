@@ -1,18 +1,18 @@
-#include "AI/Monster/BTTask_PatrolMove.h"
+#include "AI/Monster/BTTask_Clone_PatrolMove.h"
 
-EBTNodeResult::Type UBTTask_PatrolMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Clone_PatrolMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Clone_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 	FVector PatrolPos = GetBlackboardComponent(OwnerComp)->GetValueAsVector(TEXT("PatrolPos"));
-	FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
 	FVector PathPos;
 
 	TArray<FVector> PathPoint = PathFind(OwnerComp, PatrolPos);
@@ -30,7 +30,7 @@ void UBTTask_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	FVector Dir = PathPos - CurPos;
 	Dir.Normalize();
 
-	FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
+	FVector OtherForward = GetWeaponCharacter(OwnerComp)->GetActorForwardVector();
 	OtherForward.Normalize();
 
 	FVector Cross = FVector::CrossProduct(OtherForward, Dir);
@@ -41,18 +41,18 @@ void UBTTask_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	if (10.f <= FMath::Abs(Angle0 - Angle1))
 	{
 		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-		GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+		GetWeaponCharacter(OwnerComp)->AddActorWorldRotation(Rot);
 	}
 	else
 	{
 		FRotator Rot = Dir.Rotation();
-		GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
+		GetWeaponCharacter(OwnerComp)->SetActorRotation(Rot);
 	}
 
 	// ÀÌµ¿
 	FVector Dis = PatrolPos - CurPos;
 
-	GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+	GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 
 	float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
 

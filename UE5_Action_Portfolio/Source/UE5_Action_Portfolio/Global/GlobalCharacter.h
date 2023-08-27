@@ -26,6 +26,10 @@ public:
 	{
 		return static_cast<EnumType>(Animstate);
 	}
+	int GetAnimState()
+	{
+		return Animstate;
+	}
 	template<typename EnumType>
 	void SetAnimState(EnumType _AnimState)
 	{
@@ -33,7 +37,6 @@ public:
 
 	}
 	void SetAnimState(int _AnimState);
-
 
 protected:
 	virtual void BeginPlay() override;

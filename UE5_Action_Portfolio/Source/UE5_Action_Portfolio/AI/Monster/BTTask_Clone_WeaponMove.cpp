@@ -1,6 +1,6 @@
-#include "AI/Monster/BTTask_WeaponMove.h"
+#include "AI/Monster/BTTask_Clone_WeaponMove.h"
 
-EBTNodeResult::Type UBTTask_WeaponMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Clone_WeaponMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -9,17 +9,17 @@ EBTNodeResult::Type UBTTask_WeaponMove::ExecuteTask(UBehaviorTreeComponent& Owne
     return EBTNodeResult::InProgress;
 }
 
-void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
     Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	EWeaponType CurWeaponType = GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 
 	FVector TargetPos = TargetActor->GetActorLocation();
-	FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
 	FVector PathPos;
 
 	CurPos.Z = 0.f;
@@ -42,7 +42,7 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		FVector Dir = PathPos - CurPos;
 		Dir.Normalize();
 
-		FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
+		FVector OtherForward = GetWeaponCharacter(OwnerComp)->GetActorForwardVector();
 		OtherForward.Normalize();
 
 		FVector Cross = FVector::CrossProduct(OtherForward, Dir);
@@ -53,12 +53,12 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		if (10.f <= FMath::Abs(Angle0 - Angle1))
 		{
 			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-			GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+			GetWeaponCharacter(OwnerComp)->AddActorWorldRotation(Rot);
 		}
 		else
 		{
 			FRotator Rot = Dir.Rotation();
-			GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
+			GetWeaponCharacter(OwnerComp)->SetActorRotation(Rot);
 		}
 
 		FVector Dis = TargetPos - CurPos;
@@ -67,7 +67,7 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 		if (AttackRange < Dis.Size())
 		{
-			GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 		}
 		else if (AttackRange >= Dis.Size() && MoveTime <= GetStateTime(OwnerComp))
 		{
@@ -77,7 +77,7 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		}
 		else
 		{
-			GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
+			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
 		}
 	}
 	// È°
@@ -91,7 +91,7 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		FVector Dir = TargetPos - CurPos;
 		Dir.Normalize();
 
-		FVector OtherForward = GetGlobalCharacter(OwnerComp)->GetActorForwardVector();
+		FVector OtherForward = GetWeaponCharacter(OwnerComp)->GetActorForwardVector();
 		OtherForward.Normalize();
 
 		FVector Cross = FVector::CrossProduct(OtherForward, Dir);
@@ -102,12 +102,12 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		if (10.f <= FMath::Abs(Angle0 - Angle1))
 		{
 			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-			GetGlobalCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+			GetWeaponCharacter(OwnerComp)->AddActorWorldRotation(Rot);
 		}
 		else
 		{
 			FRotator Rot = Dir.Rotation();
-			GetGlobalCharacter(OwnerComp)->SetActorRotation(Rot);
+			GetWeaponCharacter(OwnerComp)->SetActorRotation(Rot);
 		}
 
 		// ÀÌµ¿
@@ -115,15 +115,15 @@ void UBTTask_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 		if (1000.f >= Dis.Size())
 		{
-			GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(-1);
+			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(-1);
 		}
 		else if (1500.f <= Dis.Size())
 		{
-			GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 		}
 		else
 		{
-			GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
+			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
 		}
 
 		if (MoveTime <= GetStateTime(OwnerComp))

@@ -8,13 +8,19 @@ UBTTask_BossBase::UBTTask_BossBase()
 
 EBTNodeResult::Type UBTTask_BossBase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	return EBTNodeResult::Type();
+	Super::ExecuteTask(OwnerComp, NodeMemory);
+
+	ResetStateTime(OwnerComp);
+
+	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_BossBase::OnGameplayTaskActivated(UGameplayTask& _Task)
+void UBTTask_BossBase::OnGameplayTaskActivated(UGameplayTask&)
 {
+
 }
 
 void UBTTask_BossBase::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 }

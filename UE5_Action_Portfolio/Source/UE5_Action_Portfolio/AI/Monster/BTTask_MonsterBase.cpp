@@ -8,9 +8,9 @@ UBTTask_MonsterBase::UBTTask_MonsterBase()
 	bNotifyTaskFinished = true;
 }
 
-AWeaponCharacter* UBTTask_MonsterBase::GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp)
+AWeaponCharacter* UBTTask_MonsterBase::GetWeaponCharacter(UBehaviorTreeComponent& OwnerComp)
 {
-	ACharacter* CurCharacter = GetCurCharacter(OwnerComp);
+	ACharacter* CurCharacter = GetGlobalCharacter(OwnerComp);
 
 	if (nullptr == CurCharacter || false == CurCharacter->IsValidLowLevel())
 	{
@@ -35,17 +35,17 @@ EBTNodeResult::Type UBTTask_MonsterBase::ExecuteTask(UBehaviorTreeComponent& Own
 
 	ResetStateTime(OwnerComp);
 
-	GetGlobalCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
-	GetGlobalCharacter(OwnerComp)->CurWeaponAction->DAndAButtonAction(0);
-	GetGlobalCharacter(OwnerComp)->CurWeaponAction->RollorRunAction(0);
-	GetGlobalCharacter(OwnerComp)->CurWeaponAction->AimorBlockAtion(0);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->WAndSButtonAction(0);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->DAndAButtonAction(0);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->RollorRunAction(0);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->AimorBlockAtion(0);
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_MonsterBase::OnGameplayTaskActivated(UGameplayTask& _Task)
+void UBTTask_MonsterBase::OnGameplayTaskActivated(UGameplayTask&)
 {
-	Super::OnGameplayTaskActivated(_Task);
+
 }
 
 void UBTTask_MonsterBase::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)

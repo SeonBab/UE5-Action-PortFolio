@@ -1,8 +1,8 @@
-#include "AI/Monster/BTTask_Patrol.h"
+#include "AI/Monster/BTTask_Clone_Patrol.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 
-EBTNodeResult::Type UBTTask_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Clone_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
@@ -24,7 +24,7 @@ EBTNodeResult::Type UBTTask_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerCom
         return EBTNodeResult::Failed;
     }
 
-    FVector Origin = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+    FVector Origin = GetWeaponCharacter(OwnerComp)->GetActorLocation();
 
 
     float Radius = Blackboard->GetValueAsFloat(TEXT("PatrolRange"));
@@ -43,7 +43,7 @@ EBTNodeResult::Type UBTTask_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerCom
     return EBTNodeResult::Succeeded;
 }
 
-void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Clone_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 
 }

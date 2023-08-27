@@ -17,10 +17,10 @@ class UE5_ACTION_PORTFOLIO_API UBTTask_MonsterBase : public UBTTask_AIBase
 public:
 	UBTTask_MonsterBase();
 
-	AWeaponCharacter* GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp);
+	AWeaponCharacter* GetWeaponCharacter(UBehaviorTreeComponent& OwnerComp);
 
 protected:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	void OnGameplayTaskActivated(class UGameplayTask& _Task) override;
+	void OnGameplayTaskActivated(class UGameplayTask&) override;
 	void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

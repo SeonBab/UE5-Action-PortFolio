@@ -9,4 +9,9 @@ class UE5_ACTION_PORTFOLIO_API UBTTask_Death : public UBTTask_MonsterBase
 {
 	GENERATED_BODY()
 	
+protected:
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+	void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
 };

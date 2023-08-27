@@ -1,10 +1,10 @@
-#include "AI/Monster/BTTask_Attack.h"
+#include "AI/Monster/BTTask_Clone_Attack.h"
 
-EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Clone_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	EWeaponType CurWeaponType = GetGlobalCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
 
 	// 근접 무기라면 공격 몇번 할지 횟수 구하기
 	if (EWeaponType::Sword == CurWeaponType)
@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		{
 			MeleeAtackCount = UGlobalGameInstance::MainRandom.RandRange(0, 2);
 
-			GetGlobalCharacter(OwnerComp)->CurWeaponAction->AttackAction();
+			GetWeaponCharacter(OwnerComp)->CurWeaponAction->AttackAction();
 		}
 		// true라면 방어
 		else if (true == AttackOrBlock)
@@ -27,36 +27,36 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}
 	else if (EWeaponType::Bow == CurWeaponType)
 	{
-		GetGlobalCharacter(OwnerComp)->CurWeaponAction->AttackAction();
+		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AttackAction();
 	}
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Clone_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 
-	bool AttackCheck = GetGlobalCharacter(OwnerComp)->CurWeaponAction->GetAttackCheck();
+	bool AttackCheck = GetWeaponCharacter(OwnerComp)->CurWeaponAction->GetAttackCheck();
 
 	
 	if (0.f < BlockTime)
 	{
-		GetGlobalCharacter(OwnerComp)->CurWeaponAction->AimorBlockAtion(1);
+		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AimorBlockAtion(1);
 		BlockTime -= DeltaSeconds;
 	}
 	else if (true == AttackOrBlock && 0.f > BlockTime)
 	{
-		GetGlobalCharacter(OwnerComp)->CurWeaponAction->AimorBlockAtion(0);
+		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AimorBlockAtion(0);
 	}
 	else if (0 < MeleeAtackCount && false == AttackCheck)
 	{
 		--MeleeAtackCount;
-		GetGlobalCharacter(OwnerComp)->CurWeaponAction->AttackAction();
+		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AttackAction();
 	}
 
-	CharacterAnimState CharAnim = (GetGlobalCharacter(OwnerComp)->CurWeaponAction->GetAnimState());
+	CharacterAnimState CharAnim = (GetWeaponCharacter(OwnerComp)->CurWeaponAction->GetAnimState());
 
 	if (CharacterAnimState::Dizzy == CharAnim || CharacterAnimState::Death == CharAnim)
 	{

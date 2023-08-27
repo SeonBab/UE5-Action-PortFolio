@@ -1,14 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Global/GlobalCharacter.h"
 #include "GlobalAICharacter.generated.h"
 
 class UBehaviorTree;
 class UBlackboardComponent;
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API AGlobalAICharacter : public ACharacter
+class UE5_ACTION_PORTFOLIO_API AGlobalAICharacter : public AGlobalCharacter
 {
 	GENERATED_BODY()
 	

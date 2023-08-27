@@ -10,15 +10,12 @@ class UE5_ACTION_PORTFOLIO_API UGlobalAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	virtual void MontageBlendingOut(UAnimMontage* Anim, bool Inter);
-
+	UAnimMontage* GetAnimMontage(int _Index);
 	template<typename EnumType>
 	UAnimMontage* GetAnimMontage(EnumType _Index)
 	{
 		return GetAnimMontage(static_cast<int>(_Index));
 	}
-	UAnimMontage* GetAnimMontage(int _Index);
 	template<typename EnumType>
 	void SetAllAnimation(const TMap<EnumType, UAnimMontage*>& _MapAnimation)
 	{
@@ -32,8 +29,11 @@ protected:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaTime) override;
-
+	UFUNCTION()
+	virtual void MontageEnd(UAnimMontage* Anim, bool _Inter);
+	UFUNCTION()
+	virtual void MontageBlendingOut(UAnimMontage* Anim, bool Inter);
 public:
 	UPROPERTY()
-		TMap<int, UAnimMontage*> AllAnimations;
+	TMap<int, UAnimMontage*> AllAnimations;
 };

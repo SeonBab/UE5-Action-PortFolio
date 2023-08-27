@@ -475,6 +475,7 @@ void UMainCharAnimInstance::AnimNotify_ParryOnOff()
 
 void UMainCharAnimInstance::NativeInitializeAnimation()
 {
+	Super::NativeInitializeAnimation();
 }
 
 void UMainCharAnimInstance::NativeBeginPlay()
@@ -502,8 +503,6 @@ void UMainCharAnimInstance::NativeBeginPlay()
 
 void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 {
-	Super::NativeUpdateAnimation(DeltaTime);
-
 	if (0 == AllAnimations.Num())
 	{
 		return;
