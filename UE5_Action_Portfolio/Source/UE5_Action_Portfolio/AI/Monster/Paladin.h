@@ -20,6 +20,6 @@ protected:
 
 private:
 	const struct FMonsterData* CurMonsterData;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName = "Paladin";
 };

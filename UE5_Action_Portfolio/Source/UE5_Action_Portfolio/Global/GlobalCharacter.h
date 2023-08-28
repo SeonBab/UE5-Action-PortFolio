@@ -2,7 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GlobalAnimInstance.h"
 #include "GlobalCharacter.generated.h"
+
+class UAnimMontage;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AGlobalCharacter : public ACharacter
@@ -37,6 +40,18 @@ public:
 
 	}
 	void SetAnimState(int _AnimState);
+	template<typename EnumType>
+	void SetAllAnimation(const TMap<EnumType, UAnimMontage*>& _MapAnimation)
+	{
+		UGlobalAnimInstance* GlobalAnimInstance = Cast<UGlobalAnimInstance>(GetMesh()->GetAnimInstance());
+
+		if (nullptr == GlobalAnimInstance)
+		{
+			return;
+		}
+
+		GlobalAnimInstance->SetAllAnimation<EnumType>(_MapAnimation);
+	}
 
 protected:
 	virtual void BeginPlay() override;

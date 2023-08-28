@@ -15,5 +15,5 @@ struct UE5_ACTION_PORTFOLIO_API FBossData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	class UBehaviorTree* AI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	TMap<BossAnimState, UAnimMontage*> AllAnimations;
+	TMap<BossAnimState, UAnimMontage*> MapAnimation;
 };

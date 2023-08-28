@@ -3,12 +3,30 @@
 EBTNodeResult::Type UBTTask_Clone_Unequip::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	GetWeaponCharacter(OwnerComp)->bUseControllerRotationYaw = false;
-	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetUnArmed();
 	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetUnArmed();
 
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::InProgress;
 }
 
 void UBTTask_Clone_Unequip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+	UWeaponAction* CurWeaponAction = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction();
+
+	if (CurWeaponAction == nullptr)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+	}
+
+	EWeaponType CurWeaponType = CurWeaponAction->GetWeaponType();
+
+	if (EWeaponType::UnArmed == CurWeaponType)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
+	else
+	{
+		CurWeaponAction->ChangeSetUnArmed();
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+	}
 }

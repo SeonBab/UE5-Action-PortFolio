@@ -2,14 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "AI/AICon.h"
-#include "AIPlayerCloneCon.generated.h"
+#include "AI_BossCon.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API AAIPlayerCloneCon : public AAICon
+class UE5_ACTION_PORTFOLIO_API AAI_BossCon : public AAICon
 {
 	GENERATED_BODY()
+
 public:
-	AAIPlayerCloneCon();
+	AAI_BossCon();
 	void Tick(float _DeltaTime) override;
 
 protected:

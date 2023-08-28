@@ -6,6 +6,11 @@ EBTNodeResult::Type UBTTask_Clone_Patrol::ExecuteTask(UBehaviorTreeComponent& Ow
 {
     UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
+    if (true == Blackboard->GetValueAsBool(TEXT("IsReturn")))
+    {
+        return EBTNodeResult::Failed;
+    }
+
     int PatrolCount = Blackboard->GetValueAsInt(TEXT("PatrolCount"));
     ++PatrolCount;
 

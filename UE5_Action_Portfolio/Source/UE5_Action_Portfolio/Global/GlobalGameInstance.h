@@ -18,6 +18,7 @@ public:
 	USkeletalMesh* GetWeaponMesh(FName _Name);
 	struct FWeaponData* GetWeaponData(FName _Name);
 	struct FMonsterData* GetMonsterData(FName _Name);
+	struct FBossData* GetBossData(FName _Name);
 
 	struct FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
 
@@ -33,4 +34,6 @@ private:
 	UDataTable* Animations;
 	UPROPERTY()
 	UDataTable* MonsterDatas;
+	UPROPERTY()
+	UDataTable* BossDatas;
 };

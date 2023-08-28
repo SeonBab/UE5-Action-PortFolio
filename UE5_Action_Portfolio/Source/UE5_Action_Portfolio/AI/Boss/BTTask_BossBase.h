@@ -4,6 +4,8 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/BTTask_AIBase.h"
+#include "Enums_Boss.h"
+#include "Global/GlobalCharacter.h"
 #include "BTTask_BossBase.generated.h"
 
 UCLASS()

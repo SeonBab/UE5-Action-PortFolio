@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Global/GlobalAICharacter.h"
+#include "Global/Data/BossData.h"
 #include "Lich.generated.h"
 
 UCLASS()
@@ -18,8 +19,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	//const struct FBossData* CurBossData;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	const struct FBossData* CurBossData;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName = "Lich";
 
 	FName ActorTypeTag;

@@ -12,16 +12,17 @@ APaladin::APaladin()
 
 void APaladin::BeginPlay()
 {
+	Super::BeginPlay();
+
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Inst)
+	if (nullptr != Inst)
 	{
-		return;
+		CurMonsterData = Inst->GetMonsterData(DataName);
+		SetHP(CurMonsterData->HP);
+		SetMaxHP(GetHP());
 	}
 
-	CurMonsterData = Inst->GetMonsterData(DataName);
-
-	Super::BeginPlay();
 
 	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
@@ -33,8 +34,6 @@ void APaladin::BeginPlay()
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), false);
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), false);
 	//GetBlackboardComponent()->SetValueAsFloat(TEXT("HP"), CurMonsterData->HP);
-	SetHP(CurMonsterData->HP);
-	SetMaxHP(GetHP());
 
 	this->bUseControllerRotationYaw = false;
 }

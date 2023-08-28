@@ -2,6 +2,7 @@
 #include "Global/Data/AnimaitionData.h"
 #include "Global/Data/WeaponData.h"
 #include "Global/Data/MonsterData.h"
+#include "Global/Data/BossData.h"
 
 FRandomStream UGlobalGameInstance::MainRandom;
 
@@ -31,12 +32,23 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 	{
 		// 몬스터 데이터
-		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_MonsterData.DT_MonsterData'");
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/AI/Monster/DT_MonsterData.DT_MonsterData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
 
 		if (DataTable.Succeeded())
 		{
 			MonsterDatas = DataTable.Object;
+		}
+	}
+
+	{
+		// 보스 데이터
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/AI/BOSS/DT_BossData.DT_BossData'");
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			BossDatas = DataTable.Object;
 		}
 	}
 }
@@ -83,6 +95,23 @@ FMonsterData* UGlobalGameInstance::GetMonsterData(FName _Name)
 	}
 
 	FMonsterData* FindTable = MonsterDatas->FindRow<FMonsterData>(_Name, _Name.ToString());
+
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
+
+	return FindTable;
+}
+
+FBossData* UGlobalGameInstance::GetBossData(FName _Name)
+{
+	if (nullptr == BossDatas)
+	{
+		return nullptr;
+	}
+
+	FBossData* FindTable = BossDatas->FindRow<FBossData>(_Name, _Name.ToString());
 
 	if (nullptr == FindTable)
 	{
