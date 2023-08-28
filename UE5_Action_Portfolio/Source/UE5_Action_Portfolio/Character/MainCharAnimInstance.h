@@ -11,31 +11,32 @@ class UE5_ACTION_PORTFOLIO_API UMainCharAnimInstance : public UGlobalAnimInstanc
 	GENERATED_BODY()
 	
 public:
-		void MontageBlendingOut(UAnimMontage* Anim, bool Inter) override;
+	void MontageBlendingOut(UAnimMontage* Anim, bool Inter) override;
+
 	UFUNCTION()
-		void AnimNotify_RollStop();
+	void AnimNotify_RollStop();
 	UFUNCTION()
-		void AnimNotify_JumpStart();
+	void AnimNotify_JumpStart();
 	UFUNCTION()
-		void AnimNotify_ChangeWeapon();
+	void AnimNotify_ChangeWeapon();
 	UFUNCTION()
-		void AnimNotify_AttackCheck();
+	void AnimNotify_AttackCheck();
 	UFUNCTION()
-		void AnimNotify_AimorBlockCheck();
+	void AnimNotify_AimorBlockCheck();
 	UFUNCTION()
-		void AnimNotify_ArrowReadyCheck();
+	void AnimNotify_ArrowReadyCheck();
 	UFUNCTION()
-		void AnimNotify_ChordToHand();
+	void AnimNotify_ChordToHand();
 	UFUNCTION()
-		void AnimNotify_ReRoad();
+	void AnimNotify_ReRoad();
 	UFUNCTION()
-		void AnimNotify_StartAttack();
+	void AnimNotify_StartAttack();
 	UFUNCTION()
-		void AnimNotify_EndAttack();
+	void AnimNotify_EndAttack();
 	UFUNCTION()
-		void AnimNotify_Death();
+	void AnimNotify_Death();
 	UFUNCTION()
-		void AnimNotify_ParryOnOff();
+	void AnimNotify_ParryOnOff();
 
 protected:
 	void NativeInitializeAnimation() override;

@@ -11,6 +11,16 @@ ALich::ALich()
 	SetAttackTypeTag(TEXT("MonsterAttack"));
 }
 
+void ALich::SetDarkBall(AActor* _Actor)
+{
+	DarkBall = _Actor;
+}
+
+AActor* ALich::GetDarkBall()
+{
+	return DarkBall;
+}
+
 void ALich::BeginPlay()
 {
 	Super::BeginPlay();

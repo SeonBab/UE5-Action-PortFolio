@@ -25,10 +25,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHP();
 	template<typename EnumType>
+	UFUNCTION(BlueprintCallable)
 	EnumType GetAnimState()
 	{
 		return static_cast<EnumType>(Animstate);
 	}
+	UFUNCTION(BlueprintCallable)
 	int GetAnimState()
 	{
 		return Animstate;
@@ -51,6 +53,30 @@ public:
 		}
 
 		GlobalAnimInstance->SetAllAnimation<EnumType>(_MapAnimation);
+	}
+	template<typename EnumType>
+	UAnimMontage* GetAnimMontage(EnumType _Index)
+	{
+		return GetAnimMontage(static_cast<int>(_Index));
+	}
+
+	UAnimMontage* GetAnimMontage(int _Index)
+	{
+		UGlobalAnimInstance* GlobalAnimInstance = Cast<UGlobalAnimInstance>(GetMesh()->GetAnimInstance());
+
+		if (nullptr == GlobalAnimInstance)
+		{
+			return nullptr;
+		}
+
+		TMap<int, UAnimMontage*> AllAnimations = GlobalAnimInstance->GetAllAnimations();
+
+		if (false == AllAnimations.Contains(_Index))
+		{
+			return nullptr;
+		}
+
+		return AllAnimations[_Index];
 	}
 
 protected:

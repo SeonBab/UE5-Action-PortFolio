@@ -12,6 +12,8 @@ class UE5_ACTION_PORTFOLIO_API ALich : public AGlobalAICharacter
 
 public:
 	ALich();
+	void SetDarkBall(AActor* _Actor);
+	AActor* GetDarkBall();
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,4 +27,6 @@ private:
 
 	FName ActorTypeTag;
 	FName AttackTypeTag;
+
+	AActor* DarkBall = nullptr;
 };

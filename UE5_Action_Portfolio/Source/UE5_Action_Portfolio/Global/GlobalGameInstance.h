@@ -16,6 +16,8 @@ public:
 	~UGlobalGameInstance();
 
 	USkeletalMesh* GetWeaponMesh(FName _Name);
+	TSubclassOf<UObject> GetSubClass(FName _Name);
+
 	struct FWeaponData* GetWeaponData(FName _Name);
 	struct FMonsterData* GetMonsterData(FName _Name);
 	struct FBossData* GetBossData(FName _Name);
@@ -27,8 +29,6 @@ public:
 
 private:
 	UPROPERTY()
-	UDataTable* SubClassData;
-	UPROPERTY()
 	UDataTable* WeaponDatas;
 	UPROPERTY()
 	UDataTable* Animations;
@@ -36,4 +36,6 @@ private:
 	UDataTable* MonsterDatas;
 	UPROPERTY()
 	UDataTable* BossDatas;
+	UPROPERTY()
+	UDataTable* SubClassDatas;
 };

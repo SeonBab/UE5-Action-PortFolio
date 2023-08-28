@@ -27,6 +27,7 @@ public:
 
 protected:
 	virtual void OnPossess(APawn* _InPawn) override;
+	virtual void BeginPlay() override;
 	ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 	UFUNCTION()
 	void OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus);

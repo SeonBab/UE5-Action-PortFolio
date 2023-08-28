@@ -16,6 +16,11 @@ UAnimMontage* UGlobalAnimInstance::GetAnimMontage(int _Index)
 	return AllAnimations[_Index];
 }
 
+TMap<int, UAnimMontage*> UGlobalAnimInstance::GetAllAnimations()
+{
+	return AllAnimations;
+}
+
 void UGlobalAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();

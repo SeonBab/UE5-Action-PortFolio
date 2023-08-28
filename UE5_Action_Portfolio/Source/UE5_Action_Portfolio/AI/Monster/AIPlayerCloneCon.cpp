@@ -3,7 +3,6 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 
-
 AAIPlayerCloneCon::AAIPlayerCloneCon()
 {	
 	GetAISenseConfigSight()->DetectionByAffiliation.bDetectEnemies = true;
@@ -50,6 +49,4 @@ void AAIPlayerCloneCon::OnPossess(APawn* _InPawn)
 void AAIPlayerCloneCon::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GetAIPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AAIPlayerCloneCon::OnTargetPerceptionUpdated);
 }

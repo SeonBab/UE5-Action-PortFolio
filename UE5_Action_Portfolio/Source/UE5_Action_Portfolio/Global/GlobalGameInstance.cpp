@@ -3,6 +3,7 @@
 #include "Global/Data/WeaponData.h"
 #include "Global/Data/MonsterData.h"
 #include "Global/Data/BossData.h"
+#include "Global/Data/SubClassData.h"
 
 FRandomStream UGlobalGameInstance::MainRandom;
 
@@ -49,6 +50,17 @@ UGlobalGameInstance::UGlobalGameInstance()
 		if (DataTable.Succeeded())
 		{
 			BossDatas = DataTable.Object;
+		}
+	}
+
+	{
+		// 서브 클레스 데이터
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_WeaponData.DT_WeaponData'");
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			SubClassDatas = DataTable.Object;
 		}
 	}
 }
@@ -119,6 +131,23 @@ FBossData* UGlobalGameInstance::GetBossData(FName _Name)
 	}
 
 	return FindTable;
+}
+
+TSubclassOf<UObject> UGlobalGameInstance::GetSubClass(FName _Name)
+{
+	if (nullptr == SubClassDatas)
+	{
+		return nullptr;
+	}
+
+	FSubClassData* FindTable = SubClassDatas->FindRow<FSubClassData>(_Name, _Name.ToString());
+	
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
+
+	return FindTable->Object;
 }
 
 FAnimaitionData* UGlobalGameInstance::GetAllAnimaitionDatas(FName _Name)

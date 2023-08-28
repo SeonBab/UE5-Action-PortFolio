@@ -24,6 +24,7 @@ public:
 			AllAnimations.Add(static_cast<int>(Pair.Key), Pair.Value);
 		}
 	}
+	TMap<int, UAnimMontage*> GetAllAnimations();
 
 protected:
 	virtual void NativeInitializeAnimation() override;

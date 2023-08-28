@@ -59,6 +59,13 @@ void AAICon::OnPossess(APawn* _InPawn)
 	Super::OnPossess(_InPawn);
 }
 
+void AAICon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GetAIPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AAICon::OnTargetPerceptionUpdated);
+}
+
 ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 {
 	APawn const* OtherPawn = Cast<APawn>(&Other);

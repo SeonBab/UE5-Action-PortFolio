@@ -6,6 +6,7 @@
 #include "AI/BTTask_AIBase.h"
 #include "Enums_Boss.h"
 #include "Global/GlobalCharacter.h"
+#include "Global/GlobalGameInstance.h"
 #include "BTTask_BossBase.generated.h"
 
 UCLASS()
