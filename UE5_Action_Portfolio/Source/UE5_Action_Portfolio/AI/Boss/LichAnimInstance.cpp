@@ -4,9 +4,8 @@
 #include "AI/Boss/DarkBall.h"
 #include "Global/GlobalGameInstance.h"
 
-void ULichAnimInstance::AnimNotify_Craete_Dark_Ball()
+void ULichAnimInstance::AnimNotify_CreateDarkBall()
 {
-	// 들어오질 않는다?
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
 	if (nullptr == Inst)
@@ -14,7 +13,7 @@ void ULichAnimInstance::AnimNotify_Craete_Dark_Ball()
 		return;
 	}
 
-	TSubclassOf<UObject> DarkBall = Inst->GetSubClass(TEXT("Dark_Ball"));
+	TSubclassOf<UObject> DarkBall = Inst->GetSubClass(TEXT("DarkBall"));
 
 	if (nullptr == DarkBall)
 	{
@@ -28,7 +27,7 @@ void ULichAnimInstance::AnimNotify_Craete_Dark_Ball()
 		return;
 	}
 
-	
+
 	ADarkBall* Ball = GetWorld()->SpawnActor<ADarkBall>(DarkBall);
 
 	if (nullptr == Ball)
@@ -39,12 +38,37 @@ void ULichAnimInstance::AnimNotify_Craete_Dark_Ball()
 	// 발사 전까지 가지고 있기
 	Lich->SetDarkBall(Ball);
 
-	// 손 위치로 변경하기
-	Lich->GetDarkBall()->SetActorLocation(Lich->GetActorLocation());
-	Lich->GetDarkBall()->SetActorRotation(Lich->GetActorRotation());
+	// DarkBallSoket 위치로 변경하기
+	USkeletalMeshComponent* LichMesh = Lich->GetMesh();
+	FTransform Trans = LichMesh->GetSocketTransform(TEXT("DarkBallSoket"));
+	FVector Pos = Trans.GetLocation();
+	FRotator Rot = Lich->GetActorRotation();
+	Lich->GetDarkBall()->SetActorLocation(Pos);
+	Lich->GetDarkBall()->SetActorRotation(Rot);
+	
+	// 콜리전 변경하기
+	FName AttackType = Lich->GetAttackTypeTag();
+	USphereComponent* SpherComponent = Ball->GetSphereComponent();
+
+	if (nullptr == SpherComponent)
+	{
+		return;
+	}
+
+	SpherComponent->SetCollisionProfileName(AttackType);
+
+	// 컨트롤러 설정
+	AController* CurController= Lich->GetController();
+
+	if (nullptr == CurController)
+	{
+		return;
+	}
+
+	Ball->SetCurController(CurController);
 }
 
-void ULichAnimInstance::AnimNotify_Dark_Ball_Shot()
+void ULichAnimInstance::AnimNotify_DarkBallShot()
 {
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
@@ -61,6 +85,7 @@ void ULichAnimInstance::AnimNotify_Dark_Ball_Shot()
 		return;
 	}
 
+	// 전방으로 발사하기
 	Ball->SetSpeed(2000.f);
 	Ball->SetDeathCheck(true);
 	Lich->SetDarkBall(nullptr);
@@ -92,7 +117,8 @@ void ULichAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		return;
 	}
 
-	if (Anim == GetAnimMontage(BossAnimState::Attack_Left) || Anim == GetAnimMontage(BossAnimState::Attack_Right))
+	if (Anim == GetAnimMontage(BossAnimState::Attack_Left) || Anim == GetAnimMontage(BossAnimState::Attack_Right) ||
+		Anim == GetAnimMontage(BossAnimState::Attack_SpawnTornado))
 	{
 		Character->SetAnimState(BossAnimState::Idle);
 		Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);

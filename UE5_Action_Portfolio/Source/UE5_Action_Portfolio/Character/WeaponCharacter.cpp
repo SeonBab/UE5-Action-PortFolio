@@ -78,7 +78,13 @@ void AWeaponCharacter::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 FVector AWeaponCharacter::GetBowJointLocation()
 {
+	if (nullptr == BowWeaponMesh)
+	{
+		return FVector::ZeroVector;
+	}
+
 	FVector Pos = BowWeaponMesh->GetSocketLocation(TEXT("Bow_04_Joint"));
+
 	return Pos;
 }
 
@@ -215,32 +221,42 @@ void AWeaponCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	CurWeaponAction->Tick(_DeltaTime);
-	SetAnimState<CharacterAnimState>(CurWeaponAction->GetAnimState());
+	UWeaponAction* CurWeapon = GetCurWeaponAction();
 
-	if (EWeaponType::Bow == CurWeaponAction->GetWeaponType())
+	if (nullptr == CurWeapon)
+	{
+		return;
+	}
+
+	CurWeapon->Tick(_DeltaTime);
+
+	if (EWeaponType::Bow == CurWeapon->GetWeaponType())
 	{
 		BowChordMove();
 	}
+	CharacterAnimState CurState = CurWeapon->GetAnimState();
 
-	TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 55.f);
-	TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 55.f);
-
-	UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
-	UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
-
-	float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
-
-	if (0.f < HipOffsetValue)
+	if (CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState)
 	{
-		HipOffsetValue = 0.f;
+		TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 55.f);
+		TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 55.f);
+
+		UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
+		UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
+
+		float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
+
+		if (0.f < HipOffsetValue)
+		{
+			HipOffsetValue = 0.f;
+		}
+
+		UpdateFootOffset(_DeltaTime, HipOffsetValue, &HipOffset, 20.f);
+		UpdateCapsuleHalfHeight(_DeltaTime, HipOffsetValue, false);
+
+		UpdateFootOffset(_DeltaTime, LeftTrace.Get<0>() - HipOffsetValue, &FootOffsetLeft, 20.f);
+		UpdateFootOffset(_DeltaTime, RightTrace.Get<0>() - HipOffsetValue, &FootOffsetRight, 20.f);
 	}
-
-	UpdateFootOffset(_DeltaTime, HipOffsetValue, &HipOffset, 20.f);
-	UpdateCapsuleHalfHeight(_DeltaTime, HipOffsetValue, false);
-
-	UpdateFootOffset(_DeltaTime, LeftTrace.Get<0>() - HipOffsetValue, &FootOffsetLeft, 20.f);
-	UpdateFootOffset(_DeltaTime, RightTrace.Get<0>() - HipOffsetValue, &FootOffsetRight, 20.f);
 }
 
 void AWeaponCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -312,10 +328,12 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		
 		if (0.f < GetHP())
 		{
+			// 생존
 			GetCurWeaponAction()->GotHit(Dir);
 		}
 		else if (0.f >= GetHP())
 		{
+			// 죽음
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
 			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
 
@@ -337,7 +355,7 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 					MainChar->LostLockedOnTargetActor();
 				}
 			}
-
+			// 체력이 음수값이 되지 않게
 			SetHP(0.f);
 
 			return FinalDamage;

@@ -55,7 +55,7 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 	{
 		// 서브 클레스 데이터
-		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_WeaponData.DT_WeaponData'");
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_SubClassData.DT_SubClassData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
 
 		if (DataTable.Succeeded())

@@ -1,4 +1,7 @@
 #include "AI/Boss/DarkBall.h"
+#include "Engine/DamageEvents.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 ADarkBall::ADarkBall()
 {
@@ -8,41 +11,45 @@ ADarkBall::ADarkBall()
 	SphereComponent->SetupAttachment(RootComponent);
 	SphereComponent->SetCollisionProfileName("NoCollision", true);
 
+	GetNiagaraComponent()->SetupAttachment(SphereComponent);
+
 	Speed = 0.f;
 	DeathTime = 5.f;
+	Damage = 10.f;
 }
 
-void ADarkBall::SetDeathCheck(bool _Value)
+USphereComponent* ADarkBall::GetSphereComponent()
 {
-	DeathCheck = _Value;
+	return SphereComponent;
 }
 
-void ADarkBall::SetSpeed(float _Value)
+void ADarkBall::DarkBallBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Speed = _Value;
+	FPointDamageEvent DamageEvent;
+
+	AController* Controller = GetCurController();
+
+	if (nullptr == Controller)
+	{
+		return;
+	}
+
+	OtherActor->TakeDamage(Damage, DamageEvent, Controller, this);
+
+	Destroy();
 }
 
 void ADarkBall::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADarkBall::DarkBallBeginOverlap);
 	OnDestroyed.AddDynamic(this, &ADarkBall::DestroyProjectile);
 }
 
 void ADarkBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (true == DeathCheck)
-	{
-		DeathTime -= DeltaTime;
-	}
-
-	if (DeathTime < 0.0f)
-	{
-		Destroy();
-		return;
-	}
 
 	AddActorWorldOffset(GetActorForwardVector() * DeltaTime * Speed);
 }

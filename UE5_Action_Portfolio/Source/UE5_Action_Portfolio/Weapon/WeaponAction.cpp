@@ -858,7 +858,6 @@ void UWeaponAction::AimorBlockAtion(float _Value)
 	if (0 == _Value)
 	{
 		IsAimOn = false;
-
 		IsBlock = false;
 
 		if (CharacterAnimState::AimOrBlock == AnimState)

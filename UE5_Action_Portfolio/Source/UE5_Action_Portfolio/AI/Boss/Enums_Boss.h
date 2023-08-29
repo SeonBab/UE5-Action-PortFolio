@@ -10,6 +10,7 @@ enum class BossAnimState : uint8
 	Walk,
 	Attack_Left,
 	Attack_Right,
+	Attack_SpawnTornado,
 	GotHit,
 	Death,
 	Dizzy,

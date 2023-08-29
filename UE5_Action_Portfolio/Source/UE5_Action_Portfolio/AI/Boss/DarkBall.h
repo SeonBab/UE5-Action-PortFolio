@@ -1,22 +1,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "AI/Boss/BossSpellBase.h"
 #include "Components/SphereComponent.h"
 #include "DarkBall.generated.h"
 
 
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API ADarkBall : public AActor
+class UE5_ACTION_PORTFOLIO_API ADarkBall : public ABossSpellBase
 {
 	GENERATED_BODY()
 	
 public:	
 	ADarkBall();
 
-	void SetDeathCheck(bool _Value);
-	void SetSpeed(float _Value);
+	USphereComponent* GetSphereComponent();
+
+	UFUNCTION()
+	void DarkBallBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,10 +29,7 @@ private:
 	void DestroyProjectile(AActor* _Destroy);
 
 public:	
-	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float Speed = 0.f;
-	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float DeathTime = 0.f;
+
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AActor>DeathCreateObject = nullptr;
 
@@ -38,5 +37,4 @@ public:
 private:
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	USphereComponent* SphereComponent = nullptr;
-	bool DeathCheck = false;
 };

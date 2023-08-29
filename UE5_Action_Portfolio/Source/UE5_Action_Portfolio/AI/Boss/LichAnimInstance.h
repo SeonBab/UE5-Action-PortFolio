@@ -10,9 +10,9 @@ class UE5_ACTION_PORTFOLIO_API ULichAnimInstance : public UGlobalAnimInstance
 	GENERATED_BODY()
 public:
 	UFUNCTION()
-	void AnimNotify_Craete_Dark_Ball();
+	void AnimNotify_CreateDarkBall();
 	UFUNCTION()
-	void AnimNotify_Dark_Ball_Shot();
+	void AnimNotify_DarkBallShot();
 
 
 protected:
