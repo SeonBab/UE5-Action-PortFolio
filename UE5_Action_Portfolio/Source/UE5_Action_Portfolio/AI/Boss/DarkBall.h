@@ -2,10 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "AI/Boss/BossSpellBase.h"
-#include "Components/SphereComponent.h"
 #include "DarkBall.generated.h"
 
-
+class USphereComponent;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API ADarkBall : public ABossSpellBase
@@ -29,10 +28,8 @@ private:
 	void DestroyProjectile(AActor* _Destroy);
 
 public:	
-
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AActor>DeathCreateObject = nullptr;
-
 		
 private:
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

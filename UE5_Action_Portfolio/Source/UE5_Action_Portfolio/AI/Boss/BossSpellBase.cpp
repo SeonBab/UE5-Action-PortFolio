@@ -47,7 +47,6 @@ UNiagaraComponent* ABossSpellBase::GetNiagaraComponent()
 void ABossSpellBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ABossSpellBase::Tick(float DeltaTime)

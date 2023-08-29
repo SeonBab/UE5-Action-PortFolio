@@ -1,7 +1,8 @@
 #include "AI/Boss/DarkBall.h"
-#include "Engine/DamageEvents.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Engine/DamageEvents.h"
+#include "Components/SphereComponent.h"
 
 ADarkBall::ADarkBall()
 {
@@ -10,8 +11,10 @@ ADarkBall::ADarkBall()
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->SetupAttachment(RootComponent);
 	SphereComponent->SetCollisionProfileName("NoCollision", true);
+	SphereComponent->SetWorldScale3D({ 1.2f, 1.2f, 1.2f });
 
 	GetNiagaraComponent()->SetupAttachment(SphereComponent);
+	GetNiagaraComponent()->SetWorldScale3D({ 0.8f, 0.8f, 0.8f });
 
 	Speed = 0.f;
 	DeathTime = 5.f;

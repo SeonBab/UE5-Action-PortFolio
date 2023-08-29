@@ -13,7 +13,8 @@ public:
 	void AnimNotify_CreateDarkBall();
 	UFUNCTION()
 	void AnimNotify_DarkBallShot();
-
+	UFUNCTION()
+	void AnimNotify_CreateTornado();
 
 protected:
 	virtual void NativeInitializeAnimation() override;
