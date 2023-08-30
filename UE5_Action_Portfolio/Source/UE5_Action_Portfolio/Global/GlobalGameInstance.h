@@ -6,6 +6,8 @@
 #include "Enums.h"
 #include "GlobalGameInstance.generated.h"
 
+class UNiagaraSystem;
+
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API UGlobalGameInstance : public UGameInstance
 {
@@ -16,6 +18,7 @@ public:
 	~UGlobalGameInstance();
 
 	USkeletalMesh* GetWeaponMesh(FName _Name);
+	UNiagaraSystem* GetNiagaraAsset(FName _Name);
 	TSubclassOf<UObject> GetSubClass(FName _Name);
 
 	struct FWeaponData* GetWeaponData(FName _Name);
@@ -36,6 +39,8 @@ private:
 	UDataTable* MonsterDatas;
 	UPROPERTY()
 	UDataTable* BossDatas;
+	UPROPERTY()
+	UDataTable* NiagaraDatas;
 	UPROPERTY()
 	UDataTable* SubClassDatas;
 };

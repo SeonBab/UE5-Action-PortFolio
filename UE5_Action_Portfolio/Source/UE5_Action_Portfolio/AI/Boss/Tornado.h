@@ -15,6 +15,8 @@ public:
 	ATornado();
 
 	UCapsuleComponent* GetCapsuleComponent();
+	void SetAttackType(FName _AttackType);
+	void SetTargetCharacter(ACharacter* _TargetCharacter);
 
 	UFUNCTION()
 	void TornadoBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -28,9 +30,18 @@ protected:
 private:
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* CapsuleComponent = nullptr;
+	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UDecalComponent* DecalComponent = nullptr;
 
 	ACharacter* TargetCharacter = nullptr;
 	AActor* OverlapOtherActor = nullptr;
 
-	float HitTimeCheck = 0.f;
+	bool TornadoSpawnCheck = false;
+
+	float HitTime = 0.f;
+	float DecalTime = 0.f;
+	float DecalFadeStartDelay = 0.f;
+	float DecalFadeDuration = 0.f;
+
+	FName AttackType;
 };

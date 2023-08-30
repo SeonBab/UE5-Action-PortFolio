@@ -11,6 +11,7 @@ enum class BossAnimState : uint8
 	Attack_Left,
 	Attack_Right,
 	Attack_SpawnTornado,
+	Attack_MagicShot,
 	GotHit,
 	Death,
 	Dizzy,

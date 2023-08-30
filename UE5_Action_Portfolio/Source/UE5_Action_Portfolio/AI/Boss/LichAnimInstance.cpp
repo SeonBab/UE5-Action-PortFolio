@@ -7,6 +7,86 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
+
+void ULichAnimInstance::AnimNotify_MeleeStart()
+{
+	ALich* Lich = Cast<ALich>(GetOwningActor());
+
+	if (nullptr == Lich)
+	{
+		return;
+	}
+
+	UCapsuleComponent* CapsuleComponent = Lich->GetMeleeCapsuleComponent();
+
+	if (nullptr == CapsuleComponent)
+	{
+		return;
+	}
+
+	// 콜리전 설정
+	FName AttackType = Lich->GetAttackTypeTag();
+
+	CapsuleComponent->SetCollisionProfileName(AttackType);
+
+	// 나이아가라 설정
+	UNiagaraComponent* NiagaraComponent = Lich->GetNiagaraComponent();
+
+	if (nullptr == NiagaraComponent)
+	{
+		return;
+	}
+
+	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Inst)
+	{
+		return;
+	}
+	
+	UNiagaraSystem* TrailWind = Inst->GetNiagaraAsset(TEXT("TrailWind"));
+
+	if (nullptr == TrailWind)
+	{
+		return;
+	}
+	
+	NiagaraComponent->SetAsset(TrailWind);
+
+}
+
+void ULichAnimInstance::AnimNotify_MeleeEnd()
+{
+	ALich* Lich = Cast<ALich>(GetOwningActor());
+
+	if (nullptr == Lich)
+	{
+		return;
+	}
+
+	UCapsuleComponent* CapsuleComponent = Lich->GetMeleeCapsuleComponent();
+
+	if (nullptr == CapsuleComponent)
+	{
+		return;
+	}
+
+	// 콜리전 설정
+	CapsuleComponent->SetCollisionProfileName(TEXT("NoCollision"));
+
+	// 나이아가라 설정
+
+	UNiagaraComponent* NiagaraComponent = Lich->GetNiagaraComponent();
+
+	if (nullptr == NiagaraComponent)
+	{
+		return;
+	}
+
+	NiagaraComponent->SetAsset(nullptr);
+}
 
 void ULichAnimInstance::AnimNotify_CreateDarkBall()
 {
@@ -65,7 +145,7 @@ void ULichAnimInstance::AnimNotify_CreateDarkBall()
 
 	// DarkBallSoket 위치로 변경하기
 	USkeletalMeshComponent* LichMesh = Lich->GetMesh();
-	FTransform Trans = LichMesh->GetSocketTransform(TEXT("DarkBallSoket"));
+	FTransform Trans = LichMesh->GetSocketTransform(TEXT("DarkBallSocket"));
 	FVector Pos = Trans.GetLocation();
 	FRotator Rot = Lich->GetActorRotation();
 	Lich->GetDarkBall()->SetActorLocation(Pos);
@@ -134,16 +214,9 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 
 	SpawnTornado->SetCurController(CurController);
 
-	// 콜리전 변경하기
+	// 변경할 콜리전 타입 넘겨주기
 	FName AttackType = Lich->GetAttackTypeTag();
-	UCapsuleComponent* CapsuleComponent = SpawnTornado->GetCapsuleComponent();
-
-	if (nullptr == CapsuleComponent)
-	{
-		return;
-	}
-
-	CapsuleComponent->SetCollisionProfileName(AttackType);
+	SpawnTornado->SetAttackType(AttackType);
 
 	// 타겟의 위치로
 	UBlackboardComponent* Blackboard = Lich->GetBlackboardComponent();
@@ -169,14 +242,29 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 
 	FVector TargetPos = TargetActor->GetActorLocation();
 
+	UCapsuleComponent* CapsuleComponent = SpawnTornado->GetCapsuleComponent();
+
+	if (nullptr == CapsuleComponent)
+	{
+		return;
+	}
 
 	float PlusZPos = CapsuleComponent->GetScaledCapsuleHalfHeight();
 	PlusZPos -= TargetPos.Z;
 
 	FVector SetPos({ TargetPos.X, TargetPos.Y, TargetPos.Z + PlusZPos });
 
-	// 땅에 묻혀 있다. 어떻게 올려줘야 할까
 	SpawnTornado->SetActorLocation(SetPos);
+
+	// 타겟 캐릭터 설정
+	ACharacter* TargetCharacter = Cast<ACharacter>(TargetActor);
+
+	if (nullptr == TargetCharacter)
+	{
+		return;
+	}
+
+	SpawnTornado->SetTargetCharacter(TargetCharacter);
 }
 
 void ULichAnimInstance::NativeInitializeAnimation()

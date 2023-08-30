@@ -3,6 +3,7 @@
 #include "Global/Data/WeaponData.h"
 #include "Global/Data/MonsterData.h"
 #include "Global/Data/BossData.h"
+#include "Global/Data/NiagaraData.h"
 #include "Global/Data/SubClassData.h"
 
 FRandomStream UGlobalGameInstance::MainRandom;
@@ -54,6 +55,17 @@ UGlobalGameInstance::UGlobalGameInstance()
 	}
 
 	{
+		// 나이아가라 데이터
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_NiagaraData.DT_NiagaraData'");
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			NiagaraDatas = DataTable.Object;
+		}
+	}
+
+	{
 		// 서브 클레스 데이터
 		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_SubClassData.DT_SubClassData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
@@ -85,7 +97,36 @@ USkeletalMesh* UGlobalGameInstance::GetWeaponMesh(FName _Name)
 
 	USkeletalMesh* FindMesh = FindTable->WeaponMesh;
 
+	if (nullptr == FindMesh)
+	{
+		return nullptr;
+	}
+
 	return FindMesh;
+}
+
+UNiagaraSystem* UGlobalGameInstance::GetNiagaraAsset(FName _Name)
+{
+	if (nullptr == NiagaraDatas)
+	{
+		return nullptr;
+	}
+
+	FNiagaraData* FindTable = NiagaraDatas->FindRow<FNiagaraData>(_Name, _Name.ToString());
+
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
+
+	UNiagaraSystem* FindNiagaraAsset = FindTable->NiagaraAsset;
+
+	if (nullptr == FindNiagaraAsset)
+	{
+		return nullptr;
+	}
+
+	return FindNiagaraAsset;
 }
 
 FWeaponData* UGlobalGameInstance::GetWeaponData(FName _Name)
