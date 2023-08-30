@@ -96,6 +96,11 @@ bool UWeaponAction::GetIsAimOn()
 	return IsAimOn;
 }
 
+bool UWeaponAction::GetIsRollMove()
+{
+	return IsRollMove;
+}
+
 void UWeaponAction::SetAttackType(FName _AttackType)
 {
 	AttackType = _AttackType;
@@ -383,7 +388,7 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 		// 움직이기
 		FVector DeltaLocation = CurCharacter->GetActorRotation().Vector();
 
-		DeltaLocation.X = 600 * _DeltaTime;
+		DeltaLocation.X = 500 * _DeltaTime;
 		DeltaLocation.Y = 0;
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);

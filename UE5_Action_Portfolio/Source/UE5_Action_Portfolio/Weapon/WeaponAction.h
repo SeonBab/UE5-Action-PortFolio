@@ -25,6 +25,7 @@ public:
 	void SetAttackCheck(bool _Value);
 	void SetIsLockOn(bool _Value);
 	bool GetIsAimOn();
+	bool GetIsRollMove();
 	void SetAttackType(FName _AttackType);
 	void SetIsBlock(bool _Value);
 	bool GetIsBlock();

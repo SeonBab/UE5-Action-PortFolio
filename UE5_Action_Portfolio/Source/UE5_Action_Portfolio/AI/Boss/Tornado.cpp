@@ -4,6 +4,8 @@
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
+#include "AI/Boss/SpellDecal.h"
+#include "Global/GlobalGameInstance.h"
 
 ATornado::ATornado()
 {
@@ -47,6 +49,30 @@ void ATornado::BeginPlay()
 	
 	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ATornado::TornadoBeginOverlap);
 	CapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &ATornado::TornadoEndOverlap);
+
+	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Inst)
+	{
+		return;
+	}
+
+	TSubclassOf<UObject> SpellDecal = Inst->GetSubClass(TEXT("SpellDecal"));
+
+	if (nullptr == SpellDecal)
+	{
+		return;
+	}
+
+	ASpellDecal* SpawnSpellDecal = GetWorld()->SpawnActor<ASpellDecal>(SpellDecal);
+	
+	FVector SetPos({ this->GetActorLocation().X, this->GetActorLocation().Y, this->GetActorLocation().Z - CapsuleComponent->GetScaledCapsuleHalfHeight() });
+
+	SpawnSpellDecal->SetActorLocation(SetPos);
+	// 데칼 크기와 높이 변경
+	// 일정 시간 후 사라지게 하기
+	// 사라진 후 토네이도 만들어지게 하기
+	// 충돌도 만들어진 후 하기
 }
 
 void ATornado::Tick(float DeltaTime)

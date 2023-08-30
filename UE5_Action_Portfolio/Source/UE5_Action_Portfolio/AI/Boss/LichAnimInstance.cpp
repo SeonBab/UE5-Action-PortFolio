@@ -169,8 +169,14 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 
 	FVector TargetPos = TargetActor->GetActorLocation();
 
+
+	float PlusZPos = CapsuleComponent->GetScaledCapsuleHalfHeight();
+	PlusZPos -= TargetPos.Z;
+
+	FVector SetPos({ TargetPos.X, TargetPos.Y, TargetPos.Z + PlusZPos });
+
 	// ¶¥¿¡ ¹¯Çô ÀÖ´Ù. ¾î¶»°Ô ¿Ã·ÁÁà¾ß ÇÒ±î
-	SpawnTornado->SetActorLocation(TargetPos);
+	SpawnTornado->SetActorLocation(SetPos);
 }
 
 void ULichAnimInstance::NativeInitializeAnimation()

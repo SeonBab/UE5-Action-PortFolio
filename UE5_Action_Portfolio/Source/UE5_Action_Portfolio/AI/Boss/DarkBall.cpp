@@ -14,7 +14,7 @@ ADarkBall::ADarkBall()
 	SphereComponent->SetWorldScale3D({ 1.2f, 1.2f, 1.2f });
 
 	GetNiagaraComponent()->SetupAttachment(SphereComponent);
-	GetNiagaraComponent()->SetWorldScale3D({ 0.8f, 0.8f, 0.8f });
+	GetNiagaraComponent()->SetWorldScale3D({ 0.9f, 0.9f, 0.9f });
 
 	Speed = 0.f;
 	DeathTime = 5.f;

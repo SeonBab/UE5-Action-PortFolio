@@ -280,6 +280,20 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 			return 0.f;
 		}
 
+		UWeaponAction* CurWeapon = GetCurWeaponAction();
+
+		if (nullptr == CurWeapon)
+		{
+			return 0.f;
+		}
+
+		bool IsRoll = CurWeapon->GetIsRollMove();
+
+		if (true == IsRoll)
+		{
+			return 0.f;
+		}
+
 		FVector HitDir = EventInstigator->GetPawn()->GetActorLocation();
 		HitDir.Z = 0;
 
@@ -295,9 +309,9 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		float Angle0 = Dir.Rotation().Yaw;
 		float Angle1 = CurForward.Rotation().Yaw;
 
-		bool BlockCheck = GetCurWeaponAction()->GetIsBlock();
-		bool ParryCheck = GetCurWeaponAction()->GetIsParry();
-		bool IsInvincibilityCheck = GetCurWeaponAction()->GetIsInvincibility();
+		bool BlockCheck = CurWeapon->GetIsBlock();
+		bool ParryCheck = CurWeapon->GetIsParry();
+		bool IsInvincibilityCheck = CurWeapon->GetIsInvincibility();
 
 		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
 		{
@@ -332,7 +346,7 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		if (0.f < GetHP())
 		{
 			// »ýÁ¸
-			GetCurWeaponAction()->GotHit(Dir);
+			CurWeapon->GotHit(Dir);
 		}
 		else if (0.f >= GetHP())
 		{
@@ -340,7 +354,7 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
 			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
 
-			GetCurWeaponAction()->Death();
+			CurWeapon->Death();
 
 			if (nullptr == EventInstigator)
 			{
