@@ -267,6 +267,16 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 	SpawnTornado->SetTargetCharacter(TargetCharacter);
 }
 
+void ULichAnimInstance::AnimNotify_MagicSpawn()
+{
+	ALich* Lich = Cast<ALich>(GetOwningActor());
+
+	if (nullptr == Lich)
+	{
+		return;
+	}
+}
+
 void ULichAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();

@@ -37,11 +37,11 @@ EBTNodeResult::Type UBTTask_Boss_RandAttack::ExecuteTask(UBehaviorTreeComponent&
 
     if (300.f >= Dis.Size())
     {
-        RandAttack = UGlobalGameInstance::MainRandom.RandRange(1, 3);
+        RandAttack = UGlobalGameInstance::MainRandom.RandRange(1, 4);
     }
     else if (300.f < Dis.Size())
     {
-        RandAttack = UGlobalGameInstance::MainRandom.RandRange(2, 3);
+        RandAttack = UGlobalGameInstance::MainRandom.RandRange(2, 4);
     }
 
     Blackboard->SetValueAsInt(TEXT("RandAttack"), RandAttack);

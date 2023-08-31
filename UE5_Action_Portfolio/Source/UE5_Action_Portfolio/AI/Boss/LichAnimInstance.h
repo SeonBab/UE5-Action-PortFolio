@@ -19,6 +19,8 @@ public:
 	void AnimNotify_DarkBallShot();
 	UFUNCTION()
 	void AnimNotify_CreateTornado();
+	UFUNCTION()
+	void AnimNotify_MagicSpawn();
 
 protected:
 	virtual void NativeInitializeAnimation() override;
