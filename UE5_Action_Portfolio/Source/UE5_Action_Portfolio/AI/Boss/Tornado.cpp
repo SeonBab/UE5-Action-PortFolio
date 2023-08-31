@@ -26,7 +26,8 @@ ATornado::ATornado()
 	CapsuleComponent->SetCollisionProfileName("NoCollision", true);
 	CapsuleComponent->SetCapsuleHalfHeight(300.f);
 	CapsuleComponent->SetCapsuleRadius(40.f);
-	
+	CapsuleComponent->SetGenerateOverlapEvents(true);
+
 	GetNiagaraComponent()->SetupAttachment(CapsuleComponent);
 
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));

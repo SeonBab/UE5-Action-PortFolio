@@ -27,9 +27,9 @@ protected:
 
 public:	
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		float Speed = 0.f;
+	float Speed = 0.f;
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		float Damage = 0.f;
+	float Damage = 0.f;
 	UPROPERTY(Category = "Effect", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 		float DeathTime = 0.f;
 

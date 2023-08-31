@@ -4,6 +4,7 @@
 #include "Global/Data/MonsterData.h"
 #include "Global/Data/BossData.h"
 #include "Global/Data/NiagaraData.h"
+#include "Global/Data/ParticleData.h"
 #include "Global/Data/SubClassData.h"
 
 FRandomStream UGlobalGameInstance::MainRandom;
@@ -62,6 +63,17 @@ UGlobalGameInstance::UGlobalGameInstance()
 		if (DataTable.Succeeded())
 		{
 			NiagaraDatas = DataTable.Object;
+		}
+	}
+
+	{
+		// 파티클 데이터
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_ParticleData.DT_ParticleData'");
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			ParticleDatas = DataTable.Object;
 		}
 	}
 
@@ -127,6 +139,30 @@ UNiagaraSystem* UGlobalGameInstance::GetNiagaraAsset(FName _Name)
 	}
 
 	return FindNiagaraAsset;
+}
+
+UParticleSystem* UGlobalGameInstance::GetParticleAsset(FName _Name)
+{
+	if (nullptr == ParticleDatas)
+	{
+		return nullptr;
+	}
+
+	FParticleData* FindTable = ParticleDatas->FindRow<FParticleData>(_Name, _Name.ToString());
+
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
+
+	UParticleSystem* FindParticleAsset = FindTable->ParticleAsset;
+
+	if (nullptr == FindParticleAsset)
+	{
+		return nullptr;
+	}
+
+	return FindParticleAsset;
 }
 
 FWeaponData* UGlobalGameInstance::GetWeaponData(FName _Name)

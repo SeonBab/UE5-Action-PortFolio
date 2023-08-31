@@ -2,8 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Arrow.generated.h"
+
+class UProjectileMovementComponent;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AArrow : public AActor
@@ -25,15 +26,14 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	//UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	//class USphereComponent* SphereComponent;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* ArrowScene;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* ArrowSkeletalMesh;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UProjectileMovementComponent* ProjectileMovement;
+	UProjectileMovementComponent* ProjectileMovement;
 
 	bool IsLocationAndRotation = true;
-	AController* CurController = nullptr;
+	UPROPERTY()
+	AController* CurController;
 };

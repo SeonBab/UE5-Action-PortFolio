@@ -1,6 +1,6 @@
-#include "AI/Boss/BTTask_Attack_MagicShot.h"
+#include "AI/Boss/BTTask_Attack_Frostbolt.h"
 
-EBTNodeResult::Type UBTTask_Attack_MagicShot::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Attack_Frostbolt::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -11,12 +11,12 @@ EBTNodeResult::Type UBTTask_Attack_MagicShot::ExecuteTask(UBehaviorTreeComponent
         return EBTNodeResult::Failed;
     }
 
-    Character->SetAnimState(BossAnimState::Attack_MagicShot);
+    Character->SetAnimState(BossAnimState::Attack_FrostboltShot);
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_Attack_MagicShot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Attack_Frostbolt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 

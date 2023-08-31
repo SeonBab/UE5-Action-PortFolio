@@ -7,6 +7,7 @@
 #include "GlobalGameInstance.generated.h"
 
 class UNiagaraSystem;
+class UParticleSystem;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API UGlobalGameInstance : public UGameInstance
@@ -19,6 +20,7 @@ public:
 
 	USkeletalMesh* GetWeaponMesh(FName _Name);
 	UNiagaraSystem* GetNiagaraAsset(FName _Name);
+	UParticleSystem* GetParticleAsset(FName _Name);
 	TSubclassOf<UObject> GetSubClass(FName _Name);
 
 	struct FWeaponData* GetWeaponData(FName _Name);
@@ -41,6 +43,8 @@ private:
 	UDataTable* BossDatas;
 	UPROPERTY()
 	UDataTable* NiagaraDatas;
+	UPROPERTY()
+	UDataTable* ParticleDatas;
 	UPROPERTY()
 	UDataTable* SubClassDatas;
 };

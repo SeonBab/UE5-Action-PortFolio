@@ -9,16 +9,31 @@
 
 UWeaponAction::UWeaponAction()
 {	
-	static ConstructorHelpers::FClassFinder<AArrow> BPArrow(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_Arrow.BP_Arrow_C'"));
 
-	if (BPArrow.Succeeded())
-	{
-		ArrowClass = BPArrow.Class;
-	}
 }
 
 void UWeaponAction::BeginPlay()
 {
+	if (nullptr == CurCharacter)
+	{
+		return;
+	}
+
+	UGlobalGameInstance* Inst = CurCharacter->GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Inst)
+	{
+		return;
+	}
+
+	TSubclassOf<UObject> Arrow = Inst->GetSubClass(TEXT("Arrow"));
+
+	if (nullptr == Arrow)
+	{
+		return;
+	}
+
+	ArrowClass = Arrow;
 }
 
 void UWeaponAction::Tick(float _DeltaTime)

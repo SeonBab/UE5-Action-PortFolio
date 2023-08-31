@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "AI/Boss/BTTask_BossBase.h"
-#include "BTTask_Attack_MagicShot.generated.h"
+#include "BTTask_Attack_Frostbolt.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UBTTask_Attack_MagicShot : public UBTTask_BossBase
+class UE5_ACTION_PORTFOLIO_API UBTTask_Attack_Frostbolt : public UBTTask_BossBase
 {
 	GENERATED_BODY()
 	

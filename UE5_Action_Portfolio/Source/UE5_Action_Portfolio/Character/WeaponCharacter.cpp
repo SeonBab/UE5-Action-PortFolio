@@ -194,6 +194,7 @@ void AWeaponCharacter::BeginPlay()
 	
 	CurWeaponAction = NewObject<UWeaponAction>();
 	CurWeaponAction->SetCurCharacter(this);
+	CurWeaponAction->BeginPlay();
 
 	UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
 

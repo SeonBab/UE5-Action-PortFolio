@@ -1,8 +1,9 @@
 #include "Weapon/Arrow.h"
 #include "Global/GlobalGameInstance.h"
-#include "Character/WeaponCharacter.h"
 #include "Global/Data/WeaponData.h"
+#include "Character/WeaponCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 AArrow::AArrow()
 {
@@ -39,7 +40,6 @@ void AArrow::ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	float CurWeaponDamage = WeaponData->Damage;
 	FPointDamageEvent DamageEvent;
 
-	// 몬스터도 사용하고 플레이어도 사용하는데 컨트롤러를 어떻게 넘겨줘야 할까?
 	OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, CurController, this);
 
 	Destroy();
@@ -62,7 +62,7 @@ void AArrow::ArrowReRoad(ACharacter* _Character, FVector _JointPos, float _Delta
 
 void AArrow::SetIsLocationAndRotation(bool _Value)
 {
-	IsLocationAndRotation = false;
+	IsLocationAndRotation = _Value;
 }
 
 void AArrow::ArrowChangeCollision(FName _FName)

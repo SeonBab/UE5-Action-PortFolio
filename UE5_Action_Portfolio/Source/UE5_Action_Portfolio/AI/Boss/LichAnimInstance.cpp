@@ -169,8 +169,10 @@ void ULichAnimInstance::AnimNotify_DarkBallShot()
 	}
 
 	// 전방으로 발사하기
-	Ball->SetSpeed(2000.f);
-	Ball->SetDeathCheck(true);
+	FVector ForwardVec = Lich->GetActorForwardVector();
+	Ball->ShotDarkBall(ForwardVec);
+
+	// 리치가 가지고 있는 다크볼 지우기
 	Lich->SetDarkBall(nullptr);
 }
 
