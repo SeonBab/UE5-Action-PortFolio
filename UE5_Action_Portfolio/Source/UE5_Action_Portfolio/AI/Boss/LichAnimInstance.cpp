@@ -3,6 +3,7 @@
 #include "AI/Boss/Lich.h"
 #include "AI/Boss/DarkBall.h"
 #include "AI/Boss/Tornado.h"
+#include "AI/Boss/Frostbolt.h"
 #include "Global/GlobalGameInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
@@ -267,9 +268,92 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 		return;
 	}
 
+	// 페이즈 가져와서 몇개의 볼트를 소환할지 계산 1페이즈 3개, 2페이즈 5개
 	int LichPhase = Lich->GetPhase();
+	TArray<AActor*>& FrostboltArray = Lich->GetFrostboltArray();
+	int FrostboltCount = FrostboltArray.Num();
 
-	Lich->GetFrostboltArray();
+	if (1 == LichPhase && 3 <= FrostboltCount)
+	{
+		return;
+	}
+
+	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Inst)
+	{
+		return;
+	}
+
+	TSubclassOf<UObject> Frostbolt = Inst->GetSubClass(TEXT("Frostbolt"));
+
+	if (nullptr == Frostbolt || false == Frostbolt->IsValidLowLevel())
+	{
+		return;
+	}
+
+	// Frostbolt 스폰
+	AFrostbolt* SpawnFrostbolt = GetWorld()->SpawnActor<AFrostbolt>(Frostbolt);
+
+	if (nullptr == SpawnFrostbolt)
+	{
+		return;
+	}
+
+	// 발사 전까지 가지고 있기
+	FrostboltArray.Emplace(SpawnFrostbolt);
+
+	// 컨트롤러 설정
+	AController* CurController = Lich->GetController();
+
+	if (nullptr == CurController)
+	{
+		return;
+	}
+
+	SpawnFrostbolt->SetCurController(CurController);
+
+	// 콜리전 변경하기
+	FName AttackType = Lich->GetAttackTypeTag();
+
+	USphereComponent* SpherComponent = SpawnFrostbolt->GetSphereComponent();
+
+	if (nullptr == SpherComponent)
+	{
+		return;
+	}
+
+	SpherComponent->SetCollisionProfileName(AttackType);
+
+	// FrostboltSoket 위치로 변경하기
+	USkeletalMeshComponent* LichMesh = Lich->GetMesh();
+
+	if (nullptr == LichMesh)
+	{
+		return;
+	}
+
+	FString FrostboltSoketStr = "FrostboltSoket";
+	FString FrostboltIndexStr = FString::FromInt(FrostboltCount);
+	FString FrostboltSoketNameIndex = FrostboltSoketStr + FrostboltIndexStr;
+	FName FindFrostboltSoket = FName(*FrostboltSoketNameIndex);
+
+	FTransform Trans = LichMesh->GetSocketTransform(FindFrostboltSoket);
+	FVector Pos = Trans.GetLocation();
+	FRotator Rot = Lich->GetActorRotation();
+	SpawnFrostbolt->SetActorLocation(Pos);
+	SpawnFrostbolt->SetActorRotation(Rot);
+
+	// 타겟 액터 설정
+
+	AActor* TargetActor = Lich->GetTargetActor();
+
+	if (nullptr == TargetActor)
+	{
+		return;
+	}
+
+	SpawnFrostbolt->SetTargetActor(TargetActor);
 }
 
 void ULichAnimInstance::AnimNotify_FrostboltShot()
@@ -281,7 +365,37 @@ void ULichAnimInstance::AnimNotify_FrostboltShot()
 		return;
 	}
 
+	TArray<AActor*>& FrostboltArray = Lich->GetFrostboltArray();
 
+	for (int i = 0; i < FrostboltArray.Num(); i++)
+	{
+		if (nullptr == FrostboltArray[i])
+		{
+			continue;
+		}
+
+		AFrostbolt* Frostbolt = Cast<AFrostbolt>(FrostboltArray[i]);
+
+		if (nullptr == Frostbolt || false == Frostbolt->IsValidLowLevel())
+		{
+			continue;
+		}
+
+		// 가지고있던 방향대로 발사하기
+		Frostbolt->ShotFrostbolt();
+
+		// 리치가 가지고 있는 프로스트볼트 포인트 값 초기화
+		Lich->SetNullFrostboltArray(i);
+
+		if (i + 1 == FrostboltArray.Num())
+		{
+			FrostboltArray.Empty();
+		}
+
+		break;
+	}
+
+	
 }
 
 void ULichAnimInstance::AnimNotify_Death()

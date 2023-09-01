@@ -9,7 +9,7 @@ ADarkBall::ADarkBall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Speed = 20000.f;
+	Speed = 2000.f;
 	DeathTime = 3.f;
 	Damage = 10.f;
 

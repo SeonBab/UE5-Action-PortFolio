@@ -15,11 +15,12 @@ class UE5_ACTION_PORTFOLIO_API ALich : public AGlobalAICharacter
 
 public:
 	ALich();
-	void SetDarkBall(AActor* _Actor);
-	AActor* GetDarkBall();
 	UCapsuleComponent* GetMeleeCapsuleComponent();
 	UNiagaraComponent* GetMeleeNiagaraComponent();
-	TArray<AActor*> GetFrostboltArray();
+	AActor* GetDarkBall();
+	void SetDarkBall(AActor* _Actor);
+	TArray<AActor*>& GetFrostboltArray();
+	void SetNullFrostboltArray(int _Index);
 
 	void Destroyed() override;
 
@@ -39,7 +40,6 @@ protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 private:
-	UPROPERTY()
 	const struct FBossData* CurBossData;
 
 	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -54,10 +54,10 @@ private:
 	AActor* DarkBall;
 	UPROPERTY()
 	TArray<AActor*> FrostboltArray;
-
+	
 	float MeleeDamage;
 
-	const int MaxPhase;
+	int MaxPhase;
 
 	// 머티리얼을 변경 할 방법 2가지
 	// 데이터 테이블에 머리티얼을 저장해서 직접 스켈레탈 메쉬컴포넌트에 SetMaterial을 사용

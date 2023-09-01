@@ -90,15 +90,15 @@ void ATornado::Tick(float DeltaTime)
 
 		if (nullptr != Inst)
 		{
-			UNiagaraSystem* Storm = Inst->GetNiagaraAsset(TEXT("Storm"));
+			UNiagaraSystem* StormNiagara = Inst->GetNiagaraAsset(TEXT("Storm"));
 
-			if (nullptr != Storm)
+			if (nullptr != StormNiagara)
 			{
 				UNiagaraComponent* CurNiagaraComponent = GetNiagaraComponent();
 
 				if (nullptr != CurNiagaraComponent)
 				{
-					CurNiagaraComponent->SetAsset(Storm);
+					CurNiagaraComponent->SetAsset(StormNiagara);
 				}
 			}
 		}

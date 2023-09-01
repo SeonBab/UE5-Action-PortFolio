@@ -19,7 +19,7 @@ ALich::ALich()
 	
 	DarkBall = nullptr;
 	FrostboltArray.Empty();
-
+	
 	MeleeDamage = 15.f;
 	MaxPhase = 3;
 
@@ -62,9 +62,14 @@ UNiagaraComponent* ALich::GetMeleeNiagaraComponent()
 	return MeleeNiagaraComponent;
 }
 
-TArray<AActor*> ALich::GetFrostboltArray()
+TArray<AActor*>& ALich::GetFrostboltArray()
 {
 	return FrostboltArray;
+}
+
+void ALich::SetNullFrostboltArray(int _Index)
+{
+	FrostboltArray[_Index] = nullptr;
 }
 
 void ALich::Destroyed()
