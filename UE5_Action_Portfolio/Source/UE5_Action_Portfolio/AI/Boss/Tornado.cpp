@@ -48,14 +48,14 @@ void ATornado::SetAttackType(FName _AttackType)
 	AttackType = _AttackType;
 }
 
-void ATornado::SetTargetCharacter(ACharacter* _TargetCharacter)
+void ATornado::SetTargetActor(AActor* _TargetActor)
 {
-	if (nullptr == _TargetCharacter)
+	if (nullptr == _TargetActor)
 	{
 		return;
 	}
 
-	TargetCharacter = _TargetCharacter;
+	TargetActor = _TargetActor;
 }
 
 void ATornado::TornadoBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -131,10 +131,10 @@ void ATornado::Tick(float DeltaTime)
 		}
 	}
 
-	if (nullptr != TargetCharacter && true == TornadoSpawnCheck)
+	if (nullptr != TargetActor && true == TornadoSpawnCheck)
 	{
 		// 타겟 느리게 따라가기
-		FVector TargetPos = TargetCharacter->GetActorLocation();
+		FVector TargetPos = TargetActor->GetActorLocation();
 		FVector CurPos = this->GetActorLocation();
 
 		TargetPos.Z = 0.f;

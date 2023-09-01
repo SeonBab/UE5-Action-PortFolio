@@ -24,6 +24,11 @@ void ABossSpellBase::SetSpeed(float _Value)
 	Speed = _Value;
 }
 
+float ABossSpellBase::GetSpeed()
+{
+	return Speed;
+}
+
 void ABossSpellBase::SetCurController(AController* _Controller)
 {
 	if (nullptr == _Controller)

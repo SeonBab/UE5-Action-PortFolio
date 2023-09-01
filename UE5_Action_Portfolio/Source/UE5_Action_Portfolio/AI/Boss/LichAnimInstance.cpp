@@ -32,7 +32,7 @@ void ULichAnimInstance::AnimNotify_MeleeStart()
 	CapsuleComponent->SetCollisionProfileName(AttackType);
 
 	// 나이아가라 설정
-	UNiagaraComponent* NiagaraComponent = Lich->GetNiagaraComponent();
+	UNiagaraComponent* NiagaraComponent = Lich->GetMeleeNiagaraComponent();
 
 	if (nullptr == NiagaraComponent)
 	{
@@ -78,7 +78,7 @@ void ULichAnimInstance::AnimNotify_MeleeEnd()
 
 	// 나이아가라 설정
 
-	UNiagaraComponent* NiagaraComponent = Lich->GetNiagaraComponent();
+	UNiagaraComponent* NiagaraComponent = Lich->GetMeleeNiagaraComponent();
 
 	if (nullptr == NiagaraComponent)
 	{
@@ -221,21 +221,7 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 	SpawnTornado->SetAttackType(AttackType);
 
 	// 타겟의 위치로
-	UBlackboardComponent* Blackboard = Lich->GetBlackboardComponent();
-	
-	if (nullptr == Blackboard)
-	{
-		return;
-	}
-
-	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
-
-	if (nullptr == TargetObject)
-	{
-		return;
-	}
-
-	AActor* TargetActor = Cast<AActor>(TargetObject);
+	AActor* TargetActor = Lich->GetTargetActor();
 
 	if (nullptr == TargetActor)
 	{
@@ -258,18 +244,21 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 
 	SpawnTornado->SetActorLocation(SetPos);
 
-	// 타겟 캐릭터 설정
-	ACharacter* TargetCharacter = Cast<ACharacter>(TargetActor);
+	// 타겟 액터 설정
+	SpawnTornado->SetTargetActor(TargetActor);
 
-	if (nullptr == TargetCharacter)
+	// 페이즈2부터 속도가 빨라지게
+	int LichPhase = Lich->GetPhase();
+
+	if (2 <= LichPhase)
 	{
-		return;
+		float TornadoSpeed = SpawnTornado->GetSpeed();
+		TornadoSpeed *= 2.f;
+		SpawnTornado->SetSpeed(TornadoSpeed);
 	}
-
-	SpawnTornado->SetTargetCharacter(TargetCharacter);
 }
 
-void ULichAnimInstance::AnimNotify_MagicSpawn()
+void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 {
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
@@ -277,6 +266,34 @@ void ULichAnimInstance::AnimNotify_MagicSpawn()
 	{
 		return;
 	}
+
+	int LichPhase = Lich->GetPhase();
+
+	Lich->GetFrostboltArray();
+}
+
+void ULichAnimInstance::AnimNotify_FrostboltShot()
+{
+	ALich* Lich = Cast<ALich>(GetOwningActor());
+
+	if (nullptr == Lich)
+	{
+		return;
+	}
+
+
+}
+
+void ULichAnimInstance::AnimNotify_Death()
+{
+	ALich* Lich = Cast<ALich>(GetOwningActor());
+
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
+	{
+		return;
+	}
+
+	Lich->Destroy();
 }
 
 void ULichAnimInstance::NativeInitializeAnimation()
@@ -306,7 +323,8 @@ void ULichAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	}
 
 	if (Anim == GetAnimMontage(BossAnimState::Attack_Left) || Anim == GetAnimMontage(BossAnimState::Attack_Right) ||
-		Anim == GetAnimMontage(BossAnimState::Attack_SpawnTornado))
+		Anim == GetAnimMontage(BossAnimState::Attack_SpawnTornado) || Anim == GetAnimMontage(BossAnimState::Attack_FrostboltShot) ||
+		Anim == GetAnimMontage(BossAnimState::GotHit))
 	{
 		Character->SetAnimState(BossAnimState::Idle);
 		Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);

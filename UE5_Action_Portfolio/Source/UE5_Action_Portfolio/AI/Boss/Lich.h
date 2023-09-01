@@ -18,8 +18,15 @@ public:
 	void SetDarkBall(AActor* _Actor);
 	AActor* GetDarkBall();
 	UCapsuleComponent* GetMeleeCapsuleComponent();
-	UNiagaraComponent* GetNiagaraComponent();
+	UNiagaraComponent* GetMeleeNiagaraComponent();
+	TArray<AActor*> GetFrostboltArray();
+
 	void Destroyed() override;
+
+	void SetPhase(int _Phase);
+	int GetPhase();
+
+	AActor* GetTargetActor();
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,17 +39,30 @@ protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 private:
+	UPROPERTY()
 	const struct FBossData* CurBossData;
 
 	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UCapsuleComponent* MeleeCapsuleComponent = nullptr;
+	UCapsuleComponent* MeleeCapsuleComponent;
 	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UNiagaraComponent* NiagaraComponent = nullptr;
+	UNiagaraComponent* MeleeNiagaraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FName DataName = "Lich";
+	FName DataName;
 
-	AActor* DarkBall = nullptr;
+	UPROPERTY()
+	AActor* DarkBall;
+	UPROPERTY()
+	TArray<AActor*> FrostboltArray;
 
-	float MeleeDamage = 0.f;
+	float MeleeDamage;
+
+	const int MaxPhase;
+
+	// 머티리얼을 변경 할 방법 2가지
+	// 데이터 테이블에 머리티얼을 저장해서 직접 스켈레탈 메쉬컴포넌트에 SetMaterial을 사용
+	//USkeletalMeshComponent* PTr = nullptr;
+	//PTr->SetMaterial(0, )
+	// 머티리얼을 블루프린트에서 변수로 저장해 Array에서 하나씩 불러와 사용
+	//TArray<UMat>
 };

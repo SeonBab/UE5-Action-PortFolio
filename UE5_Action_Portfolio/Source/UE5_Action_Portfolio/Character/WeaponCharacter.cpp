@@ -276,7 +276,14 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	// PointDamage를 전달 받았다.
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
-		if (nullptr == EventInstigator)
+		if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
+		{
+			return 0.f;
+		}
+
+		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
+
+		if (nullptr == EventInstigatorPawn || false == EventInstigatorPawn->IsValidLowLevel())
 		{
 			return 0.f;
 		}
@@ -295,7 +302,7 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 			return 0.f;
 		}
 
-		FVector HitDir = EventInstigator->GetPawn()->GetActorLocation();
+		FVector HitDir = EventInstigatorPawn->GetActorLocation();
 		HitDir.Z = 0;
 
 		FVector CurPos = GetActorLocation();
@@ -328,12 +335,12 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		{
 			FinalDamage = 0.f;
 
-			AWeaponCharacter* EnemyChar = Cast<AWeaponCharacter>(EventInstigator->GetPawn());
+			AWeaponCharacter* EnemyChar = Cast<AWeaponCharacter>(EventInstigatorPawn);
 
 			UWeaponAction* EnemyWeaponAction = EnemyChar->GetCurWeaponAction();
 
 			EnemyWeaponAction->ChangeNoCollision();
-			// 애니메이션이 정상적으로 재생 안됨
+
 			EnemyWeaponAction->SetAnimState(CharacterAnimState::Dizzy);
 			
 			return FinalDamage;
@@ -351,30 +358,26 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		}
 		else if (0.f >= GetHP())
 		{
+			// 체력은 음수값이 되지하지 않아야한다.
+			SetHP(0.f);
+
 			// 죽음
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
 			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
 
 			CurWeapon->Death();
 
-			if (nullptr == EventInstigator)
-			{
-				return 0.f;
-			}
-
-			bool PlayerCheck = EventInstigator->GetPawn()->ActorHasTag("Player");
+			bool PlayerCheck = EventInstigatorPawn->ActorHasTag("Player");
 			
 			if (true == PlayerCheck)
 			{
-				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigator->GetPawn());
+				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
 
 				if (nullptr != MainChar)
 				{
 					MainChar->LostLockedOnTargetActor();
 				}
 			}
-			// 체력이 음수값이 되지 않게
-			SetHP(0.f);
 
 			return FinalDamage;
 		}

@@ -24,6 +24,7 @@ void APaladin::BeginPlay()
 	}
 
 
+	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), this);
 	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("PatrolRange"), 800.f);

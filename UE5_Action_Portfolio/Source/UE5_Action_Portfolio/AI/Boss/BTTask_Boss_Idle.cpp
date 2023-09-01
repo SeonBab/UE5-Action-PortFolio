@@ -4,7 +4,14 @@ EBTNodeResult::Type UBTTask_Boss_Idle::ExecuteTask(UBehaviorTreeComponent& Owner
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	GetGlobalCharacter(OwnerComp)->SetAnimState(BossAnimState::Idle);
+	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+
+	if (nullptr == Character)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	Character->SetAnimState(BossAnimState::Idle);
 
 	return EBTNodeResult::InProgress;
 }
@@ -13,7 +20,16 @@ void UBTTask_Boss_Idle::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	if (2.0f <= GetStateTime(OwnerComp))
+	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+
+	if (nullptr == Character)
+	{
+		return;
+	}
+
+	BossAnimState AnimState = Character->GetAnimState<BossAnimState>();
+
+	if (2.0f <= GetStateTime(OwnerComp) && BossAnimState::GotHit != AnimState)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}

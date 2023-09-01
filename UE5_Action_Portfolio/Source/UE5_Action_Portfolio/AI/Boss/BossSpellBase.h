@@ -17,6 +17,7 @@ public:
 	void SetDeathCheck(bool _Value);
 	bool GetDeathCheck();
 	void SetSpeed(float _Value);
+	float GetSpeed();
 	void SetCurController(AController* _Controller);
 	AController* GetCurController();
 	UNiagaraComponent* GetNiagaraComponent();

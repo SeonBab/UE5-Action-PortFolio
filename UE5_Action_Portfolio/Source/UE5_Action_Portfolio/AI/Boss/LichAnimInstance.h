@@ -20,7 +20,11 @@ public:
 	UFUNCTION()
 	void AnimNotify_CreateTornado();
 	UFUNCTION()
-	void AnimNotify_MagicSpawn();
+	void AnimNotify_FrostboltSpawn();
+	UFUNCTION()
+	void AnimNotify_FrostboltShot();
+	UFUNCTION()
+	void AnimNotify_Death();
 
 protected:
 	virtual void NativeInitializeAnimation() override;
