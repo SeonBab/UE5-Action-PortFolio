@@ -321,6 +321,15 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		bool ParryCheck = CurWeapon->GetIsParry();
 		bool IsInvincibilityCheck = CurWeapon->GetIsInvincibility();
 
+		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
+
+		if (nullptr == GlobalChar)
+		{
+			return 0.f;
+		}
+
+		bool EnemyParrybool = GlobalChar->GetParrybool();
+
 		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
 		{
 			FinalDamage *= 0.1f;
@@ -331,13 +340,23 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 			return FinalDamage;
 		}
-		else if (160.f >= FMath::Abs(Angle0 - Angle1) && true == ParryCheck)
+		else if (160.f >= FMath::Abs(Angle0 - Angle1) && (true == ParryCheck && true == EnemyParrybool))
 		{
 			FinalDamage = 0.f;
 
-			AWeaponCharacter* EnemyChar = Cast<AWeaponCharacter>(EventInstigatorPawn);
+			AWeaponCharacter* EnemyChar = Cast<AWeaponCharacter>(GlobalChar);
+
+			if (nullptr == EnemyChar)
+			{
+				return 0.f;
+			}
 
 			UWeaponAction* EnemyWeaponAction = EnemyChar->GetCurWeaponAction();
+
+			if (nullptr == EnemyWeaponAction)
+			{
+				return 0.f;
+			}
 
 			EnemyWeaponAction->ChangeNoCollision();
 

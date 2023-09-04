@@ -60,4 +60,9 @@ void UBTTask_Clone_Equip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	}
+
+	if (EWeaponType::UnArmed == CurWeaponType)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+	}
 }

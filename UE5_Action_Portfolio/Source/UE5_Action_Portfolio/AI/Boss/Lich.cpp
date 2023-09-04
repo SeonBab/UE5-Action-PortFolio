@@ -14,8 +14,9 @@ ALich::ALich()
 
 	SetActorTypeTag(TEXT("Monster"));
 	SetAttackTypeTag(TEXT("MonsterAttack"));
+	SetParrybool(false);
 
-	DataName = "Lich";
+	OverHeadName = "Lich";
 	
 	DarkBall = nullptr;
 	FrostboltArray.Empty();
@@ -152,7 +153,7 @@ void ALich::BeginPlay()
 
 	if (nullptr != Inst)
 	{
-		CurBossData = Inst->GetBossData(DataName);
+		CurBossData = Inst->GetBossData(OverHeadName);
 
 		SetAllAnimation<BossAnimState>(CurBossData->MapAnimation);
 		SetHP(CurBossData->HP);

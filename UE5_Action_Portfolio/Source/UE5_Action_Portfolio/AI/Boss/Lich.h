@@ -46,9 +46,8 @@ private:
 	UCapsuleComponent* MeleeCapsuleComponent;
 	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UNiagaraComponent* MeleeNiagaraComponent;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FName DataName;
+	FName OverHeadName;
 
 	UPROPERTY()
 	AActor* DarkBall;

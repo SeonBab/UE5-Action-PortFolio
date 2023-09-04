@@ -4,7 +4,11 @@ AGlobalCharacter::AGlobalCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	ActorTypeTag = TEXT("");
+	AttackTypeTag = TEXT("");
+	Parrybool = false;
 	HP = 0.f;
+	MaxHP = 0.f;
 
 }
 
@@ -26,6 +30,16 @@ void AGlobalCharacter::SetAttackTypeTag(FName _Tag)
 FName AGlobalCharacter::GetAttackTypeTag()
 {
 	return AttackTypeTag;
+}
+
+void AGlobalCharacter::SetParrybool(bool _Value)
+{
+	Parrybool = _Value;
+}
+
+bool AGlobalCharacter::GetParrybool()
+{
+	return Parrybool;
 }
 
 void AGlobalCharacter::SetHP(float _HP)

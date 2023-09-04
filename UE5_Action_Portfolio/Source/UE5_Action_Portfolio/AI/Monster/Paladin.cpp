@@ -8,6 +8,9 @@ APaladin::APaladin()
 {
 	SetActorTypeTag(TEXT("Monster"));
 	SetAttackTypeTag(TEXT("MonsterAttack"));
+	SetParrybool(true);
+
+	OverHeadName = "Paladin";
 }
 
 void APaladin::BeginPlay()
@@ -18,11 +21,10 @@ void APaladin::BeginPlay()
 
 	if (nullptr != Inst)
 	{
-		CurMonsterData = Inst->GetMonsterData(DataName);
+		CurMonsterData = Inst->GetMonsterData(OverHeadName);
 		SetHP(CurMonsterData->HP);
 		SetMaxHP(GetHP());
 	}
-
 
 	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), this);
 	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
