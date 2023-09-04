@@ -14,5 +14,6 @@ enum class BossAnimState : uint8
 	Attack_FrostboltShot,
 	GotHit,
 	Death,
-	Dizzy,
+	Hide,
+	Visible,
 };
