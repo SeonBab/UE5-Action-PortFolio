@@ -15,6 +15,9 @@ class UE5_ACTION_PORTFOLIO_API ALich : public AGlobalAICharacter
 
 public:
 	ALich();
+	UFUNCTION(BlueprintCallable)
+	FName GetDataName();
+
 	UCapsuleComponent* GetMeleeCapsuleComponent();
 	UNiagaraComponent* GetMeleeNiagaraComponent();
 	AActor* GetDarkBall();
@@ -47,7 +50,7 @@ private:
 	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UNiagaraComponent* MeleeNiagaraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FName OverHeadName;
+	FName DataName;
 
 	UPROPERTY()
 	AActor* DarkBall;
@@ -58,6 +61,7 @@ private:
 
 	int MaxPhase;
 
+	// 천천히 변하게 하는 disintegrate 효과
 	// 머티리얼을 변경 할 방법 2가지
 	// 데이터 테이블에 머리티얼을 저장해서 직접 스켈레탈 메쉬컴포넌트에 SetMaterial을 사용
 	//USkeletalMeshComponent* PTr = nullptr;

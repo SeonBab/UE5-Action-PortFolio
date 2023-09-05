@@ -10,7 +10,7 @@ APaladin::APaladin()
 	SetAttackTypeTag(TEXT("MonsterAttack"));
 	SetParrybool(true);
 
-	OverHeadName = "Paladin";
+	DataName = "Paladin";
 }
 
 void APaladin::BeginPlay()
@@ -21,7 +21,7 @@ void APaladin::BeginPlay()
 
 	if (nullptr != Inst)
 	{
-		CurMonsterData = Inst->GetMonsterData(OverHeadName);
+		CurMonsterData = Inst->GetMonsterData(DataName);
 		SetHP(CurMonsterData->HP);
 		SetMaxHP(GetHP());
 	}

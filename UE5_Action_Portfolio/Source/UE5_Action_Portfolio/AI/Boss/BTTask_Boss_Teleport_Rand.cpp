@@ -11,7 +11,7 @@ EBTNodeResult::Type UBTTask_Boss_Teleport_Rand::ExecuteTask(UBehaviorTreeCompone
         return EBTNodeResult::Failed;
     }
 
-    int Rand = UGlobalGameInstance::MainRandom.RandRange(0, 9);
+    int Rand = UGlobalGameInstance::MainRandom.RandRange(0, 4);
 
     if (0 == Rand)
     {

@@ -21,5 +21,5 @@ protected:
 private:
 	const struct FMonsterData* CurMonsterData;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FName OverHeadName;
+	FName DataName;
 };

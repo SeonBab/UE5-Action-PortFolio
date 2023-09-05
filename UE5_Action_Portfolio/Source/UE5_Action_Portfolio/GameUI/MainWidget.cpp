@@ -1,4 +1,6 @@
 #include "GameUI/MainWidget.h"
+#include "GameUI/HealthBar.h"
+#include "GameUI/BossInfo.h"
 
 void UMainWidget::SetCrosshairOnOff(bool _Value)
 {
@@ -22,4 +24,20 @@ void UMainWidget::SetBossHpBar(bool _Value)
 	{
 		BossHpBar = ESlateVisibility::Hidden;
 	}
+}
+
+void UMainWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	CrosshairOnOff = ESlateVisibility::Hidden;
+	BossHpBar = ESlateVisibility::Hidden;
+
+	CharacterHPBar = Cast<UHealthBar>(GetWidgetFromName(TEXT("")));
+	BossInfo = Cast<UBossInfo>(GetWidgetFromName(TEXT("")));
+}
+
+void UMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
 }

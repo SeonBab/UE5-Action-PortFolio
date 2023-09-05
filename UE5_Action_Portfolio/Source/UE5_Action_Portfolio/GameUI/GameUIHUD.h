@@ -11,7 +11,7 @@ class UE5_ACTION_PORTFOLIO_API AGameUIHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	
+	UFUNCTION(BlueprintCallable)
 	UMainWidget* GetMainWidget();
 	
 protected:
