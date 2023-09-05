@@ -17,6 +17,9 @@ public:
 
 	TArray<FVector> PathFind(UBehaviorTreeComponent& _OwnerComp, AActor* _Actor);
 	TArray<FVector> PathFind(UBehaviorTreeComponent& _OwnerComp, FVector _Pos);
+	UNavigationPath* PathFindNavPath(UBehaviorTreeComponent& _OwnerComp, AActor* _Actor);
+	UNavigationPath* PathFindNavPath(UBehaviorTreeComponent& _OwnerComp, FVector _Pos);
+
 	float GetStateTime(UBehaviorTreeComponent& OwnerComp);
 	void ResetStateTime(UBehaviorTreeComponent& OwnerComp);
 	UBlackboardComponent* GetBlackboardComponent(UBehaviorTreeComponent& OwnerComp);

@@ -22,5 +22,5 @@ protected:
 
 private:
 	UTextBlock* InfoName;
-	UHealthBar* HealthBar;
+	UHealthBar* HPBar;
 };

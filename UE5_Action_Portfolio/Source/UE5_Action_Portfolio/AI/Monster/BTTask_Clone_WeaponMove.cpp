@@ -63,13 +63,13 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 		FVector Dis = TargetPos - CurPos;
 
-		float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
+		float MeleeAttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("MeleeAttackRange"));
 
-		if (AttackRange < Dis.Size())
+		if (MeleeAttackRange < Dis.Size())
 		{
 			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 		}
-		else if (AttackRange >= Dis.Size() && MoveTime <= GetStateTime(OwnerComp))
+		else if (MeleeAttackRange >= Dis.Size() && MoveTime <= GetStateTime(OwnerComp))
 		{
 			ResetStateTime(OwnerComp);
 

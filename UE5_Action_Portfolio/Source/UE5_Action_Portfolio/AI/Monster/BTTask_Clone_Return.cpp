@@ -4,11 +4,6 @@ EBTNodeResult::Type UBTTask_Clone_Return::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
-	
-	Blackboard->SetValueAsInt(TEXT("PatrolCount"), 0);
-	Blackboard->SetValueAsBool(TEXT("IsReturn"), false);
-
 	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
 
 	return EBTNodeResult::InProgress;
@@ -18,7 +13,14 @@ void UBTTask_Clone_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	FVector ReturnPos = GetBlackboardComponent(OwnerComp)->GetValueAsVector(TEXT("SpawnPos"));
+	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
+
+	if (nullptr == Blackboard)
+	{
+		return;
+	}
+
+	FVector ReturnPos = Blackboard->GetValueAsVector(TEXT("SpawnPos"));
 	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
 	FVector PathPos;
 
@@ -57,14 +59,17 @@ void UBTTask_Clone_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 	}
 
 	// ÀÌµ¿
-	GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->WAndSButtonAction(1);
 
 	FVector Dis = ReturnPos - CurPos;
 
-	float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
+	float MeleeAttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("MeleeAttackRange"));
 
-	if (AttackRange >= Dis.Size())
+	if (MeleeAttackRange >= Dis.Size())
 	{
+		Blackboard->SetValueAsInt(TEXT("PatrolCount"), 0);
+		Blackboard->SetValueAsBool(TEXT("IsReturn"), false);
+
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 }

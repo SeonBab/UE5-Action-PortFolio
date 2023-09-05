@@ -168,11 +168,16 @@ void ALich::BeginPlay()
 
 	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), this);
 	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
+	GetBlackboardComponent()->SetValueAsObject(TEXT("NavPath"), nullptr);
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), false);
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), false);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("Phase"), 1);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("RandAttack"), 0);
+	GetBlackboardComponent()->SetValueAsInt(TEXT("NavPathIndex"), 1);
 	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
+	GetBlackboardComponent()->SetValueAsFloat(TEXT("MeleeAttackRange"), 300.f);
+	GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
+	GetBlackboardComponent()->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
 
 	MeleeCapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ALich::MeleeBeginOverlap);
 }

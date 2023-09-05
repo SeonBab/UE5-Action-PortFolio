@@ -54,9 +54,9 @@ void UBTTask_Clone_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
 
-	float AttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("AttackRange"));
+	float MeleeAttackRange = GetBlackboardComponent(OwnerComp)->GetValueAsFloat(TEXT("MeleeAttackRange"));
 
-	if (AttackRange >= Dis.Size())
+	if (MeleeAttackRange >= Dis.Size())
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}

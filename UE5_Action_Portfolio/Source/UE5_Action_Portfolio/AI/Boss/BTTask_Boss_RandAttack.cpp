@@ -35,11 +35,13 @@ EBTNodeResult::Type UBTTask_Boss_RandAttack::ExecuteTask(UBehaviorTreeComponent&
 
     int RandAttack = 0;
 
-    if (300.f >= Dis.Size())
+    float MeleeAttackRange = Blackboard->GetValueAsFloat(TEXT("MeleeAttackRange"));
+
+    if (MeleeAttackRange >= Dis.Size())
     {
         RandAttack = UGlobalGameInstance::MainRandom.RandRange(1, 4);
     }
-    else if (300.f < Dis.Size())
+    else if (MeleeAttackRange < Dis.Size())
     {
         RandAttack = UGlobalGameInstance::MainRandom.RandRange(2, 4);
     }

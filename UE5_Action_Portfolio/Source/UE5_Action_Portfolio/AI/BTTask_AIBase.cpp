@@ -58,6 +58,30 @@ TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& _OwnerComp, FVe
 	return PathObject->PathPoints;
 }
 
+UNavigationPath* UBTTask_AIBase::PathFindNavPath(UBehaviorTreeComponent& _OwnerComp, AActor* _Actor)
+{
+	return PathFindNavPath(_OwnerComp, _Actor->GetActorLocation());
+}
+
+UNavigationPath* UBTTask_AIBase::PathFindNavPath(UBehaviorTreeComponent& _OwnerComp, FVector _Pos)
+{
+	UNavigationPath* PathObject = nullptr;
+
+	AGlobalCharacter* Character = GetGlobalCharacter(_OwnerComp);
+
+	if (nullptr == Character)
+	{
+		return nullptr;
+	}
+
+	FVector StartPos = Character->GetActorLocation();
+	FVector EndPos = _Pos;
+
+	PathObject = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), StartPos, EndPos);
+
+	return PathObject;
+}
+
 float UBTTask_AIBase::GetStateTime(UBehaviorTreeComponent& OwnerComp)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();

@@ -5,12 +5,12 @@
 
 void UBossInfo::SetBossInfo(FName _InfoName, float _HP, float _MaxHP)
 {
-	if (nullptr == HealthBar)
+	if (nullptr == HPBar)
 	{
 		return;
 	}
 
-	HealthBar->SetHPInfo(_HP, _MaxHP);
+	HPBar->SetHPInfo(_HP, _MaxHP);
 
 	FText NameText = FText::FromName(_InfoName);
 	InfoName->SetText(NameText);
@@ -21,7 +21,7 @@ void UBossInfo::NativeConstruct()
 	Super::NativeConstruct();
 
 	InfoName = Cast<UTextBlock>(GetWidgetFromName(TEXT("BossName")));
-	HealthBar = Cast<UHealthBar>(GetWidgetFromName(TEXT("WBP_HealthBar")));
+	HPBar = Cast<UHealthBar>(GetWidgetFromName(TEXT("WBP_HealthBar")));	
 }
 
 void UBossInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
