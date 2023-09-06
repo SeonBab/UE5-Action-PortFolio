@@ -14,15 +14,39 @@ void UMainWidget::SetCrosshairOnOff(bool _Value)
 	}
 }
 
-void UMainWidget::SetBossHpBar(bool _Value)
+void UMainWidget::SetBossInfoOnOff(bool _Value)
 {
 	if (true == _Value)
 	{
-		BossHpBar = ESlateVisibility::Visible;
+		BossInfoOnOff = ESlateVisibility::Visible;
 	}
 	else if (false == _Value)
 	{
-		BossHpBar = ESlateVisibility::Hidden;
+		BossInfoOnOff = ESlateVisibility::Hidden;
+	}
+}
+
+void UMainWidget::SetMainCharHpBarOnOff(bool _Value)
+{
+	if (true == _Value)
+	{
+		MainCharHpBarOnOff = ESlateVisibility::Visible;
+	}
+	else if (false == _Value)
+	{
+		MainCharHpBarOnOff = ESlateVisibility::Hidden;
+	}
+}
+
+void UMainWidget::SetWeaponSlotOnOff(bool _Value)
+{
+	if (true == _Value)
+	{
+		WeaponSlotOnOff = ESlateVisibility::Visible;
+	}
+	else if (false == _Value)
+	{
+		WeaponSlotOnOff = ESlateVisibility::Hidden;
 	}
 }
 
@@ -31,10 +55,9 @@ void UMainWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	CrosshairOnOff = ESlateVisibility::Hidden;
-	BossHpBar = ESlateVisibility::Hidden;
-
-	CharacterHPBar = Cast<UHealthBar>(GetWidgetFromName(TEXT("")));
-	BossInfo = Cast<UBossInfo>(GetWidgetFromName(TEXT("")));
+	BossInfoOnOff = ESlateVisibility::Hidden;
+	MainCharHpBarOnOff = ESlateVisibility::Hidden;
+	WeaponSlotOnOff = ESlateVisibility::Hidden;
 }
 
 void UMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

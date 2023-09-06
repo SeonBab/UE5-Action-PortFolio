@@ -37,10 +37,14 @@ public:
 	FVector CameraLineTrace();
 	void LostLockedOnTargetActor();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BpEventCallHPBar();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* _PlayerInputComponent) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 private:
 	UFUNCTION()

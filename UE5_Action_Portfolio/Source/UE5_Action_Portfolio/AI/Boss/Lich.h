@@ -32,6 +32,9 @@ public:
 
 	AActor* GetTargetActor();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BpEventCallBossInfo();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

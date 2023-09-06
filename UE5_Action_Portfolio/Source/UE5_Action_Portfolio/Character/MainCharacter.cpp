@@ -167,6 +167,15 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* _PlayerInputComp
 	_PlayerInputComponent->BindAction("Parry", EInputEvent::IE_Pressed, this, &AMainCharacter::Parry);
 }
 
+float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	BpEventCallHPBar();
+
+	return FinalDamage;
+}
+
 void AMainCharacter::ZoomIn()
 {
 	if (MainCameraSpringArmComponent->TargetArmLength > 50.f)

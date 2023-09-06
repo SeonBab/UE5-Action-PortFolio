@@ -15,6 +15,9 @@ struct UE5_ACTION_PORTFOLIO_API FWeaponData : public FTableRowBase
 	EWeaponType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UTexture* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
