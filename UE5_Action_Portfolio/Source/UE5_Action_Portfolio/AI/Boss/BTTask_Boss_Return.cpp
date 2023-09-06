@@ -78,11 +78,18 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		return;
 	}
 
+	int NavPathIndex = 0;
+	
+	if (1 < NavPath->PathPoints.Num())
+	{
+		// 도착지점에 서있을 경우 NavPath가 1개이므로 도착지점에 서있지 않을 경우에만 값 변경
+		NavPathIndex = Blackboard->GetValueAsInt(TEXT("NavPathIndex"));
+	}
+
 	FVector PathPos;
 
-	int NavPathIndex = Blackboard->GetValueAsInt(TEXT("NavPathIndex"));
-
 	PathPos = NavPath->PathPoints[NavPathIndex];
+
 
 	ReturnPos.Z = 0.f;
 	CurPos.Z = 0.f;
@@ -133,6 +140,10 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		Blackboard->SetValueAsObject(TEXT("NavPath"), nullptr);
 		Blackboard->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
 		Blackboard->SetValueAsInt(TEXT("NavPathIndex"), 1);
+		Blackboard->SetValueAsInt(TEXT("Phase"), 1);
+
+		float CurMaxHP = Character->GetMaxHP();
+		Character->SetHP(CurMaxHP);
 
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}

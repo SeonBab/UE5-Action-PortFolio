@@ -9,6 +9,10 @@
 class UNiagaraSystem;
 class UParticleSystem;
 
+struct FWeaponData;
+struct FMonsterData;
+struct FBossData;
+
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API UGlobalGameInstance : public UGameInstance
 {
@@ -23,9 +27,10 @@ public:
 	UParticleSystem* GetParticleAsset(FName _Name);
 	TSubclassOf<UObject> GetSubClass(FName _Name);
 
-	struct FWeaponData* GetWeaponData(FName _Name);
-	struct FMonsterData* GetMonsterData(FName _Name);
-	struct FBossData* GetBossData(FName _Name);
+	FWeaponData* GetWeaponData(FName _Name);
+	TMap<EWeaponType, UTexture*> GetWeaponDataTMap();
+	FMonsterData* GetMonsterData(FName _Name);
+	FBossData* GetBossData(FName _Name);
 
 	struct FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
 

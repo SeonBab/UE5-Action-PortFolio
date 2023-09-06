@@ -33,7 +33,9 @@ public:
 	AActor* GetTargetActor();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void BpEventCallBossInfo();
+	void BpEventCallBossInfoOn();
+	UFUNCTION(BlueprintImplementableEvent)
+	void BpEventCallBossInfoOff();
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,6 +46,9 @@ protected:
 	void MeleeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+
+private:
+	void LostTarget();
 
 private:
 	const struct FBossData* CurBossData;

@@ -80,20 +80,7 @@ void ALich::SetNullFrostboltArray(int _Index)
 
 void ALich::Destroyed()
 {
-	if (DarkBall != nullptr || true == DarkBall->IsValidLowLevel())
-	{
-		DarkBall->Destroyed();
-	}
-	DarkBall = nullptr;
-
-	for (int i = 0; i < FrostboltArray.Num(); i++)
-	{
-		if (nullptr != FrostboltArray[i] || true == FrostboltArray[i]->IsValidLowLevel())
-		{
-			FrostboltArray[i]->Destroy();
-		}
-	}
-	FrostboltArray.Empty();
+	LostTarget();
 
 	Super::Destroyed();
 }
@@ -106,8 +93,6 @@ void ALich::SetPhase(int _Phase)
 	}
 
 	GetBlackboardComponent()->SetValueAsInt(TEXT("Phase"), _Phase);
-
-	// 페이즈에 따라 머티리얼 바꾸기
 }
 
 int ALich::GetPhase()
@@ -186,6 +171,20 @@ void ALich::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UBlackboardComponent* Blackboard = GetBlackboardComponent();
+
+	if (Blackboard == nullptr)
+	{
+		return;
+	}
+
+	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
+
+	if (nullptr == TargetObject)
+	{
+		LostTarget();
+		BpEventCallBossInfoOff();
+	}
 }
 
 void ALich::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -216,7 +215,7 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 		{
 			// 체력 변경
 			SetHP(GetHP() - FinalDamage);
-			BpEventCallBossInfo();
+			BpEventCallBossInfoOn();
 		}
 
 		if (0.f < GetHP())
@@ -227,13 +226,17 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 				SetAnimState(BossAnimState::GotHit);
 			}
 
-			// 체력 100마다 페이즈 변경하기
-			if (100 < GetHP() && 200.f >= GetHP())
+			// 체력 1/3마다 페이즈 변경하기
+			float CurMaxHP = GetMaxHP();
+			float Phase2HP = CurMaxHP * 0.6f;
+			float Phase3HP = CurMaxHP * 0.3f;
+
+			if (Phase3HP < GetHP() && Phase2HP >= GetHP())
 			{
 				// 2페이즈
 				SetPhase(2);
 			}
-			else if (100.f >= GetHP())
+			else if (Phase3HP >= GetHP())
 			{
 				// 3페이즈
 				SetPhase(3);
@@ -284,5 +287,23 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 	}
 
 	return FinalDamage;
+}
+
+void ALich::LostTarget()
+{
+	if (DarkBall != nullptr || true == DarkBall->IsValidLowLevel())
+	{
+		DarkBall->Destroyed();
+	}
+	DarkBall = nullptr;
+
+	for (int i = 0; i < FrostboltArray.Num(); i++)
+	{
+		if (nullptr != FrostboltArray[i] || true == FrostboltArray[i]->IsValidLowLevel())
+		{
+			FrostboltArray[i]->Destroy();
+		}
+	}
+	FrostboltArray.Empty();
 }
 

@@ -176,6 +176,30 @@ FWeaponData* UGlobalGameInstance::GetWeaponData(FName _Name)
 	return FindTable;
 }
 
+TMap<EWeaponType, UTexture*> UGlobalGameInstance::GetWeaponDataTMap()
+{
+	TMap<EWeaponType, UTexture*> WeaponArray;
+
+	if (nullptr == WeaponDatas)
+	{
+		return WeaponArray;
+	}
+
+	TArray<FName> ArrayName = WeaponDatas->GetRowNames();
+
+	for (int i = 0; i < ArrayName.Num(); i++)
+	{
+		FWeaponData* WeaponData = WeaponDatas->FindRow<FWeaponData>(ArrayName[i], ArrayName[i].ToString());
+
+		EWeaponType WeaponType = WeaponData->Type;
+		UTexture* WeaponIcon = WeaponData->Icon;
+
+		WeaponArray.Add(WeaponType, WeaponIcon);
+	}
+
+	return WeaponArray;
+}
+
 FMonsterData* UGlobalGameInstance::GetMonsterData(FName _Name)
 {
 	if (nullptr == MonsterDatas)
