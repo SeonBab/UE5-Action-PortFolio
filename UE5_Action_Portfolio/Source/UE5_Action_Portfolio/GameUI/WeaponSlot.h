@@ -6,6 +6,7 @@
 #include "WeaponSlot.generated.h"
 
 class UImage;
+class UPaperSprite;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API UWeaponSlot : public UUserWidget
@@ -13,6 +14,7 @@ class UE5_ACTION_PORTFOLIO_API UWeaponSlot : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetWpSlotIcon(EWeaponType _WpType);
 
 protected:
@@ -27,5 +29,5 @@ private:
 	UImage* WpSlotGrid;
 	UImage* WpSlotIcon;
 
-	TMap<EWeaponType, UTexture*> WpIcon;
+	TMap<EWeaponType, UPaperSprite*> WpIcon;
 };

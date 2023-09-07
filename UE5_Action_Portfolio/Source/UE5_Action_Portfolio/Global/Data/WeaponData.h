@@ -4,6 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
 #include "Global/Enums.h"
+#include "PaperSprite.h"
 #include "WeaponData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -15,7 +16,7 @@ struct UE5_ACTION_PORTFOLIO_API FWeaponData : public FTableRowBase
 	EWeaponType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	UTexture* Icon;
+	UPaperSprite* Icon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int Damage;

@@ -8,6 +8,7 @@ APaladin::APaladin()
 {
 	SetActorTypeTag(TEXT("Monster"));
 	SetAttackTypeTag(TEXT("MonsterAttack"));
+	Tags.Add(GetActorTypeTag());
 	SetParrybool(true);
 
 	DataName = "Paladin";

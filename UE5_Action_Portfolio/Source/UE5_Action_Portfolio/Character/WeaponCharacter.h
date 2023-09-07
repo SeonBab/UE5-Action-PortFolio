@@ -5,6 +5,8 @@
 #include "Global/Enums.h"
 #include "WeaponCharacter.generated.h"
 
+class UWeaponAction;
+
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AWeaponCharacter : public AGlobalCharacter
 {
@@ -13,29 +15,29 @@ class UE5_ACTION_PORTFOLIO_API AWeaponCharacter : public AGlobalCharacter
 public:
 	AWeaponCharacter();
 	UFUNCTION(BlueprintCallable)
-	class UWeaponAction* GetCurWeaponAction();
+	UWeaponAction* GetCurWeaponAction();
+	FVector GetBowJointLocation();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float _DeltaTime) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* _PlayerInputComponent) override;
 	UFUNCTION()
 	void WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	FVector GetBowJointLocation();
+	UFUNCTION()
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+	void BowChordMove();
+
 	TTuple<float, FVector> IKFootLineTrace(FName _Socket, float _TraceDis);
 	FRotator NormalToRotator(FVector _Vector);
 	void UpdateFootRotation(float _DeltaTime, FRotator _NormalToRotatorValue, FRotator* _FootRotatorValue, float _InterpSpeed);
 	void UpdateCapsuleHalfHeight(float _DeltaTime, float _HipsShifs, bool _ResetDefault);
 	void UpdateFootOffset(float _DeltaTime, float _TargetValue, float* _EffectorValue, float _InterpSpeed);
-
-protected:
-	virtual void BeginPlay() override;
-	virtual void Tick(float _DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* _PlayerInputComponent) override;
-	UFUNCTION()
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
-
-private:
-	void BowChordMove();
-
 public:
 	UPROPERTY()
-	class UWeaponAction* CurWeaponAction;
+	UWeaponAction* CurWeaponAction;
 
 	// ÀåÂø ÇÑ ¹«±â
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)

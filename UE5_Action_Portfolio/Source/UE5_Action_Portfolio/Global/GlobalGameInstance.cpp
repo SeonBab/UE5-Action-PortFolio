@@ -176,9 +176,9 @@ FWeaponData* UGlobalGameInstance::GetWeaponData(FName _Name)
 	return FindTable;
 }
 
-TMap<EWeaponType, UTexture*> UGlobalGameInstance::GetWeaponDataTMap()
+TMap<EWeaponType, UPaperSprite*> UGlobalGameInstance::GetWeaponDataTMap()
 {
-	TMap<EWeaponType, UTexture*> WeaponArray;
+	TMap<EWeaponType, UPaperSprite*> WeaponArray;
 
 	if (nullptr == WeaponDatas)
 	{
@@ -192,7 +192,7 @@ TMap<EWeaponType, UTexture*> UGlobalGameInstance::GetWeaponDataTMap()
 		FWeaponData* WeaponData = WeaponDatas->FindRow<FWeaponData>(ArrayName[i], ArrayName[i].ToString());
 
 		EWeaponType WeaponType = WeaponData->Type;
-		UTexture* WeaponIcon = WeaponData->Icon;
+		UPaperSprite* WeaponIcon = WeaponData->Icon;
 
 		WeaponArray.Add(WeaponType, WeaponIcon);
 	}

@@ -14,9 +14,10 @@ ALich::ALich()
 
 	SetActorTypeTag(TEXT("Monster"));
 	SetAttackTypeTag(TEXT("MonsterAttack"));
-	SetParrybool(false);
-
+	Tags.Add(GetActorTypeTag());
 	DataName = "Lich";
+
+	SetParrybool(false);
 	
 	DarkBall = nullptr;
 	FrostboltArray.Empty();

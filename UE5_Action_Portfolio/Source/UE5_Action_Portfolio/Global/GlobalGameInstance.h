@@ -8,6 +8,7 @@
 
 class UNiagaraSystem;
 class UParticleSystem;
+class UPaperSprite;
 
 struct FWeaponData;
 struct FMonsterData;
@@ -28,7 +29,7 @@ public:
 	TSubclassOf<UObject> GetSubClass(FName _Name);
 
 	FWeaponData* GetWeaponData(FName _Name);
-	TMap<EWeaponType, UTexture*> GetWeaponDataTMap();
+	TMap<EWeaponType, UPaperSprite*> GetWeaponDataTMap();
 	FMonsterData* GetMonsterData(FName _Name);
 	FBossData* GetBossData(FName _Name);
 

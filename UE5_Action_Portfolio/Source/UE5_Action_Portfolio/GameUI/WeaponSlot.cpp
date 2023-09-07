@@ -1,17 +1,18 @@
 #include "GameUI/WeaponSlot.h"
 #include "Components/Image.h"
+#include "PaperSprite.h"
 #include "Global/GlobalGameInstance.h"
 
 void UWeaponSlot::SetWpSlotIcon(EWeaponType _WpType)
 {
-	UTexture* Texture = *(WpIcon.Find(_WpType));
+	UPaperSprite* PaperSprite = *(WpIcon.Find(_WpType));
 
-	if (nullptr == Texture)
+	if (nullptr == PaperSprite)
 	{
 		return;
 	}
 
-	//WpSlotIcon->SetBrushFromTexture();
+	WpSlotIcon->SetBrushFromAtlasInterface(PaperSprite);
 
 	WeaponIconOnOff = ESlateVisibility::Visible;
 }

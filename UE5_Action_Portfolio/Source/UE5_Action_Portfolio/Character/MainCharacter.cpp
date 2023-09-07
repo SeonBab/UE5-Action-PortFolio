@@ -9,6 +9,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameUI/GameUIHUD.h"
+#include "CollisionShape.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -24,16 +25,18 @@ AMainCharacter::AMainCharacter()
 	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 55.f, 0.f));
 	BaseTurnRate = 30.f;
 	BaseLookUpRate = 30.f;
-
+	
 	FOVUpdateDelegate.BindUFunction(this, FName("AimZoomTimelineUpdate"));
 	ArmUpdateDelegate.BindUFunction(this, FName("ArmTimelineUpdate"));
 	TimelineFinishDelegate.BindUFunction(this, FName("AimZoomOnFinish"));
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate.Yaw = 360.f;
-	
+
 	SetActorTypeTag(TEXT("Player"));
 	SetAttackTypeTag(TEXT("PlayerAttack"));
+
+	Tags.Add(GetActorTypeTag());
 }
 
 void AMainCharacter::BeginPlay()
@@ -251,41 +254,48 @@ void AMainCharacter::LockOnTarget()
 	if (false == CurWeaponAction->GetIsLockOn())
 	{
 		FVector Start = GetActorLocation(); // 시작 지점
+		Start.Z += BaseEyeHeight;
 		FVector End = GetActorForwardVector() * LockOnTargetRange; // 끝 지점
 		End = End.RotateAngleAxis(-50.f, FVector::UpVector); // 왼쪽 방향부터
 
 		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType; // 히트 가능한 오브젝트 유형
 		ObjectType.Emplace(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
-		//TEnumAsByte<EObjectTypeQuery> WorldStatic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic);
-		//TEnumAsByte<EObjectTypeQuery> WorldDynamic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic);
-		//ObjectTypes.Add(WorldStatic);
-		//ObjectTypes.Add(WorldDynamic);
+		ObjectType.Emplace(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel5));
+
 		TArray<AActor*> NotTargeting; // 무시할 액터들
 		NotTargeting.Emplace(this);
 
-		FHitResult OutHit; // 히트 결과 값을 받는 변수
+		FHitResult HitRes; // 히트 결과 값을 받는 변수
 
 		float TargetDistance = LockOnTargetRange; // 가장 가까운 액터와의 거리 저장
-		AActor* HitActor = nullptr; // 가장 가까운 액터 저장
+		AActor* HitNearActor = nullptr; // 가장 가까운 액터 저장
 
-		for (int i = 0; i <= 100; i += 10) // 반복 하면서 오른쪽 방향으로 돌림
+		for (int i = 0; i <= 100; i += 2) // 반복 하면서 오른쪽 방향으로 돌림
 		{
 			FVector Direction = End.RotateAngleAxis(i, FVector::UpVector);
 			FVector EndPoint = Start + Direction;
 
-			bool IsHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), Start, EndPoint, 200.f, ObjectType, false, NotTargeting, EDrawDebugTrace::ForDuration, OutHit, true);
-			
-			if (true == IsHit && OutHit.Distance < TargetDistance)
+			bool IsHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), Start, EndPoint, 30.f, ObjectType, false, NotTargeting, EDrawDebugTrace::ForDuration, HitRes, true);
+
+			// 히트 결과 값이 몬스터인지 확인
+			bool IsMonster = false;
+			if (true == IsHit)
 			{
-				TargetDistance = OutHit.Distance;
-				HitActor = OutHit.GetActor();
+				AActor* HitResActor = HitRes.GetActor();
+				IsMonster = HitResActor->ActorHasTag(TEXT("Monster"));
+			}
+			// 몬스터라면 저장
+			if (true == IsMonster && HitRes.Distance < TargetDistance)
+			{
+				TargetDistance = HitRes.Distance;
+				HitNearActor = HitRes.GetActor();
 			}
 		}
-
-		if (nullptr != HitActor)
+		// 가장 가까운 몬스터 락온
+		if (nullptr != HitNearActor)
 		{
 			CurWeaponAction->SetIsLockOn(true);
-			LockedOnTargetActor = HitActor;
+			LockedOnTargetActor = HitNearActor;
 		}
 	}
 	else if (true == CurWeaponAction->GetIsLockOn())

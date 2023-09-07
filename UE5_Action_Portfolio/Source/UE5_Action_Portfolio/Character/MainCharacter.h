@@ -39,6 +39,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BpEventCallHPBar();
+	UFUNCTION(BlueprintImplementableEvent)
+	void BpEventChangeWpSlot();
 
 protected:
 	virtual void BeginPlay() override;
