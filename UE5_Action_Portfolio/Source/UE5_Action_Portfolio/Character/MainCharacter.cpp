@@ -276,7 +276,7 @@ void AMainCharacter::LockOnTarget()
 			FVector EndPoint = Start + Direction;
 
 			bool IsHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), Start, EndPoint, 30.f, ObjectType, false, NotTargeting, EDrawDebugTrace::ForDuration, HitRes, true);
-
+			
 			// 히트 결과 값이 몬스터인지 확인
 			bool IsMonster = false;
 			if (true == IsHit)

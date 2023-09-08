@@ -19,5 +19,5 @@ protected:
 	void Tick(float _DeltaTime) override;
 
 private:
-	UMainWidget* MainWidget = nullptr;
+	UMainWidget* MainWidget;
 };
