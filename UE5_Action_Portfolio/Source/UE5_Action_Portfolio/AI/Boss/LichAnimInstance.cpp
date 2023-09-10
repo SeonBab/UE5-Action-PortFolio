@@ -223,8 +223,9 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 
 	// 타겟의 위치로
 	AActor* TargetActor = Lich->GetTargetActor();
+	AGlobalCharacter* TargetCharacter = Cast<AGlobalCharacter>(TargetActor);
 
-	if (nullptr == TargetActor)
+	if (nullptr == TargetCharacter)
 	{
 		return;
 	}
@@ -238,8 +239,10 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 		return;
 	}
 
+
+	float TargetCapsuleSize = TargetCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	float PlusZPos = CapsuleComponent->GetScaledCapsuleHalfHeight();
-	PlusZPos -= TargetPos.Z;
+	PlusZPos = PlusZPos - TargetCapsuleSize;
 
 	FVector SetPos({ TargetPos.X, TargetPos.Y, TargetPos.Z + PlusZPos });
 
@@ -248,15 +251,7 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 	// 타겟 액터 설정
 	SpawnTornado->SetTargetActor(TargetActor);
 
-	// 페이즈2부터 속도가 빨라지게
-	int LichPhase = Lich->GetPhase();
-
-	if (2 <= LichPhase)
-	{
-		float TornadoSpeed = SpawnTornado->GetSpeed();
-		TornadoSpeed *= 2.f;
-		SpawnTornado->SetSpeed(TornadoSpeed);
-	}
+	// 페이즈2부터 EQS를 사용해 랜덤한 위치에 2개가 더 생성
 }
 
 void ULichAnimInstance::AnimNotify_FrostboltSpawn()

@@ -2,6 +2,8 @@
 
 EBTNodeResult::Type UBTTask_Clone_Unequip::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	Super::ExecuteTask(OwnerComp, NodeMemory);
+
 	GetWeaponCharacter(OwnerComp)->bUseControllerRotationYaw = false;
 	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
 	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetUnArmed();
@@ -11,6 +13,8 @@ EBTNodeResult::Type UBTTask_Clone_Unequip::ExecuteTask(UBehaviorTreeComponent& O
 
 void UBTTask_Clone_Unequip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+
 	UWeaponAction* CurWeaponAction = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction();
 
 	if (CurWeaponAction == nullptr)

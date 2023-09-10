@@ -216,6 +216,14 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 		{
 			// 체력 변경
 			SetHP(GetHP() - FinalDamage);
+
+			// 체력은 음수값이 되지하지 않아야한다.
+			if (0.f >= GetHP())
+			{
+			SetHP(0.f);
+			}
+
+			// Info 표시
 			BpEventCallBossInfoOn();
 		}
 
@@ -245,8 +253,6 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 		}
 		else if (0.f >= GetHP())
 		{
-			// 체력은 음수값이 되지하지 않아야한다.
-			SetHP(0.f);
 
 			// 죽음
 			SetAnimState(BossAnimState::Death);

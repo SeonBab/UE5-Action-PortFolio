@@ -64,7 +64,7 @@ public:
 	UCameraComponent* MainCameraComponent;
 	float BaseTurnRate;
 	float BaseLookUpRate;
-	float LockOnTargetRange = 2000.f;
+	float LockOnTargetRange = 2500.f;
 	AActor* LockedOnTargetActor = nullptr;
 
 private:

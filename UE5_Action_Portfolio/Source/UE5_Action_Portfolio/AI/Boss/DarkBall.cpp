@@ -9,22 +9,22 @@ ADarkBall::ADarkBall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Speed = 2000.f;
+	Speed = 6000.f;
 	DeathTime = 3.f;
 	Damage = 10.f;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->SetupAttachment(RootComponent);
 	SphereComponent->SetCollisionProfileName("NoCollision", true);
-	SphereComponent->SetWorldScale3D({ 1.2f, 1.2f, 1.2f });
+	SphereComponent->SetWorldScale3D({ 1.3f, 1.3f, 1.3f });
 
 	GetNiagaraComponent()->SetupAttachment(SphereComponent);
-	GetNiagaraComponent()->SetWorldScale3D({ 0.9f, 0.9f, 0.9f });
+	GetNiagaraComponent()->SetWorldScale3D({ 1.f, 1.f, 1.f });
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->SetUpdatedComponent(SphereComponent);
 	ProjectileMovement->InitialSpeed = 0.f;
-	ProjectileMovement->MaxSpeed = 2000.f;
+	ProjectileMovement->MaxSpeed = 10000.f;
 	ProjectileMovement->ProjectileGravityScale = false;
 }
 

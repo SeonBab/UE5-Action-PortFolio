@@ -8,8 +8,8 @@ AAI_BossCon::AAI_BossCon()
 	GetAISenseConfigSight()->DetectionByAffiliation.bDetectEnemies = true;
 	GetAISenseConfigSight()->DetectionByAffiliation.bDetectNeutrals = true;
 	GetAISenseConfigSight()->DetectionByAffiliation.bDetectFriendlies = false;
-	GetAISenseConfigSight()->SightRadius = 3000.f;
-	GetAISenseConfigSight()->LoseSightRadius = 3500.f;
+	GetAISenseConfigSight()->SightRadius = 4000.f;
+	GetAISenseConfigSight()->LoseSightRadius = 4500.f;
 	GetAISenseConfigSight()->PeripheralVisionAngleDegrees = 360.f;
 	GetAISenseConfigSight()->SetMaxAge(5.f);
 

@@ -16,7 +16,7 @@ ATornado::ATornado()
 	DecalFadeStartDelay = 1.f;
 	DecalFadeDuration = 1.f;
 
-	Speed = 100.f;
+	Speed = 300.f;
 	DeathTime = 5.f;
 	Damage = 2.f;
 	HitTime = 1.f;
@@ -32,7 +32,7 @@ ATornado::ATornado()
 
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
 	DecalComponent->SetupAttachment(CapsuleComponent);
-	DecalComponent->DecalSize.Set(0.6f, CapsuleComponent->GetScaledCapsuleRadius(), CapsuleComponent->GetUnscaledCapsuleRadius());
+	DecalComponent->DecalSize.Set(10.f, CapsuleComponent->GetScaledCapsuleRadius(), CapsuleComponent->GetUnscaledCapsuleRadius());
 	DecalComponent->FadeStartDelay = 1.f;
 	DecalComponent->FadeDuration = 1.f;
 	DecalComponent->bDestroyOwnerAfterFade = false;	

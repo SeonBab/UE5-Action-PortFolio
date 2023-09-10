@@ -242,8 +242,8 @@ void AWeaponCharacter::Tick(float _DeltaTime)
 	// 공중에 있으면 본의 위치를 변경 하지 않는다
 	if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState) && false == IsFall)
 	{
-		TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 60.f);
-		TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 60.f);
+		TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 45.f);
+		TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 45.f);
 
 		UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
 		UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);

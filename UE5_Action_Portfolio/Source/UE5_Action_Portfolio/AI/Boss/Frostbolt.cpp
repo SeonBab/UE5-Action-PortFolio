@@ -9,7 +9,7 @@
 
 AFrostbolt::AFrostbolt()
 {
-	Speed = 4000.f;
+	Speed = 7000.f;
 	DeathTime = 3.f;
 	Damage = 10.f;
 	Shot = false;
@@ -31,7 +31,7 @@ AFrostbolt::AFrostbolt()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovement->SetUpdatedComponent(SphereComponent);
 	ProjectileMovement->InitialSpeed = 0.f;
-	ProjectileMovement->MaxSpeed = 5000.f;
+	ProjectileMovement->MaxSpeed = 10000.f;
 	ProjectileMovement->ProjectileGravityScale = false;
 
 	GetNiagaraComponent()->SetupAttachment(SphereComponent);

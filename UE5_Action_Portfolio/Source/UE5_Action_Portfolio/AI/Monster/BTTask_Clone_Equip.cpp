@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_Clone_Equip::ExecuteTask(UBehaviorTreeComponent& Own
 
 	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(true);
 
-	if (600 <= Dir.Size())
+	if (800 <= Dir.Size())
 	{
 		if (EWeaponType::Bow != CurWeaponType)
 		{
