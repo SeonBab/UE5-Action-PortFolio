@@ -141,11 +141,6 @@ bool UWeaponAction::GetIsParry()
 	return IsParry;
 }
 
-bool UWeaponAction::GetIsInvincibility()
-{
-	return IsInvincibility;
-}
-
 void UWeaponAction::ChangeCollisionAttackType()
 {
 	AWeaponCharacter* GlobalChar = Cast<AWeaponCharacter>(CurCharacter);
@@ -247,7 +242,15 @@ void UWeaponAction::SetAnimState(CharacterAnimState _State)
 void UWeaponAction::IsRollMoveToFalse()
 {
 	IsRollMove = false;
-	IsInvincibility = false;
+
+	AGlobalCharacter* Character = Cast<AGlobalCharacter>(CurCharacter);
+
+	if (nullptr == Character || false == Character->IsValidLowLevel())
+	{
+		return;
+	}
+
+	Character->SetIsInvincibility(false);
 }
 
 void UWeaponAction::ChangeWeapon(FName _Weapon)
@@ -407,7 +410,15 @@ void UWeaponAction::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 		DeltaLocation.Y = 0;
 
 		CurCharacter->AddActorLocalOffset(DeltaLocation, true);
-		IsInvincibility = true;
+
+		AGlobalCharacter* Character = Cast<AGlobalCharacter>(CurCharacter);
+
+		if (nullptr == Character || false == Character->IsValidLowLevel())
+		{
+			return;
+		}
+
+		Character->SetIsInvincibility(true);
 	}
 }
 
@@ -1044,8 +1055,6 @@ void UWeaponAction::SetLockOnCheck(bool _Value)
 
 void UWeaponAction::GotHit(FVector _Value)
 {
-	//UMaterialInterface* CurMaterial = CurCharacter->GetMesh()->GetMaterial(0);
-
 	switch (AnimState)
 	{
 	case CharacterAnimState::Idle:

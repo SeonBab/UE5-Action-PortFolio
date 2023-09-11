@@ -18,8 +18,13 @@ public:
 	FName GetActorTypeTag();
 	void SetAttackTypeTag(FName _Tag);
 	FName GetAttackTypeTag();
-	void SetParrybool(bool _Value);
 	bool GetParrybool();
+	void SetParrybool(bool _Value);
+	UFUNCTION(BlueprintCallable)
+	bool GetIsInvincibility();
+	UFUNCTION(BlueprintCallable)
+	void SetIsInvincibility(bool _Value);
+	UFUNCTION(BlueprintCallable)
 	void SetHP(float _HP);
 	UFUNCTION(BlueprintCallable)
 	float GetHP();
@@ -94,6 +99,7 @@ private:
 	FName ActorTypeTag;
 	FName AttackTypeTag;
 	bool Parrybool;
+	bool IsInvincibility = false;
 	float HP;
 	float MaxHP;
 };

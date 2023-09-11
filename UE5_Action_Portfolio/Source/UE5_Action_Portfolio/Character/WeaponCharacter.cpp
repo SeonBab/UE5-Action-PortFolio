@@ -319,7 +319,7 @@ float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 		bool BlockCheck = CurWeapon->GetIsBlock();
 		bool ParryCheck = CurWeapon->GetIsParry();
-		bool IsInvincibilityCheck = CurWeapon->GetIsInvincibility();
+		bool IsInvincibilityCheck = GetIsInvincibility();
 
 		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
 

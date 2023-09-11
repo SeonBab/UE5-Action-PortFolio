@@ -62,7 +62,7 @@ void AMainCharacter::BeginPlay()
 		ChangeViewFTimeline.SetLooping(false);
 	}
 
-	SetHP(5000.f);
+	SetHP(1000.f);
 	SetMaxHP(GetHP());
 }
 

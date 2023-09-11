@@ -157,6 +157,7 @@ void ALich::BeginPlay()
 	GetBlackboardComponent()->SetValueAsObject(TEXT("NavPath"), nullptr);
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), false);
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), false);
+	GetBlackboardComponent()->SetValueAsBool(TEXT("IsBattle"), false);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("Phase"), 1);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("RandAttack"), 0);
 	GetBlackboardComponent()->SetValueAsInt(TEXT("NavPathIndex"), 1);

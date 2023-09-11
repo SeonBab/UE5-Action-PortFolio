@@ -7,6 +7,7 @@ AGlobalCharacter::AGlobalCharacter()
 	ActorTypeTag = TEXT("");
 	AttackTypeTag = TEXT("");
 	Parrybool = false;
+	IsInvincibility = false;
 	HP = 0.f;
 	MaxHP = 0.f;
 
@@ -40,6 +41,16 @@ void AGlobalCharacter::SetParrybool(bool _Value)
 bool AGlobalCharacter::GetParrybool()
 {
 	return Parrybool;
+}
+
+bool AGlobalCharacter::GetIsInvincibility()
+{
+	return IsInvincibility;
+}
+
+void AGlobalCharacter::SetIsInvincibility(bool _Value)
+{
+	IsInvincibility = _Value;
 }
 
 void AGlobalCharacter::SetHP(float _HP)

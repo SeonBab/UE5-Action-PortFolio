@@ -35,6 +35,7 @@ public:
 	void LookAtTarget(float _DeltaTime);
 	void CharTurnAim(float _DeltaTime);
 	FVector CameraLineTrace();
+	UFUNCTION(BlueprintCallable)
 	void LostLockedOnTargetActor();
 
 	UFUNCTION(BlueprintImplementableEvent)
