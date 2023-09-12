@@ -6,7 +6,7 @@
 #include "WeaponCharacter.generated.h"
 
 class UWeaponAction;
-
+// UObject를 상속받거나 컴포넌트로 만들어지게 사용해서 쓰자
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AWeaponCharacter : public AGlobalCharacter
 {

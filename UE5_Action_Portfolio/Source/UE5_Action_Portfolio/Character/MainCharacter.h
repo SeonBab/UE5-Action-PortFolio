@@ -42,12 +42,16 @@ public:
 	void BpEventCallHPBar();
 	UFUNCTION(BlueprintImplementableEvent)
 	void BpEventChangeWpSlot();
+	UFUNCTION(BlueprintImplementableEvent)
+	void BpEventLockOnMarkHidden();
+	UFUNCTION(BlueprintImplementableEvent)
+	void BpEventLockOnMarkVisible();
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* _PlayerInputComponent) override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	UFUNCTION()
