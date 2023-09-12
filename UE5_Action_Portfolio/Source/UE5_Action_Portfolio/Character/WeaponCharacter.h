@@ -30,11 +30,6 @@ protected:
 private:
 	void BowChordMove();
 
-	TTuple<float, FVector> IKFootLineTrace(FName _Socket, float _TraceDis);
-	FRotator NormalToRotator(FVector _Vector);
-	void UpdateFootRotation(float _DeltaTime, FRotator _NormalToRotatorValue, FRotator* _FootRotatorValue, float _InterpSpeed);
-	void UpdateCapsuleHalfHeight(float _DeltaTime, float _HipsShifs, bool _ResetDefault);
-	void UpdateFootOffset(float _DeltaTime, float _TargetValue, float* _EffectorValue, float _InterpSpeed);
 public:
 	UPROPERTY()
 	UWeaponAction* CurWeaponAction;

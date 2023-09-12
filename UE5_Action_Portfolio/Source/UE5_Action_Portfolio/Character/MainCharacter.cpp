@@ -10,10 +10,16 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameUI/GameUIHUD.h"
 #include "CollisionShape.h"
+#include "Weapon/WeaponComponent.h"
 
 AMainCharacter::AMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	SetActorTypeTag(TEXT("Player"));
+	SetAttackTypeTag(TEXT("PlayerAttack"));
+
+	Tags.Add(GetActorTypeTag());
 
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
@@ -33,10 +39,16 @@ AMainCharacter::AMainCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate.Yaw = 360.f;
 
-	SetActorTypeTag(TEXT("Player"));
-	SetAttackTypeTag(TEXT("PlayerAttack"));
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 
-	Tags.Add(GetActorTypeTag());
+	float CapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	FootIKComponent = CreateDefaultSubobject<UFootIKComponent>(TEXT("FootIK"));
+	FootIKComponent->SetBeginCapsuleSize(CapsuleSize);
+	FootIKComponent->SetTraceDis(45.f);
+	FootIKComponent->SetFootSoket(TEXT("LeftFoot"), TEXT("RightFoot"));
+
+	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon"));
+	WeaponComponent->SetMeshAttach(GetMesh());
 }
 
 void AMainCharacter::BeginPlay()
@@ -70,7 +82,9 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	if (nullptr == GetCurWeaponAction())
+	UWeaponAction* WeaponAction = GetCurWeaponAction();
+
+	if (nullptr == WeaponAction || false == WeaponAction->IsValidLowLevel())
 	{
 		return;
 	}
@@ -78,8 +92,8 @@ void AMainCharacter::Tick(float _DeltaTime)
 	// 락온 타겟에 고정
 	LookAtTarget(_DeltaTime);
 
-	EWeaponType CurWeponT = GetCurWeaponAction()->GetWeaponType();
-	bool IsAim = GetCurWeaponAction()->GetIsAimOn();
+	EWeaponType CurWeponT = WeaponAction->GetWeaponType();
+	bool IsAim = WeaponAction->GetIsAimOn();
 
 	ChangeViewFTimeline.TickTimeline(_DeltaTime);
 
@@ -110,6 +124,16 @@ void AMainCharacter::Tick(float _DeltaTime)
 			this->bUseControllerRotationYaw = false;
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 		}
+	}
+
+	CharacterAnimState CurState = WeaponAction->GetAnimState();
+	bool IsFall = GetMovementComponent()->IsFalling();
+
+	// 공중에 있으면 본의 위치를 변경 하지 않는다
+	if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState) && false == IsFall)
+	{
+
+		FootIKOffset = FootIKComponent->GetFootIKOffset(this, _DeltaTime);
 	}
 }
 
@@ -525,6 +549,19 @@ void AMainCharacter::LostLockedOnTargetActor()
 	MouseTimeCheck = 0.f;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCurWeaponAction()->SetIsLockOn(false);
-	GetCurWeaponAction()->SetLockOnCheck(false);
+
+	UWeaponAction* WeaponAction = GetCurWeaponAction();
+
+	if (nullptr == WeaponAction || false == WeaponAction->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponAction->SetIsLockOn(false);
+	WeaponAction->SetLockOnCheck(false);
+}
+
+FFootIKOffset AMainCharacter::GetFootIKOffset()
+{
+	return FootIKOffset;
 }

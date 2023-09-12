@@ -3,12 +3,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Global/Enums.h"
+#include "Global/FootIKComponent.h"
 #include "Character/WeaponCharacter.h"
 #include "Components/TimelineComponent.h"
 #include "MainCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
+class UFootIKComponent;
+class UWeaponComponent;
+struct FFootIKOffset;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AWeaponCharacter
@@ -37,15 +41,13 @@ public:
 	FVector CameraLineTrace();
 	UFUNCTION(BlueprintCallable)
 	void LostLockedOnTargetActor();
+	UFUNCTION(BlueprintCallable)
+	FFootIKOffset GetFootIKOffset();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BpEventCallHPBar();
 	UFUNCTION(BlueprintImplementableEvent)
 	void BpEventChangeWpSlot();
-	UFUNCTION(BlueprintImplementableEvent)
-	void BpEventLockOnMarkHidden();
-	UFUNCTION(BlueprintImplementableEvent)
-	void BpEventLockOnMarkVisible();
 
 protected:
 	virtual void BeginPlay() override;
@@ -90,4 +92,10 @@ private:
 	FOnTimelineEvent TimelineFinishDelegate;
 	float AimZoomTimelineLength = 1.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UFootIKComponent* FootIKComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UWeaponComponent* WeaponComponent;
+
+	FFootIKOffset FootIKOffset;
 };
