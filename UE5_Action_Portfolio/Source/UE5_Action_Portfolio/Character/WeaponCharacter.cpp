@@ -1,92 +1,91 @@
-#include "Character/WeaponCharacter.h"
-#include "Global/GlobalGameInstance.h"
-#include "Global/Data/WeaponData.h"
-#include "Engine/DamageEvents.h"
-#include "Weapon/WeaponAction.h"
-#include "Weapon/BowAnimInstance.h"
-#include "Weapon/Arrow.h"
-#include "Character/MainCharacter.h"
-#include "Components/CapsuleComponent.h"
-
-#include "GameFramework/CharacterMovementComponent.h"
-
-AWeaponCharacter::AWeaponCharacter()
-{
-	PrimaryActorTick.bCanEverTick = true;
-
-	UnArmedWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("UnArmedMesh"));
-	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
-	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
-	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
-
-	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandSoket"));
-	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandSoket"));
-	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSoket"));
-	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
-
-	UnArmedWeaponMesh->SetGenerateOverlapEvents(true);
-	BowWeaponMesh->SetGenerateOverlapEvents(true);
-	SwordWeaponMesh->SetGenerateOverlapEvents(true);
-
-	BackBowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackBowMesh"));
-	BackSwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackSwordMesh"));
-	BackShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackShiedlMesh"));
-
-	BackBowWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackBow"));
-	BackSwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackSword"));
-	BackShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackShield"));
-
-	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
-
-	CurWeaponAction = nullptr;
-}
-
-UWeaponAction* AWeaponCharacter::GetCurWeaponAction()
-{
-	return CurWeaponAction;
-}
-
-void AWeaponCharacter::WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	// 공격 충돌 처리
-	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
-
-	if (nullptr == Instance)
-	{
-		return;
-	}
-
-	EWeaponType CurWeaponEnum = GetCurWeaponAction()->GetWeaponType();
-	FName WeaponName;
-
-	const UEnum* WeaponEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EWeaponType"), true);
-
-	if (0 != WeaponEnum)
-	{
-		FString WeaponString = WeaponEnum->GetNameStringByValue((int64)CurWeaponEnum);
-		WeaponName = FName(WeaponString);
-	}
-
-	FWeaponData* WeaponData = Instance->GetWeaponData(WeaponName);
-
-	int CurWeaponDamage = WeaponData->Damage;
-	FPointDamageEvent DamageEvent;
-
-	OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, GetController(), this);
-}
-
-FVector AWeaponCharacter::GetBowJointLocation()
-{
-	if (nullptr == BowWeaponMesh)
-	{
-		return FVector::ZeroVector;
-	}
-
-	FVector Pos = BowWeaponMesh->GetSocketLocation(TEXT("Bow_04_Joint"));
-
-	return Pos;
-}
-
+//#include "Character/WeaponCharacter.h"
+//#include "Global/GlobalGameInstance.h"
+//#include "Global/Data/WeaponData.h"
+//#include "Engine/DamageEvents.h"
+//#include "Weapon/WeaponAction.h"
+//#include "Weapon/BowAnimInstance.h"
+//#include "Weapon/Arrow.h"
+//#include "Character/MainCharacter.h"
+//#include "Components/CapsuleComponent.h"
+//#include "Kismet/KismetSystemLibrary.h"
+//#include "Kismet/KismetMathLibrary.h"
+//#include "GameFramework/CharacterMovementComponent.h"
+//
+//AWeaponCharacter::AWeaponCharacter()
+//{
+//	PrimaryActorTick.bCanEverTick = true;
+//
+//	UnArmedWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("UnArmedMesh"));
+//	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
+//	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
+//	ShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShiedlMesh"));
+//
+//	UnArmedWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandSoket"));
+//	BowWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandSoket"));
+//	SwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("RightHandSoket"));
+//	ShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("LeftHandShield"));
+//
+//	UnArmedWeaponMesh->SetGenerateOverlapEvents(true);
+//	BowWeaponMesh->SetGenerateOverlapEvents(true);
+//	SwordWeaponMesh->SetGenerateOverlapEvents(true);
+//
+//	BackBowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackBowMesh"));
+//	BackSwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackSwordMesh"));
+//	BackShieldWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackShiedlMesh"));
+//
+//	BackBowWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackBow"));
+//	BackSwordWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackSword"));
+//	BackShieldWeaponMesh->SetupAttachment(GetMesh(), TEXT("BackShield"));
+//
+//	CurWeaponAction = nullptr;
+//}
+//
+//UWeaponAction* AWeaponCharacter::GetCurWeaponAction()
+//{
+//	return CurWeaponAction;
+//}
+//
+//void AWeaponCharacter::WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+//{
+//	// 공격 충돌 처리
+//	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+//
+//	if (nullptr == Instance)
+//	{
+//		return;
+//	}
+//
+//	EWeaponType CurWeaponEnum = GetCurWeaponAction()->GetWeaponType();
+//	FName WeaponName;
+//
+//	const UEnum* WeaponEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EWeaponType"), true);
+//
+//	if (0 != WeaponEnum)
+//	{
+//		FString WeaponString = WeaponEnum->GetNameStringByValue((int64)CurWeaponEnum);
+//		WeaponName = FName(WeaponString);
+//	}
+//
+//	FWeaponData* WeaponData = Instance->GetWeaponData(WeaponName);
+//
+//	int CurWeaponDamage = WeaponData->Damage;
+//	FPointDamageEvent DamageEvent;
+//
+//	OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, GetController(), this);
+//}
+//
+//FVector AWeaponCharacter::GetBowJointLocation()
+//{
+//	if (nullptr == BowWeaponMesh)
+//	{
+//		return FVector::ZeroVector;
+//	}
+//
+//	FVector Pos = BowWeaponMesh->GetSocketLocation(TEXT("Bow_04_Joint"));
+//
+//	return Pos;
+//}
+//
 //TTuple<float, FVector> AWeaponCharacter::IKFootLineTrace(FName _Socket, float _TraceDis)
 //{
 //	TTuple<float, FVector> ReturnValue;
@@ -113,6 +112,9 @@ FVector AWeaponCharacter::GetBowJointLocation()
 //		DebugType = EDrawDebugTrace::ForOneFrame;
 //	}
 //
+//	ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_Visibility);
+//
+//	bool bResult = UKismetSystemLibrary::LineTraceSingle(GetWorld(), LineTraceStart, LineTraceEnd, TraceType, true, ToIgnore, DebugType, HitResult, true);
 //
 //	float ImpactLength;
 //	FVector ImpactLocation(HitResult.ImpactNormal);
@@ -183,242 +185,216 @@ FVector AWeaponCharacter::GetBowJointLocation()
 //	float InterpValue = UKismetMathLibrary::FInterpTo(*_EffectorValue, _TargetValue, _DeltaTime, _InterpSpeed);
 //	*_EffectorValue = InterpValue;
 //}
-
-void AWeaponCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	CurWeaponAction = NewObject<UWeaponAction>();
-	CurWeaponAction->SetCurCharacter(this);
-	CurWeaponAction->BeginPlay();
-
-	UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
-
-	if (nullptr == Instance)
-	{
-		return;
-	}
-
-	UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
-
-	BackBowWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Bow")));
-	BackSwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
-	BackShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
-
-	UnArmedWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AWeaponCharacter::WeaponBeginOverlap);
-	BowWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AWeaponCharacter::WeaponBeginOverlap);
-	SwordWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AWeaponCharacter::WeaponBeginOverlap);
-
-	GetCurWeaponAction()->SetAttackType(GetAttackTypeTag());
-
-	//CurCapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-}
-
-void AWeaponCharacter::Tick(float _DeltaTime)
-{
-	Super::Tick(_DeltaTime);
-
-	UWeaponAction* CurWeapon = GetCurWeaponAction();
-
-	if (nullptr == CurWeapon)
-	{
-		return;
-	}
-
-	CurWeapon->Tick(_DeltaTime);
-
-	if (EWeaponType::Bow == CurWeapon->GetWeaponType())
-	{
-		BowChordMove();
-	}
-
-	//CharacterAnimState CurState = CurWeapon->GetAnimState();
-	//bool IsFall = GetMovementComponent()->IsFalling();
-
-	//// 공중에 있으면 본의 위치를 변경 하지 않는다
-	//if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState) && false == IsFall)
-	//{
-	//	TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 45.f);
-	//	TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 45.f);
-
-	//	UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
-	//	UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
-
-	//	float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
-
-	//	if (0.f < HipOffsetValue)
-	//	{
-	//		HipOffsetValue = 0.f;
-	//	}
-
-	//	UpdateFootOffset(_DeltaTime, HipOffsetValue, &HipOffset, 20.f);
-	//	UpdateCapsuleHalfHeight(_DeltaTime, HipOffsetValue, false);
-
-	//	UpdateFootOffset(_DeltaTime, LeftTrace.Get<0>() - HipOffsetValue, &FootOffsetLeft, 20.f);
-	//	UpdateFootOffset(_DeltaTime, RightTrace.Get<0>() - HipOffsetValue, &FootOffsetRight, 20.f);
-	//}
-}
-
-void AWeaponCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
-float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	// PointDamage를 전달 받았다.
-	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
-	{
-		if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
-		{
-			return 0.f;
-		}
-
-		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
-
-		if (nullptr == EventInstigatorPawn || false == EventInstigatorPawn->IsValidLowLevel())
-		{
-			return 0.f;
-		}
-
-		UWeaponAction* CurWeapon = GetCurWeaponAction();
-
-		if (nullptr == CurWeapon)
-		{
-			return 0.f;
-		}
-
-		bool IsRoll = CurWeapon->GetIsRollMove();
-
-		if (true == IsRoll)
-		{
-			return 0.f;
-		}
-
-		FVector HitDir = EventInstigatorPawn->GetActorLocation();
-		HitDir.Z = 0;
-
-		FVector CurPos = GetActorLocation();
-		CurPos.Z = 0;
-
-		FVector Dir = HitDir - CurPos;
-		Dir.Normalize();
-
-		FVector CurForward = GetActorForwardVector();
-		CurForward.Normalize();
-
-		float Angle0 = Dir.Rotation().Yaw;
-		float Angle1 = CurForward.Rotation().Yaw;
-
-		bool BlockCheck = CurWeapon->GetIsBlock();
-		bool ParryCheck = CurWeapon->GetIsParry();
-		bool IsInvincibilityCheck = GetIsInvincibility();
-
-		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
-
-		if (nullptr == GlobalChar)
-		{
-			return 0.f;
-		}
-
-		bool EnemyParrybool = GlobalChar->GetParrybool();
-
-		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
-		{
-			FinalDamage *= 0.1f;
-		}
-		else if (true == IsInvincibilityCheck)
-		{
-			FinalDamage = 0.f;
-
-			return FinalDamage;
-		}
-		else if (160.f >= FMath::Abs(Angle0 - Angle1) && (true == ParryCheck && true == EnemyParrybool))
-		{
-			FinalDamage = 0.f;
-
-			AWeaponCharacter* EnemyChar = Cast<AWeaponCharacter>(GlobalChar);
-
-			if (nullptr == EnemyChar)
-			{
-				return 0.f;
-			}
-
-			UWeaponAction* EnemyWeaponAction = EnemyChar->GetCurWeaponAction();
-
-			if (nullptr == EnemyWeaponAction)
-			{
-				return 0.f;
-			}
-
-			EnemyWeaponAction->ChangeNoCollision();
-
-			EnemyWeaponAction->SetAnimState(CharacterAnimState::Dizzy);
-			
-			return FinalDamage;
-		}
-
-		if (0.f < GetHP() && 0.f < FinalDamage)
-		{
-			SetHP(GetHP() - FinalDamage);
-		}
-		
-		if (0.f < GetHP())
-		{
-			// 생존
-			CurWeapon->GotHit(Dir);
-		}
-		else if (0.f >= GetHP())
-		{
-			// 체력은 음수값이 되지하지 않아야한다.
-			SetHP(0.f);
-
-			// 죽음
-			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
-			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
-
-			CurWeapon->Death();
-
-			bool PlayerCheck = EventInstigatorPawn->ActorHasTag("Player");
-			
-			if (true == PlayerCheck)
-			{
-				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
-
-				if (nullptr != MainChar)
-				{
-					MainChar->LostLockedOnTargetActor();
-				}
-			}
-
-			return FinalDamage;
-		}
-	}
-	
-	return FinalDamage;
-}
-
-void AWeaponCharacter::BowChordMove()
-{	
-	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
-
-	if (nullptr == BowAnim)
-	{
-		return;
-	}
-
-	if (true == BowAnim->GetBowChordCheck())
-	{
-		USkeletalMeshComponent* SkeletalMeshComponent = GetMesh();
-
-		if (nullptr != SkeletalMeshComponent)
-		{
-			FVector Vec = SkeletalMeshComponent->GetSocketLocation(TEXT("RightHandSoket"));
-
-			BowAnim->SetHandTransform(Vec);
-		}
-	}
-}
+//
+//void AWeaponCharacter::BeginPlay()
+//{
+//	Super::BeginPlay();
+//	
+//	CurWeaponAction = NewObject<UWeaponAction>();
+//	CurWeaponAction->SetCurCharacter(this);
+//	CurWeaponAction->BeginPlay();
+//
+//	UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
+//
+//	if (nullptr == Instance)
+//	{
+//		return;
+//	}
+//
+//	UnArmedWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("UnArmed")));
+//
+//	BackBowWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Bow")));
+//	BackSwordWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Sword")));
+//	BackShieldWeaponMesh->SetSkeletalMesh(Instance->GetWeaponMesh(TEXT("Shield")));
+//
+//	UnArmedWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AWeaponCharacter::WeaponBeginOverlap);
+//	BowWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AWeaponCharacter::WeaponBeginOverlap);
+//	SwordWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &AWeaponCharacter::WeaponBeginOverlap);
+//
+//	GetCurWeaponAction()->SetAttackType(GetAttackTypeTag());
+//
+//	CurCapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+//}
+//
+//void AWeaponCharacter::Tick(float _DeltaTime)
+//{
+//	Super::Tick(_DeltaTime);
+//
+//	UWeaponAction* CurWeapon = GetCurWeaponAction();
+//
+//	if (nullptr == CurWeapon)
+//	{
+//		return;
+//	}
+//
+//	CurWeapon->Tick(_DeltaTime);
+//
+//	if (EWeaponType::Bow == CurWeapon->GetWeaponType())
+//	{
+//		BowChordMove();
+//	}
+//}
+//
+//void AWeaponCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+//{
+//	Super::SetupPlayerInputComponent(PlayerInputComponent);
+//
+//}
+//
+//float AWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+//{
+//	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+//
+//	// PointDamage를 전달 받았다.
+//	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+//	{
+//		if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
+//		{
+//			return 0.f;
+//		}
+//
+//		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
+//
+//		if (nullptr == EventInstigatorPawn || false == EventInstigatorPawn->IsValidLowLevel())
+//		{
+//			return 0.f;
+//		}
+//
+//		UWeaponAction* CurWeapon = GetCurWeaponAction();
+//
+//		if (nullptr == CurWeapon)
+//		{
+//			return 0.f;
+//		}
+//
+//		bool IsRoll = CurWeapon->GetIsRollMove();
+//
+//		if (true == IsRoll)
+//		{
+//			return 0.f;
+//		}
+//
+//		FVector HitDir = EventInstigatorPawn->GetActorLocation();
+//		HitDir.Z = 0;
+//
+//		FVector CurPos = GetActorLocation();
+//		CurPos.Z = 0;
+//
+//		FVector Dir = HitDir - CurPos;
+//		Dir.Normalize();
+//
+//		FVector CurForward = GetActorForwardVector();
+//		CurForward.Normalize();
+//
+//		float Angle0 = Dir.Rotation().Yaw;
+//		float Angle1 = CurForward.Rotation().Yaw;
+//
+//		bool BlockCheck = CurWeapon->GetIsBlock();
+//		bool ParryCheck = CurWeapon->GetIsParry();
+//		bool IsInvincibilityCheck = GetIsInvincibility();
+//
+//		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
+//
+//		if (nullptr == GlobalChar)
+//		{
+//			return 0.f;
+//		}
+//
+//		bool EnemyParrybool = GlobalChar->GetParrybool();
+//
+//		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
+//		{
+//			FinalDamage *= 0.1f;
+//		}
+//		else if (true == IsInvincibilityCheck)
+//		{
+//			FinalDamage = 0.f;
+//
+//			return FinalDamage;
+//		}
+//		else if (160.f >= FMath::Abs(Angle0 - Angle1) && (true == ParryCheck && true == EnemyParrybool))
+//		{
+//			FinalDamage = 0.f;
+//
+//			AWeaponCharacter* EnemyChar = Cast<AWeaponCharacter>(GlobalChar);
+//
+//			if (nullptr == EnemyChar)
+//			{
+//				return 0.f;
+//			}
+//
+//			UWeaponAction* EnemyWeaponAction = EnemyChar->GetCurWeaponAction();
+//
+//			if (nullptr == EnemyWeaponAction)
+//			{
+//				return 0.f;
+//			}
+//
+//			EnemyWeaponAction->ChangeNoCollision();
+//
+//			EnemyWeaponAction->SetAnimState(CharacterAnimState::Dizzy);
+//			
+//			return FinalDamage;
+//		}
+//
+//		if (0.f < GetHP() && 0.f < FinalDamage)
+//		{
+//			SetHP(GetHP() - FinalDamage);
+//		}
+//		
+//		if (0.f < GetHP())
+//		{
+//			// 생존
+//			CurWeapon->GotHit(Dir);
+//		}
+//		else if (0.f >= GetHP())
+//		{
+//			// 체력은 음수값이 되지하지 않아야한다.
+//			SetHP(0.f);
+//
+//			// 죽음
+//			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
+//			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
+//
+//			CurWeapon->Death();
+//
+//			bool PlayerCheck = EventInstigatorPawn->ActorHasTag("Player");
+//			
+//			if (true == PlayerCheck)
+//			{
+//				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
+//
+//				if (nullptr != MainChar)
+//				{
+//					MainChar->LostLockedOnTargetActor();
+//				}
+//			}
+//
+//			return FinalDamage;
+//		}
+//	}
+//	
+//	return FinalDamage;
+//}
+//
+//void AWeaponCharacter::BowChordMove()
+//{	
+//	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
+//
+//	if (nullptr == BowAnim)
+//	{
+//		return;
+//	}
+//
+//	if (true == BowAnim->GetBowChordCheck())
+//	{
+//		USkeletalMeshComponent* SkeletalMeshComponent = GetMesh();
+//
+//		if (nullptr != SkeletalMeshComponent)
+//		{
+//			FVector Vec = SkeletalMeshComponent->GetSocketLocation(TEXT("RightHandSoket"));
+//
+//			BowAnim->SetHandTransform(Vec);
+//		}
+//	}
+//}

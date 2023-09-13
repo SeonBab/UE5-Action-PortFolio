@@ -1,21 +1,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Global/GlobalCharacter.h"
 #include "Global/Enums.h"
 #include "Global/FootIKComponent.h"
-#include "Character/WeaponCharacter.h"
 #include "Components/TimelineComponent.h"
 #include "MainCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
-class UFootIKComponent;
 class UWeaponComponent;
-struct FFootIKOffset;
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AWeaponCharacter
+class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AGlobalCharacter
 {
 	GENERATED_BODY()
 
@@ -39,10 +36,11 @@ public:
 	void LookAtTarget(float _DeltaTime);
 	void CharTurnAim(float _DeltaTime);
 	FVector CameraLineTrace();
+
 	UFUNCTION(BlueprintCallable)
 	void LostLockedOnTargetActor();
 	UFUNCTION(BlueprintCallable)
-	FFootIKOffset GetFootIKOffset();
+	UWeaponComponent* GetWeaponComponent();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BpEventCallHPBar();
@@ -94,8 +92,22 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UFootIKComponent* FootIKComponent;
+	FFootIKOffset FootIKOffset;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* WeaponComponent;
 
-	FFootIKOffset FootIKOffset;
+	// юс╫ц
+	protected:
+		UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		FRotator FootRotatorLeft;
+		UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		FRotator FootRotatorRight;
+		UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		float HipOffset;
+		UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		float FootOffsetLeft;
+		UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		float FootOffsetRight;
+		float CurCapsuleSize;
 };

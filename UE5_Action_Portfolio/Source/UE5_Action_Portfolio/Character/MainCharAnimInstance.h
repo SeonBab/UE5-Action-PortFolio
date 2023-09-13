@@ -42,7 +42,4 @@ protected:
 	void NativeInitializeAnimation() override;
 	void NativeBeginPlay() override;
 	void NativeUpdateAnimation(float DeltaTime) override;
-
-public:
-	float AnimSpeed = 1.f;
 };

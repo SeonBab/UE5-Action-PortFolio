@@ -28,7 +28,7 @@ void UFootIKComponent::SetTraceDis(float _TraceDis)
 
 FFootIKOffset UFootIKComponent::GetFootIKOffset(AGlobalCharacter* _Character, float _DeltaTime)
 {
-	FFootIKOffset FootIKOffset;
+	FFootIKOffset FootIKOffset{};
 
 	if (nullptr == _Character || false == _Character->IsValidLowLevel())
 	{
@@ -45,8 +45,8 @@ FFootIKOffset UFootIKComponent::GetFootIKOffset(AGlobalCharacter* _Character, fl
 	TTuple<float, FVector> LeftTrace = FootIKLineTrace(_Character, CapsuleComponent, LFootSocket, TraceDis);
 	TTuple<float, FVector> RightTrace = FootIKLineTrace(_Character, CapsuleComponent, RFootSocket, TraceDis);
 
-	UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootIKOffset.FootRotatorLeft, 20.f);
-	UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootIKOffset.FootRotatorRight, 20.f);
+	UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootIKOffset.FootIKRotatorLeft, 20.f);
+	UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootIKOffset.FootIKRotatorRight, 20.f);
 
 	float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
 

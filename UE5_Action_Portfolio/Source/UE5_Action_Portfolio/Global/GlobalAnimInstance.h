@@ -35,6 +35,9 @@ protected:
 	UFUNCTION()
 	virtual void MontageBlendingOut(UAnimMontage* Anim, bool Inter);
 public:
+	float AnimSpeed = 1.f;
+
 	UPROPERTY()
 	TMap<int, UAnimMontage*> AllAnimations;
+
 };

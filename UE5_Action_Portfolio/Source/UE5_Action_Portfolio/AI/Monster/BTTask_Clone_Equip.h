@@ -1,11 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/Monster/BTTask_MonsterBase.h"
+#include "AI/Monster/BTTask_Clone_Base.h"
 #include "BTTask_Clone_Equip.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UBTTask_Clone_Equip : public UBTTask_MonsterBase
+class UE5_ACTION_PORTFOLIO_API UBTTask_Clone_Equip : public UBTTask_Clone_Base
 {
 	GENERATED_BODY()
 	

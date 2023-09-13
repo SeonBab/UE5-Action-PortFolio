@@ -4,9 +4,23 @@ EBTNodeResult::Type UBTTask_Clone_Unequip::ExecuteTask(UBehaviorTreeComponent& O
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	GetWeaponCharacter(OwnerComp)->bUseControllerRotationYaw = false;
-	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
-	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetUnArmed();
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	CloneMonster->bUseControllerRotationYaw = false;
+	WeaponComponent->SetIsLockOn(false);
+	WeaponComponent->ChangeSetUnArmed();
 
 	return EBTNodeResult::InProgress;
 }
@@ -15,14 +29,21 @@ void UBTTask_Clone_Unequip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	UWeaponAction* CurWeaponAction = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction();
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
-	if (CurWeaponAction == nullptr)
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
 	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		return;
 	}
 
-	EWeaponType CurWeaponType = CurWeaponAction->GetWeaponType();
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	EWeaponType CurWeaponType = WeaponComponent->GetWeaponType();
 
 	if (EWeaponType::UnArmed == CurWeaponType)
 	{
@@ -30,7 +51,7 @@ void UBTTask_Clone_Unequip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 	}
 	else
 	{
-		CurWeaponAction->ChangeSetUnArmed();
+		WeaponComponent->ChangeSetUnArmed();
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 	}
 }

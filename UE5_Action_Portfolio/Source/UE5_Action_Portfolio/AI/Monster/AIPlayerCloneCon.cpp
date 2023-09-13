@@ -1,5 +1,5 @@
 #include "AI/Monster/AIPlayerCloneCon.h"
-#include "AI/Monster/AIPlayerCloneCharacter.h"
+#include "AI/Monster/CloneMonster.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 
@@ -31,7 +31,7 @@ void AAIPlayerCloneCon::OnPossess(APawn* _InPawn)
 		return;
 	}
 
-	AAIPlayerCloneCharacter* AIPawn = Cast<AAIPlayerCloneCharacter>(_InPawn);
+	ACloneMonster* AIPawn = Cast<ACloneMonster>(_InPawn);
 	
 	UBehaviorTree* BehaviorTree = AIPawn->GetBehaviorTree();
 

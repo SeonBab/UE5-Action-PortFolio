@@ -34,7 +34,14 @@ EBTNodeResult::Type UBTTask_Clone_Patrol::ExecuteTask(UBehaviorTreeComponent& Ow
         return EBTNodeResult::Failed;
     }
 
-    FVector Origin = GetWeaponCharacter(OwnerComp)->GetActorLocation();
+    ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+    if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+    {
+        return EBTNodeResult::Failed;
+    }
+
+    FVector Origin = CloneMonster->GetActorLocation();
 
 
     float Radius = Blackboard->GetValueAsFloat(TEXT("PatrolRange"));

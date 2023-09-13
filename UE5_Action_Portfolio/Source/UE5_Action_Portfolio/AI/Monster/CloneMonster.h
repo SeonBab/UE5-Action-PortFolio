@@ -1,17 +1,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/Monster/AIPlayerCloneCharacter.h"
+#include "Global/GlobalAICharacter.h"
 #include "Global/Data/MonsterData.h"
-#include "Paladin.generated.h"
+#include "CloneMonster.generated.h"
+
+class UWeaponComponent;
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API APaladin : public AAIPlayerCloneCharacter
+class UE5_ACTION_PORTFOLIO_API ACloneMonster : public AGlobalAICharacter
 {
 	GENERATED_BODY()
 
 public:
-	APaladin();
+	ACloneMonster();
+
+	UFUNCTION(BlueprintCallable)
+	UWeaponComponent* GetWeaponComponent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -22,4 +27,7 @@ private:
 	const struct FMonsterData* CurMonsterData;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UWeaponComponent* WeaponComponent;
 };

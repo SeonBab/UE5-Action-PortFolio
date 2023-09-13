@@ -1,7 +1,7 @@
 #include "Weapon/Arrow.h"
 #include "Global/GlobalGameInstance.h"
+#include "Global/GlobalCharacter.h"
 #include "Global/Data/WeaponData.h"
-#include "Character/WeaponCharacter.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 

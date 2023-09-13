@@ -1,20 +1,23 @@
 #include "Character/MainCharacter.h"
-#include "Camera/CameraComponent.h"
+#include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Weapon/WeaponAction.h"
-#include "DrawDebugHelpers.h"
+#include "Weapon/WeaponComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Camera/CameraComponent.h"
 #include "GameUI/GameUIHUD.h"
 #include "CollisionShape.h"
-#include "Weapon/WeaponComponent.h"
+#include "DrawDebugHelpers.h"
+#include "AI/Monster/CloneMonster.h"
 
 AMainCharacter::AMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 
 	SetActorTypeTag(TEXT("Player"));
 	SetAttackTypeTag(TEXT("PlayerAttack"));
@@ -40,8 +43,10 @@ AMainCharacter::AMainCharacter()
 	GetCharacterMovement()->RotationRate.Yaw = 360.f;
 
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
-
 	float CapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	// 임시
+	CurCapsuleSize = CapsuleSize;
+
 	FootIKComponent = CreateDefaultSubobject<UFootIKComponent>(TEXT("FootIK"));
 	FootIKComponent->SetBeginCapsuleSize(CapsuleSize);
 	FootIKComponent->SetTraceDis(45.f);
@@ -82,9 +87,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	UWeaponAction* WeaponAction = GetCurWeaponAction();
-
-	if (nullptr == WeaponAction || false == WeaponAction->IsValidLowLevel())
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
 		return;
 	}
@@ -92,8 +95,8 @@ void AMainCharacter::Tick(float _DeltaTime)
 	// 락온 타겟에 고정
 	LookAtTarget(_DeltaTime);
 
-	EWeaponType CurWeponT = WeaponAction->GetWeaponType();
-	bool IsAim = WeaponAction->GetIsAimOn();
+	EWeaponType CurWeponT = WeaponComponent->GetWeaponType();
+	bool IsAim = WeaponComponent->GetIsAimOn();
 
 	ChangeViewFTimeline.TickTimeline(_DeltaTime);
 
@@ -119,21 +122,45 @@ void AMainCharacter::Tick(float _DeltaTime)
 		ChangeViewFTimeline.Reverse();
 		HUD->GetMainWidget()->SetCrosshairOnOff(false);
 
-		if (false == CurWeaponAction->GetIsLockOn())
+		if (false == WeaponComponent->GetIsLockOn())
 		{
 			this->bUseControllerRotationYaw = false;
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 		}
 	}
 
-	CharacterAnimState CurState = WeaponAction->GetAnimState();
+	CharacterAnimState CurState = static_cast<CharacterAnimState>(GetAnimState());
 	bool IsFall = GetMovementComponent()->IsFalling();
 
 	// 공중에 있으면 본의 위치를 변경 하지 않는다
 	if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState) && false == IsFall)
 	{
-
 		FootIKOffset = FootIKComponent->GetFootIKOffset(this, _DeltaTime);
+
+		//TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 45.f);
+		//TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 45.f);
+		TTuple<float, FVector> LeftTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("LeftFoot"), 45.f);
+		TTuple<float, FVector> RightTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("RightFoot"), 45.f);
+
+		//UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
+		//UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
+		//FootRotatorLeft = FootIKOffset.FootIKRotatorLeft;
+		//FootRotatorRight = FootIKOffset.FootIKRotatorRight;
+		FootIKComponent->UpdateFootRotation(_DeltaTime, FootIKComponent->NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
+		FootIKComponent->UpdateFootRotation(_DeltaTime, FootIKComponent->NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
+
+		float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
+
+		if (0.f < HipOffsetValue)
+		{
+			HipOffsetValue = 0.f;
+		}
+
+		FootIKComponent->UpdateFootOffset(_DeltaTime, HipOffsetValue, &HipOffset, 20.f);
+		FootIKComponent->UpdateCapsuleHalfHeight(GetCapsuleComponent(), _DeltaTime, HipOffsetValue, false);
+
+		FootIKComponent->UpdateFootOffset(_DeltaTime, LeftTrace.Get<0>() - HipOffsetValue, &FootOffsetLeft, 20.f);
+		FootIKComponent->UpdateFootOffset(_DeltaTime, RightTrace.Get<0>() - HipOffsetValue, &FootOffsetRight, 20.f);
 	}
 }
 
@@ -198,6 +225,130 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	// PointDamage를 전달 받았다.
+	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+	{
+		if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
+		{
+			return 0.f;
+		}
+
+		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
+
+		if (nullptr == EventInstigatorPawn || false == EventInstigatorPawn->IsValidLowLevel())
+		{
+			return 0.f;
+		}
+
+		bool IsRoll = WeaponComponent->GetIsRollMove();
+
+		if (true == IsRoll)
+		{
+			return 0.f;
+		}
+
+		FVector HitDir = EventInstigatorPawn->GetActorLocation();
+		HitDir.Z = 0;
+
+		FVector CurPos = GetActorLocation();
+		CurPos.Z = 0;
+
+		FVector Dir = HitDir - CurPos;
+		Dir.Normalize();
+
+		FVector CurForward = GetActorForwardVector();
+		CurForward.Normalize();
+
+		float Angle0 = Dir.Rotation().Yaw;
+		float Angle1 = CurForward.Rotation().Yaw;
+
+		bool BlockCheck = WeaponComponent->GetIsBlock();
+		bool ParryCheck = WeaponComponent->GetIsParry();
+		bool IsInvincibilityCheck = GetIsInvincibility();
+
+		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
+
+		if (nullptr == GlobalChar)
+		{
+			return 0.f;
+		}
+
+		bool EnemyParrybool = GlobalChar->GetParrybool();
+
+		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
+		{
+			FinalDamage *= 0.1f;
+		}
+		else if (true == IsInvincibilityCheck)
+		{
+			FinalDamage = 0.f;
+
+			return FinalDamage;
+		}
+		else if (160.f >= FMath::Abs(Angle0 - Angle1) && (true == ParryCheck && true == EnemyParrybool))
+		{
+			FinalDamage = 0.f;
+
+			ACloneMonster* EnemyChar = Cast<ACloneMonster>(GlobalChar);
+
+			if (nullptr == EnemyChar)
+			{
+				return 0.f;
+			}
+
+			UWeaponComponent* EnemyWeaponComponent = EnemyChar->GetWeaponComponent();
+
+			if (nullptr == EnemyWeaponComponent || false == EnemyWeaponComponent->IsValidLowLevel())
+			{
+				return 0.f;
+			}
+
+			EnemyWeaponComponent->ChangeNoCollision();
+
+			EnemyChar->SetAnimState(CharacterAnimState::Dizzy);
+
+			return FinalDamage;
+		}
+
+		if (0.f < GetHP() && 0.f < FinalDamage)
+		{
+			SetHP(GetHP() - FinalDamage);
+		}
+
+		if (0.f < GetHP())
+		{
+			// 생존
+			WeaponComponent->GotHit(Dir);
+		}
+		else if (0.f >= GetHP())
+		{
+			// 체력은 음수값이 되지하지 않아야한다.
+			SetHP(0.f);
+
+			// 죽음
+			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
+			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
+
+			WeaponComponent->Death();
+
+			bool PlayerCheck = EventInstigatorPawn->ActorHasTag("Player");
+
+			if (true == PlayerCheck)
+			{
+				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
+
+				if (nullptr != MainChar)
+				{
+					MainChar->LostLockedOnTargetActor();
+				}
+			}
+
+			return FinalDamage;
+		}
+	}
+
+	return FinalDamage;
+
 	BpEventCallHPBar();
 
 	return FinalDamage;
@@ -221,61 +372,113 @@ void AMainCharacter::ZoomOut()
 
 void AMainCharacter::Attack()
 {
-	// 락온일 때 회전 시작
-	//if (true == CurWeaponAction->GetIsLockOn() && false == GetCurWeaponAction()->LockOnAfterRun())
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
 
-	CurWeaponAction->AttackAction();
+	WeaponComponent->AttackAction();
 }
 
 void AMainCharacter::MoveForward(float _Value)
 {
-	CurWeaponAction->WAndSButtonAction(_Value);
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->WAndSButtonAction(_Value);
 }
 
 void AMainCharacter::MoveRight(float _Value)
 {
-	CurWeaponAction->DAndAButtonAction(_Value);
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->DAndAButtonAction(_Value);
 }
 
 void AMainCharacter::RollorRun(float _Value)
 {
-	CurWeaponAction->RollorRunAction(_Value);
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->RollorRunAction(_Value);
 }
 
 void AMainCharacter::JumpAction()
 {
-	CurWeaponAction->ShiftButtonAction();
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->ShiftButtonAction();
 }
 
 void AMainCharacter::ChangeUnArmed()
 {
-	CurWeaponAction->ChangeSetUnArmed();
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->ChangeSetUnArmed();
 }
 
 void AMainCharacter::ChangeBow()
 {
-	CurWeaponAction->ChangeSetBow();
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->ChangeSetBow();
 }
 
 void AMainCharacter::ChangeSwordAndSheiled()
 {
-	CurWeaponAction->ChangeSetSwordAndSheiled();
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->ChangeSetSwordAndSheiled();
 }
 
 void AMainCharacter::Parry()
 {
-	GetCurWeaponAction()->ParryAction();
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->ParryAction();
 }
 
 void AMainCharacter::AimorBlock(float _Value)
 {
-	CurWeaponAction->AimorBlockAtion(_Value);
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	WeaponComponent->AimorBlockAtion(_Value);
 }
 
 void AMainCharacter::LockOnTarget()
 {
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
 	// 플립/플롭
-	if (false == CurWeaponAction->GetIsLockOn())
+	if (false == WeaponComponent->GetIsLockOn())
 	{
 		FVector Start = GetActorLocation(); // 시작 지점
 		Start.Z += BaseEyeHeight;
@@ -318,11 +521,11 @@ void AMainCharacter::LockOnTarget()
 		// 가장 가까운 몬스터 락온
 		if (nullptr != HitNearActor)
 		{
-			CurWeaponAction->SetIsLockOn(true);
+			WeaponComponent->SetIsLockOn(true);
 			LockedOnTargetActor = HitNearActor;
 		}
 	}
-	else if (true == CurWeaponAction->GetIsLockOn())
+	else if (true == WeaponComponent->GetIsLockOn())
 	{
 		LostLockedOnTargetActor();
 	}
@@ -348,21 +551,16 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 	{
 		return;
 	}
-	if (nullptr == GetCurWeaponAction())
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
 		return;
 	}
-	if (false == GetCurWeaponAction()->GetIsLockOn())
-	{
-		return;
-	}
-	
-	bool IsAim = GetCurWeaponAction()->GetIsAimOn();
+	bool IsAim = WeaponComponent->GetIsAimOn();
 	if (true == IsAim)
 	{
 		return;
 	}
-	if (true == GetCurWeaponAction()->GetLockOnCheck())
+	if (true == WeaponComponent->GetLockOnCheck())
 	{
 		return;
 	}
@@ -495,6 +693,11 @@ FVector AMainCharacter::CameraLineTrace()
 		return TargetVector;
 	}
 
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return TargetVector;
+	}
+
 	FHitResult HitRes;
 
 	// 시작 지점은 카메라로부터 스프링암 만큼 앞으로 간다.
@@ -530,7 +733,7 @@ FVector AMainCharacter::CameraLineTrace()
 	}
 
 	// 화살이 날아갈 방향을 구한다
-	FVector Joint = GetBowJointLocation();
+	FVector Joint = WeaponComponent->GetBowJointLocation();
 	FVector ReturnVector = TargetVector - Joint;
 
 	// Normalize 해줘야한다.
@@ -550,18 +753,11 @@ void AMainCharacter::LostLockedOnTargetActor()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	UWeaponAction* WeaponAction = GetCurWeaponAction();
-
-	if (nullptr == WeaponAction || false == WeaponAction->IsValidLowLevel())
-	{
-		return;
-	}
-
-	WeaponAction->SetIsLockOn(false);
-	WeaponAction->SetLockOnCheck(false);
+	WeaponComponent->SetIsLockOn(false);
+	WeaponComponent->SetLockOnCheck(false);
 }
 
-FFootIKOffset AMainCharacter::GetFootIKOffset()
+UWeaponComponent* AMainCharacter::GetWeaponComponent()
 {
-	return FootIKOffset;
+	return WeaponComponent;
 }

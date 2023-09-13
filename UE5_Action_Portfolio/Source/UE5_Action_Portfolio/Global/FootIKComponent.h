@@ -11,9 +11,9 @@ struct FFootIKOffset
 
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-		FRotator FootRotatorLeft;
+		FRotator FootIKRotatorLeft = FRotator::ZeroRotator;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-		FRotator FootRotatorRight;
+		FRotator FootIKRotatorRight = FRotator::ZeroRotator;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 		float HipOffset;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
@@ -42,17 +42,23 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-private:	
+public:
 	TTuple<float, FVector> FootIKLineTrace(AGlobalCharacter* _Character, UCapsuleComponent* _CapsuleComponent, FName _Socket, float _TraceDis);
 	FRotator NormalToRotator(FVector _Vector);
 	void UpdateFootRotation(float _DeltaTime, FRotator _NormalToRotatorValue, FRotator* _FootRotatorValue, float _InterpSpeed);
 	void UpdateCapsuleHalfHeight(UCapsuleComponent* _CapsuleComponent, float _DeltaTime, float _HipsShifs, bool _ResetDefault);
 	void UpdateFootOffset(float _DeltaTime, float _TargetValue, float* _EffectorValue, float _InterpSpeed);
+
+//private:	
+//	TTuple<float, FVector> FootIKLineTrace(AGlobalCharacter* _Character, UCapsuleComponent* _CapsuleComponent, FName _Socket, float _TraceDis);
+//	FRotator NormalToRotator(FVector _Vector);
+//	void UpdateFootRotation(float _DeltaTime, FRotator _NormalToRotatorValue, FRotator* _FootRotatorValue, float _InterpSpeed);
+//	void UpdateCapsuleHalfHeight(UCapsuleComponent* _CapsuleComponent, float _DeltaTime, float _HipsShifs, bool _ResetDefault);
+//	void UpdateFootOffset(float _DeltaTime, float _TargetValue, float* _EffectorValue, float _InterpSpeed);
 		
 private:
 	float BeginCapsuleSize;
 	float TraceDis;
 	FName LFootSocket;
 	FName RFootSocket;
-
 };

@@ -4,7 +4,21 @@ EBTNodeResult::Type UBTTask_Clone_Attack::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	EWeaponType CurWeaponType = WeaponComponent->GetWeaponType();
 
 	// 근접 무기라면 공격 몇번 할지 횟수 구하기
 	if (EWeaponType::Sword == CurWeaponType)
@@ -17,7 +31,7 @@ EBTNodeResult::Type UBTTask_Clone_Attack::ExecuteTask(UBehaviorTreeComponent& Ow
 		{
 			MeleeAtackCount = UGlobalGameInstance::MainRandom.RandRange(0, 2);
 
-			GetWeaponCharacter(OwnerComp)->CurWeaponAction->AttackAction();
+			WeaponComponent->AttackAction();
 		}
 		// true라면 방어
 		else if (true == AttackOrBlock)
@@ -27,7 +41,7 @@ EBTNodeResult::Type UBTTask_Clone_Attack::ExecuteTask(UBehaviorTreeComponent& Ow
 	}
 	else if (EWeaponType::Bow == CurWeaponType)
 	{
-		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AttackAction();
+		WeaponComponent->AttackAction();
 	}
 
 	return EBTNodeResult::InProgress;
@@ -37,26 +51,39 @@ void UBTTask_Clone_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
-	bool AttackCheck = GetWeaponCharacter(OwnerComp)->CurWeaponAction->GetAttackCheck();
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	bool AttackCheck = WeaponComponent->GetAttackCheck();
 
 	
 	if (0.f < BlockTime)
 	{
-		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AimorBlockAtion(1);
+		WeaponComponent->AimorBlockAtion(1);
 		BlockTime -= DeltaSeconds;
 	}
 	else if (true == AttackOrBlock && 0.f > BlockTime)
 	{
-		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AimorBlockAtion(0);
+		WeaponComponent->AimorBlockAtion(0);
 	}
 	else if (0 < MeleeAtackCount && false == AttackCheck)
 	{
 		--MeleeAtackCount;
-		GetWeaponCharacter(OwnerComp)->CurWeaponAction->AttackAction();
+		WeaponComponent->AttackAction();
 	}
 
-	CharacterAnimState CharAnim = (GetWeaponCharacter(OwnerComp)->CurWeaponAction->GetAnimState());
+	CharacterAnimState CharAnim = static_cast<CharacterAnimState>(CloneMonster->GetAnimState());
 
 	if (CharacterAnimState::Dizzy == CharAnim || CharacterAnimState::Death == CharAnim)
 	{

@@ -4,7 +4,21 @@ EBTNodeResult::Type UBTTask_Clone_Return::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(false);
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	WeaponComponent->SetIsLockOn(false);
 
 	return EBTNodeResult::InProgress;
 }
@@ -20,8 +34,22 @@ void UBTTask_Clone_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 		return;
 	}
 
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
 	FVector ReturnPos = Blackboard->GetValueAsVector(TEXT("SpawnPos"));
-	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = CloneMonster->GetActorLocation();
 	FVector PathPos;
 
 	TArray<FVector> PathPoint = PathFind(OwnerComp, ReturnPos);
@@ -39,7 +67,7 @@ void UBTTask_Clone_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 	FVector Dir = PathPos - CurPos;
 	Dir.Normalize();
 
-	FVector OtherForward = GetWeaponCharacter(OwnerComp)->GetActorForwardVector();
+	FVector OtherForward = CloneMonster->GetActorForwardVector();
 	OtherForward.Normalize();
 
 	FVector Cross = FVector::CrossProduct(OtherForward, Dir);
@@ -50,16 +78,16 @@ void UBTTask_Clone_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 	if (10.f <= FMath::Abs(Angle0 - Angle1))
 	{
 		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-		GetWeaponCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+		CloneMonster->AddActorWorldRotation(Rot);
 	}
 	else
 	{
 		FRotator Rot = Dir.Rotation();
-		GetWeaponCharacter(OwnerComp)->SetActorRotation(Rot);
+		CloneMonster->SetActorRotation(Rot);
 	}
 
 	// ÀÌµ¿
-	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->WAndSButtonAction(1);
+	WeaponComponent->WAndSButtonAction(1);
 
 	FVector Dis = ReturnPos - CurPos;
 

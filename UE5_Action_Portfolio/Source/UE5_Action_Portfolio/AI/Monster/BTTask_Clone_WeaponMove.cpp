@@ -13,13 +13,27 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 {
     Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	EWeaponType CurWeaponType = WeaponComponent->GetWeaponType();
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 
 	FVector TargetPos = TargetActor->GetActorLocation();
-	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = CloneMonster->GetActorLocation();
 	FVector PathPos;
 
 	CurPos.Z = 0.f;
@@ -42,7 +56,7 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		FVector Dir = PathPos - CurPos;
 		Dir.Normalize();
 
-		FVector OtherForward = GetWeaponCharacter(OwnerComp)->GetActorForwardVector();
+		FVector OtherForward = CloneMonster->GetActorForwardVector();
 		OtherForward.Normalize();
 
 		FVector Cross = FVector::CrossProduct(OtherForward, Dir);
@@ -53,12 +67,12 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		if (10.f <= FMath::Abs(Angle0 - Angle1))
 		{
 			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-			GetWeaponCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+			CloneMonster->AddActorWorldRotation(Rot);
 		}
 		else
 		{
 			FRotator Rot = Dir.Rotation();
-			GetWeaponCharacter(OwnerComp)->SetActorRotation(Rot);
+			CloneMonster->SetActorRotation(Rot);
 		}
 
 		FVector Dis = TargetPos - CurPos;
@@ -67,7 +81,7 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 		if (MeleeAttackRange < Dis.Size())
 		{
-			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+			WeaponComponent->WAndSButtonAction(1);
 		}
 		else if (MeleeAttackRange >= Dis.Size() && MoveTime <= GetStateTime(OwnerComp))
 		{
@@ -77,7 +91,7 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		}
 		else
 		{
-			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
+			WeaponComponent->WAndSButtonAction(0);
 		}
 	}
 	// 활
@@ -91,7 +105,7 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		FVector Dir = TargetPos - CurPos;
 		Dir.Normalize();
 
-		FVector OtherForward = GetWeaponCharacter(OwnerComp)->GetActorForwardVector();
+		FVector OtherForward = CloneMonster->GetActorForwardVector();
 		OtherForward.Normalize();
 
 		FVector Cross = FVector::CrossProduct(OtherForward, Dir);
@@ -102,12 +116,12 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		if (10.f <= FMath::Abs(Angle0 - Angle1))
 		{
 			FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 600.f * DeltaSeconds });
-			GetWeaponCharacter(OwnerComp)->AddActorWorldRotation(Rot);
+			CloneMonster->AddActorWorldRotation(Rot);
 		}
 		else
 		{
 			FRotator Rot = Dir.Rotation();
-			GetWeaponCharacter(OwnerComp)->SetActorRotation(Rot);
+			CloneMonster->SetActorRotation(Rot);
 		}
 
 		// 이동
@@ -115,15 +129,15 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 		if (1000.f >= Dis.Size())
 		{
-			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(-1);
+			WeaponComponent->WAndSButtonAction(-1);
 		}
 		else if (1500.f <= Dis.Size())
 		{
-			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(1);
+			WeaponComponent->WAndSButtonAction(1);
 		}
 		else
 		{
-			GetWeaponCharacter(OwnerComp)->CurWeaponAction->WAndSButtonAction(0);
+			WeaponComponent->WAndSButtonAction(0);
 		}
 
 		if (MoveTime <= GetStateTime(OwnerComp))
@@ -132,7 +146,7 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	}
-	// 무기 버그 실패
+	// 버그로인한 실패
 	else
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);

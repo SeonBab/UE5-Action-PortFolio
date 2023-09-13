@@ -4,31 +4,45 @@ EBTNodeResult::Type UBTTask_Clone_Equip::ExecuteTask(UBehaviorTreeComponent& Own
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	GetWeaponCharacter(OwnerComp)->bUseControllerRotationYaw = true;
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
-	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	CloneMonster->bUseControllerRotationYaw = true;
+
+	EWeaponType CurWeaponType = WeaponComponent->GetWeaponType();
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 	FVector TargetPos = TargetActor->GetActorLocation();
-	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = CloneMonster->GetActorLocation();
 
 	FVector Dir = TargetPos - CurPos;
 
-	GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->SetIsLockOn(true);
+	WeaponComponent->SetIsLockOn(true);
 
 	if (800 <= Dir.Size())
 	{
 		if (EWeaponType::Bow != CurWeaponType)
 		{
-			GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetBow();
+			WeaponComponent->ChangeSetBow();
 		}
 	}
 	else
 	{
 		if (EWeaponType::Sword != CurWeaponType)
 		{
-			GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->ChangeSetSwordAndSheiled();
+			WeaponComponent->ChangeSetSwordAndSheiled();
 		}
 	}
 
@@ -37,12 +51,27 @@ EBTNodeResult::Type UBTTask_Clone_Equip::ExecuteTask(UBehaviorTreeComponent& Own
 
 void UBTTask_Clone_Equip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	EWeaponType CurWeaponType = GetWeaponCharacter(OwnerComp)->GetCurWeaponAction()->GetWeaponType();
+
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	{
+		return;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
+
+	EWeaponType CurWeaponType = WeaponComponent->GetWeaponType();
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 	FVector TargetPos = TargetActor->GetActorLocation();
-	FVector CurPos = GetWeaponCharacter(OwnerComp)->GetActorLocation();
+	FVector CurPos = CloneMonster->GetActorLocation();
 
 	FVector Dir = TargetPos - CurPos;
 
