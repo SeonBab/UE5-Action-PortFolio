@@ -44,7 +44,6 @@ AMainCharacter::AMainCharacter()
 
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	float CapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-	// 임시
 	CurCapsuleSize = CapsuleSize;
 
 	FootIKComponent = CreateDefaultSubobject<UFootIKComponent>(TEXT("FootIK"));
@@ -322,32 +321,10 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		}
 		else if (0.f >= GetHP())
 		{
-			// 체력은 음수값이 되지하지 않아야한다.
-			SetHP(0.f);
-
-			// 죽음
-			GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
-			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
-
-			WeaponComponent->Death();
-
-			bool PlayerCheck = EventInstigatorPawn->ActorHasTag("Player");
-
-			if (true == PlayerCheck)
-			{
-				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
-
-				if (nullptr != MainChar)
-				{
-					MainChar->LostLockedOnTargetActor();
-				}
-			}
-
-			return FinalDamage;
+			// 플레이어 캐릭터는 죽지 않게
+			WeaponComponent->GotHit(Dir);
 		}
 	}
-
-	return FinalDamage;
 
 	BpEventCallHPBar();
 

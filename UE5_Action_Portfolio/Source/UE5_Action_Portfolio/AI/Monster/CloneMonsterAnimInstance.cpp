@@ -1,20 +1,19 @@
-#include "Character/MainCharAnimInstance.h"
+#include "AI/Monster/CloneMonsterAnimInstance.h"
+#include "AI/Monster/CloneMonster.h"
 #include "Global/Data/AnimaitionData.h"
 #include "Global/GlobalGameInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon/WeaponComponent.h"
 #include "Weapon/BowAnimInstance.h"
 #include "Weapon/Arrow.h"
-#include "Character/MainCharacter.h"
 
-void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
+void UCloneMonsterAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
 		return;
-
 	}
 
 	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
@@ -127,9 +126,9 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	}
 }
 
-void UMainCharAnimInstance::AnimNotify_RollStop()
+void UCloneMonsterAnimInstance::AnimNotify_RollStop()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -146,9 +145,9 @@ void UMainCharAnimInstance::AnimNotify_RollStop()
 	WeaponComponent->IsRollMoveToFalse();
 }
 
-void UMainCharAnimInstance::AnimNotify_JumpStart()
+void UCloneMonsterAnimInstance::AnimNotify_JumpStart()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -158,9 +157,9 @@ void UMainCharAnimInstance::AnimNotify_JumpStart()
 	character->Jump();
 }
 
-void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
+void UCloneMonsterAnimInstance::AnimNotify_ChangeWeapon()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -224,9 +223,9 @@ void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 	}
 }
 
-void UMainCharAnimInstance::AnimNotify_AttackCheck()
+void UCloneMonsterAnimInstance::AnimNotify_AttackCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -265,9 +264,9 @@ void UMainCharAnimInstance::AnimNotify_AttackCheck()
 	}
 }
 
-void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
+void UCloneMonsterAnimInstance::AnimNotify_AimorBlockCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -292,9 +291,9 @@ void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 	}
 }
 
-void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
+void UCloneMonsterAnimInstance::AnimNotify_ArrowReadyCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -326,9 +325,9 @@ void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 	}
 }
 
-void UMainCharAnimInstance::AnimNotify_ChordToHand()
+void UCloneMonsterAnimInstance::AnimNotify_ChordToHand()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -352,9 +351,9 @@ void UMainCharAnimInstance::AnimNotify_ChordToHand()
 	BowAnim->SetBowChordCheck(true);
 }
 
-void UMainCharAnimInstance::AnimNotify_ReRoad()
+void UCloneMonsterAnimInstance::AnimNotify_ReRoad()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -371,9 +370,9 @@ void UMainCharAnimInstance::AnimNotify_ReRoad()
 	WeaponComponent->ArrowSpawn();
 }
 
-void UMainCharAnimInstance::AnimNotify_StartAttack()
+void UCloneMonsterAnimInstance::AnimNotify_StartAttack()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -410,7 +409,7 @@ void UMainCharAnimInstance::AnimNotify_StartAttack()
 			{
 				return;
 			}
-			
+
 			FRotator ArrowRotationValue = character->GetControlRotation();
 
 			AController* CharController = character->GetController();
@@ -429,10 +428,7 @@ void UMainCharAnimInstance::AnimNotify_StartAttack()
 			}
 			else if (true == IsAim && nullptr != character->GetController())
 			{
-				AMainCharacter* MainChar = Cast<AMainCharacter>(character);
-				FVector TraceTarget = MainChar->CameraLineTrace();
-
-				CurArrow->FireInDirection(TraceTarget, ArrowRotationValue, CharController);
+				// 클론 몬스터는 조준 사격을 하지 않는다
 			}
 
 			// 콜리전 변경
@@ -447,9 +443,9 @@ void UMainCharAnimInstance::AnimNotify_StartAttack()
 	}
 }
 
-void UMainCharAnimInstance::AnimNotify_EndAttack()
+void UCloneMonsterAnimInstance::AnimNotify_EndAttack()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character && false == character->IsValidLowLevel())
 	{
@@ -466,9 +462,9 @@ void UMainCharAnimInstance::AnimNotify_EndAttack()
 	WeaponComponent->ChangeNoCollision();
 }
 
-void UMainCharAnimInstance::AnimNotify_Death()
+void UCloneMonsterAnimInstance::AnimNotify_Death()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -478,9 +474,9 @@ void UMainCharAnimInstance::AnimNotify_Death()
 	character->Destroy();
 }
 
-void UMainCharAnimInstance::AnimNotify_ParryOnOff()
+void UCloneMonsterAnimInstance::AnimNotify_ParryOnOff()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{
@@ -506,16 +502,16 @@ void UMainCharAnimInstance::AnimNotify_ParryOnOff()
 	}
 }
 
-void UMainCharAnimInstance::NativeInitializeAnimation()
+void UCloneMonsterAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 }
 
-void UMainCharAnimInstance::NativeBeginPlay()
+void UCloneMonsterAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	OnMontageBlendingOut.AddDynamic(this, &UMainCharAnimInstance::MontageBlendingOut);
+	OnMontageBlendingOut.AddDynamic(this, &UCloneMonsterAnimInstance::MontageBlendingOut);
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
@@ -534,14 +530,14 @@ void UMainCharAnimInstance::NativeBeginPlay()
 	SetAllAnimation<CharacterAnimState>(FindAnimaitionData->AllAnimations);
 }
 
-void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
+void UCloneMonsterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 {
 	if (0 == AllAnimations.Num())
 	{
 		return;
 	}
 
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	ACloneMonster* character = Cast<ACloneMonster>(GetOwningActor());
 
 	if (nullptr == character || false == character->IsValidLowLevel())
 	{

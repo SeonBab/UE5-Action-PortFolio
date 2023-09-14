@@ -6,6 +6,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Character/MainCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACloneMonster::ACloneMonster()
 {
@@ -20,6 +22,14 @@ ACloneMonster::ACloneMonster()
 
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon"));
 	WeaponComponent->SetMeshAttach(GetMesh());
+
+	float CapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	CurCapsuleSize = CapsuleSize;
+
+	FootIKComponent = CreateDefaultSubobject<UFootIKComponent>(TEXT("FootIK"));
+	FootIKComponent->SetBeginCapsuleSize(CapsuleSize);
+	FootIKComponent->SetTraceDis(45.f);
+	FootIKComponent->SetFootSoket(TEXT("LeftFoot"), TEXT("RightFoot"));
 }
 
 UWeaponComponent* ACloneMonster::GetWeaponComponent()
@@ -57,6 +67,32 @@ void ACloneMonster::BeginPlay()
 void ACloneMonster::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
+
+	CharacterAnimState CurState = static_cast<CharacterAnimState>(GetAnimState());
+	bool IsFall = GetMovementComponent()->IsFalling();
+
+	// 공중에 있으면 본의 위치를 변경 하지 않는다
+	if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState) && false == IsFall)
+	{
+		TTuple<float, FVector> LeftTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("LeftFoot"), 45.f);
+		TTuple<float, FVector> RightTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("RightFoot"), 45.f);
+
+		FootIKComponent->UpdateFootRotation(_DeltaTime, FootIKComponent->NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
+		FootIKComponent->UpdateFootRotation(_DeltaTime, FootIKComponent->NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
+
+		float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
+
+		if (0.f < HipOffsetValue)
+		{
+			HipOffsetValue = 0.f;
+		}
+
+		FootIKComponent->UpdateFootOffset(_DeltaTime, HipOffsetValue, &HipOffset, 20.f);
+		FootIKComponent->UpdateCapsuleHalfHeight(GetCapsuleComponent(), _DeltaTime, HipOffsetValue, false);
+
+		FootIKComponent->UpdateFootOffset(_DeltaTime, LeftTrace.Get<0>() - HipOffsetValue, &FootOffsetLeft, 20.f);
+		FootIKComponent->UpdateFootOffset(_DeltaTime, RightTrace.Get<0>() - HipOffsetValue, &FootOffsetRight, 20.f);
+	}
 }
 
 float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
