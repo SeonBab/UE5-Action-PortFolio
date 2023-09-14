@@ -1,4 +1,5 @@
 #include "Character/MainCharacter.h"
+#include "Global/GlobalAICharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -499,7 +500,8 @@ void AMainCharacter::LockOnTarget()
 		if (nullptr != HitNearActor)
 		{
 			WeaponComponent->SetIsLockOn(true);
-			LockedOnTargetActor = HitNearActor;
+			LockedOnTargetActor = Cast<AGlobalAICharacter>(HitNearActor);
+			LockedOnTargetActor->LockOnMarkOnOff(true);
 		}
 	}
 	else if (true == WeaponComponent->GetIsLockOn())
@@ -721,7 +723,16 @@ FVector AMainCharacter::CameraLineTrace()
 
 void AMainCharacter::LostLockedOnTargetActor()
 {
-	LockedOnTargetActor = nullptr;
+	if (nullptr != LockedOnTargetActor || false != LockedOnTargetActor->IsValidLowLevel())
+	{
+		LockedOnTargetActor->LockOnMarkOnOff(false);
+		LockedOnTargetActor = nullptr;
+	}
+	else if (nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel())
+	{
+		
+	}
+
 	IsLookAtTartget = false;
 	MouseInput = false;
 	MouseX = 0.f;
@@ -729,6 +740,11 @@ void AMainCharacter::LostLockedOnTargetActor()
 	MouseTimeCheck = 0.f;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	{
+		return;
+	}
 
 	WeaponComponent->SetIsLockOn(false);
 	WeaponComponent->SetLockOnCheck(false);

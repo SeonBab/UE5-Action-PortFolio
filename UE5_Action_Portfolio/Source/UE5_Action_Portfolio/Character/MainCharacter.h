@@ -7,6 +7,7 @@
 #include "Components/TimelineComponent.h"
 #include "MainCharacter.generated.h"
 
+class AGlobalAICharacter;
 class USpringArmComponent;
 class UCameraComponent;
 class UWeaponComponent;
@@ -70,7 +71,7 @@ public:
 	float BaseTurnRate;
 	float BaseLookUpRate;
 	float LockOnTargetRange = 2500.f;
-	AActor* LockedOnTargetActor = nullptr;
+	AGlobalAICharacter* LockedOnTargetActor = nullptr;
 
 private:
 	bool IsLookAtTartget = false;
