@@ -33,15 +33,6 @@ ALich::ALich()
 
 	MeleeNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	MeleeNiagaraComponent->SetupAttachment(MeleeCapsuleComponent);
-
-	UCapsuleComponent* CurCapsuleComponent = GetCapsuleComponent();
-
-	if (nullptr != CurCapsuleComponent)
-	{
-		FName ActorType = GetActorTypeTag();
-
-		CurCapsuleComponent->SetCollisionProfileName(ActorType);
-	}
 }
 
 FName ALich::GetDataName()

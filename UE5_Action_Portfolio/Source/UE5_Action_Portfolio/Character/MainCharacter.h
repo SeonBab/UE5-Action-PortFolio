@@ -21,19 +21,33 @@ public:
 	AMainCharacter();
 
 	// ¡∂¿€
+	UFUNCTION(BlueprintCallable)
 	void ZoomIn();
+	UFUNCTION(BlueprintCallable)
 	void ZoomOut();
+	UFUNCTION(BlueprintCallable)
 	void Attack();
+	UFUNCTION(BlueprintCallable)
 	void MoveForward(float _Value);
+	UFUNCTION(BlueprintCallable)
 	void MoveRight(float _Value);
+	UFUNCTION(BlueprintCallable)
 	void RollorRun(float _Value);
+	UFUNCTION(BlueprintCallable)
 	void JumpAction();
+	UFUNCTION(BlueprintCallable)
 	void ChangeUnArmed();
+	UFUNCTION(BlueprintCallable)
 	void ChangeBow();
+	UFUNCTION(BlueprintCallable)
 	void ChangeSwordAndSheiled();
+	UFUNCTION(BlueprintCallable)
 	void Parry();
+	UFUNCTION(BlueprintCallable)
 	void AimorBlock(float _Value);
+	UFUNCTION(BlueprintCallable)
 	void LockOnTarget();
+
 	void LookAtTarget(float _DeltaTime);
 	void CharTurnAim(float _DeltaTime);
 	FVector CameraLineTrace();
