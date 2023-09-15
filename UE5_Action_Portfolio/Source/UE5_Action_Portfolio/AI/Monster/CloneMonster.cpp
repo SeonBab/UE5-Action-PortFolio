@@ -177,7 +177,7 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 				return 0.f;
 			}
 
-			EnemyWeaponComponent->ChangeNoCollision();
+			EnemyWeaponComponent->OverlapEnd();
 
 			EnemyChar->SetAnimState(CharacterAnimState::Dizzy);
 

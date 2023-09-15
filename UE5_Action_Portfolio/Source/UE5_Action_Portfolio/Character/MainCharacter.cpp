@@ -303,7 +303,7 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 				return 0.f;
 			}
 
-			EnemyWeaponComponent->ChangeNoCollision();
+			EnemyWeaponComponent->OverlapEnd();
 
 			EnemyChar->SetAnimState(CharacterAnimState::Dizzy);
 

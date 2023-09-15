@@ -101,8 +101,12 @@ void UWeaponComponent::ChangeCollisionAttackType()
 	}
 }
 
-void UWeaponComponent::ChangeNoCollision()
+void UWeaponComponent::OverlapEnd()
 {
+	// 오버랩 배열 초기화
+	OverlapArray.Empty();
+
+	// 콜리전 변경
 	if (EWeaponType::UnArmed == WeaponType)
 	{
 		UnArmedWeaponMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
@@ -1319,6 +1323,18 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// 오버랩 됐던 액터 체크
+	for (auto OverlapCheck : OverlapArray)
+	{
+		if (OverlapCheck == OtherActor)
+		{
+			// 오버랩 됐었다면 데미지 처리를 하지 않고 리턴
+			return;
+		}
+	}
+	// 오버랩 된 적 없던 액터를 추가
+	OverlapArray.Emplace(OtherActor);
+
 	// 공격 충돌 처리
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
@@ -1349,6 +1365,8 @@ void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 	{
 		return;
 	}
+
+	
 
 	OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, Character->GetController(), Character);
 }

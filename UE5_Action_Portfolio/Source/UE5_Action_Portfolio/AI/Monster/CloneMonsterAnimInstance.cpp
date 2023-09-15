@@ -459,7 +459,7 @@ void UCloneMonsterAnimInstance::AnimNotify_EndAttack()
 		return;
 	}
 
-	WeaponComponent->ChangeNoCollision();
+	WeaponComponent->OverlapEnd();
 }
 
 void UCloneMonsterAnimInstance::AnimNotify_Death()

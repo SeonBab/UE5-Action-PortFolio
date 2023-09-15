@@ -463,7 +463,7 @@ void UMainCharAnimInstance::AnimNotify_EndAttack()
 		return;
 	}
 
-	WeaponComponent->ChangeNoCollision();
+	WeaponComponent->OverlapEnd();
 }
 
 void UMainCharAnimInstance::AnimNotify_Death()

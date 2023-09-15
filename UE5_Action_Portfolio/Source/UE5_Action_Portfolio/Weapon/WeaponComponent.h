@@ -19,7 +19,7 @@ public:
 
 	void SetMeshAttach(USkeletalMeshComponent* _Mesh);
 	void ChangeCollisionAttackType();
-	void ChangeNoCollision();
+	void OverlapEnd();
 	void ArrowSpawn();
 	void SetCharacterAirControl(float _Value);
 	void SetAttackCheck(bool _Value);
@@ -152,4 +152,6 @@ private:
 	TSubclassOf<AArrow> ArrowClass;
 	UPROPERTY()
 	AArrow* ReadyArrow = nullptr;
+
+	TArray<AActor*> OverlapArray;
 };
