@@ -50,8 +50,9 @@ void ATornado::SetAttackType(FName _AttackType)
 
 void ATornado::SetTargetActor(AActor* _TargetActor)
 {
-	if (nullptr == _TargetActor)
+	if (nullptr == _TargetActor || false == _TargetActor->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -88,19 +89,26 @@ void ATornado::Tick(float DeltaTime)
 		// 나이아가라 설정
 		UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-		if (nullptr != Inst)
+		if (nullptr == Inst || false == Inst->IsValidLowLevel())
 		{
-			UNiagaraSystem* StormNiagara = Inst->GetNiagaraAsset(TEXT("Storm"));
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+			return;
+		}
 
-			if (nullptr != StormNiagara)
-			{
-				UNiagaraComponent* CurNiagaraComponent = GetNiagaraComponent();
+		UNiagaraSystem* StormNiagara = Inst->GetNiagaraAsset(TEXT("Storm"));
 
-				if (nullptr != CurNiagaraComponent)
-				{
-					CurNiagaraComponent->SetAsset(StormNiagara);
-				}
-			}
+		if (nullptr == StormNiagara || false == StormNiagara->IsValidLowLevel())
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+			return;
+		}
+
+		UNiagaraComponent* CurNiagaraComponent = GetNiagaraComponent();
+
+		if (nullptr == CurNiagaraComponent || false == CurNiagaraComponent->IsValidLowLevel())
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+			return;
 		}
 		
 		// 콜리전 변경
@@ -131,7 +139,13 @@ void ATornado::Tick(float DeltaTime)
 		}
 	}
 
-	if (nullptr != TargetActor && true == TornadoSpawnCheck)
+	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	if (true == TornadoSpawnCheck)
 	{
 		// 타겟 느리게 따라가기
 		FVector TargetPos = TargetActor->GetActorLocation();

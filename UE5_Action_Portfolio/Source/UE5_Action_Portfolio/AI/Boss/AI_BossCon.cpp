@@ -25,25 +25,42 @@ void AAI_BossCon::OnPossess(APawn* _InPawn)
 {
 	Super::OnPossess(_InPawn);
 
-	if (nullptr == GetBehaviorTreeComponent() && false == GetBehaviorTreeComponent()->IsValidLowLevel())
+	AGlobalAICharacter* AICharacter = Cast<AGlobalAICharacter>(_InPawn);
+
+	if (nullptr == AICharacter || false == AICharacter->IsValidLowLevel())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == BehaviorTreeComponent && false == BehaviorTreeComponent->IsValidLowLevel())"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
-	AGlobalAICharacter* AIPawn = Cast<AGlobalAICharacter>(_InPawn);
-	
-	UBehaviorTree* BehaviorTree = AIPawn->GetBehaviorTree();
+	UBehaviorTree* BehaviorTree = AICharacter->GetBehaviorTree();
 	
 	if (nullptr == BehaviorTree || false == BehaviorTree->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
+
+	if (nullptr == CurBlackboardComponent || false == CurBlackboardComponent->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
-	GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), _InPawn);
+	CurBlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	CurBlackboardComponent->SetValueAsObject(TEXT("SelfActor"), _InPawn);
 	
-	GetBehaviorTreeComponent()->StartTree(*BehaviorTree);
+	UBehaviorTreeComponent* CurBehaviorTreeComponent = GetBehaviorTreeComponent();
+
+	if (nullptr == CurBehaviorTreeComponent && false == CurBehaviorTreeComponent->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBehaviorTreeComponent->StartTree(*BehaviorTree);
 }
 
 void AAI_BossCon::BeginPlay()

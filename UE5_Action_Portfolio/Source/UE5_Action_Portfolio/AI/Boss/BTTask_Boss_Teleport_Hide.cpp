@@ -6,8 +6,9 @@ EBTNodeResult::Type UBTTask_Boss_Teleport_Hide::ExecuteTask(UBehaviorTreeCompone
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character)
+    if (nullptr == Character || false == Character->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 
@@ -22,8 +23,9 @@ void UBTTask_Boss_Teleport_Hide::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character)
+    if (nullptr == Character || false == Character->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return;
     }
 
@@ -34,8 +36,9 @@ void UBTTask_Boss_Teleport_Hide::TickTask(UBehaviorTreeComponent& OwnerComp, uin
     {
         UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-        if (nullptr == Blackboard)
+        if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
         {
+            UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
             return;
         }
 

@@ -6,8 +6,9 @@ EBTNodeResult::Type UBTTask_Boss_Idle::ExecuteTask(UBehaviorTreeComponent& Owner
 
 	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-	if (nullptr == Character)
+	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return EBTNodeResult::Failed;
 	}
 
@@ -22,8 +23,9 @@ void UBTTask_Boss_Idle::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-	if (nullptr == Character)
+	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 

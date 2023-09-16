@@ -6,22 +6,25 @@ EBTNodeResult::Type UBTTask_Boss_RandAttack::ExecuteTask(UBehaviorTreeComponent&
 
     UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-    if (nullptr == Blackboard)
+    if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 
     UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
     
-    if (nullptr == TargetObject)
+    if (nullptr == TargetObject || false == TargetObject->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
     
     AActor* TargetActor = Cast<AActor>(TargetObject);
 
-    if (nullptr == TargetActor)
+    if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 

@@ -8,15 +8,17 @@ EBTNodeResult::Type UBTTask_Boss_Return::ExecuteTask(UBehaviorTreeComponent& Own
 
 	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-	if (nullptr == Character)
+	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return EBTNodeResult::Failed;
 	}
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-	if (nullptr == Blackboard)
+	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return EBTNodeResult::Failed;
 	}
 
@@ -34,17 +36,19 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 {
     Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
+	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-	if (nullptr == Blackboard)
+	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-	if (nullptr == Character)
+	if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -56,8 +60,9 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	{
 		UNavigationPath* NewNavPath = PathFindNavPath(OwnerComp, ReturnPos);
 
-		if (nullptr == NewNavPath)
+		if (nullptr == NewNavPath || false == NewNavPath->IsValidLowLevel())
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 			return;
 		}
 
@@ -67,14 +72,16 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	UObject* NavObject = Blackboard->GetValueAsObject(TEXT("NavPath"));
 	UNavigationPath* NavPath = Cast<UNavigationPath>(NavObject);
 
-	if (nullptr == NavPath)
+	if (nullptr == NavPath || false == NavPath->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	if (true == NavPath->PathPoints.IsEmpty())
 	{
 		// 길을 제대로 찾지 못했다.
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> PathPoints.IsEmpty()"), __FUNCTION__, __LINE__);
 		return;
 	}
 

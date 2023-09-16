@@ -6,8 +6,9 @@ EBTNodeResult::Type UBTTask_Boss_Death::ExecuteTask(UBehaviorTreeComponent& Owne
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character)
+    if (nullptr == Character || false == Character->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 

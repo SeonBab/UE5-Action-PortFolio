@@ -15,15 +15,18 @@ void ULichAnimInstance::AnimNotify_MeleeStart()
 {
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
-	if (nullptr == Lich)
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
+
 	UCapsuleComponent* CapsuleComponent = Lich->GetMeleeCapsuleComponent();
 
-	if (nullptr == CapsuleComponent)
+	if (nullptr == CapsuleComponent || false == CapsuleComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -35,22 +38,25 @@ void ULichAnimInstance::AnimNotify_MeleeStart()
 	// 나이아가라 설정
 	UNiagaraComponent* NiagaraComponent = Lich->GetMeleeNiagaraComponent();
 
-	if (nullptr == NiagaraComponent)
+	if (nullptr == NiagaraComponent || false == NiagaraComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Inst)
+	if (nullptr == Inst || false == Inst->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
 	UNiagaraSystem* TrailWind = Inst->GetNiagaraAsset(TEXT("TrailWind"));
 
-	if (nullptr == TrailWind)
+	if (nullptr == TrailWind || false == TrailWind->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
@@ -62,15 +68,17 @@ void ULichAnimInstance::AnimNotify_MeleeEnd()
 {
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
-	if (nullptr == Lich)
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UCapsuleComponent* CapsuleComponent = Lich->GetMeleeCapsuleComponent();
 
-	if (nullptr == CapsuleComponent)
+	if (nullptr == CapsuleComponent || false == CapsuleComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -81,8 +89,9 @@ void ULichAnimInstance::AnimNotify_MeleeEnd()
 
 	UNiagaraComponent* NiagaraComponent = Lich->GetMeleeNiagaraComponent();
 
-	if (nullptr == NiagaraComponent)
+	if (nullptr == NiagaraComponent || false == NiagaraComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -93,30 +102,33 @@ void ULichAnimInstance::AnimNotify_CreateDarkBall()
 {
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Inst)
+	if (nullptr == Inst || false == Inst->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	TSubclassOf<UObject> DarkBall = Inst->GetSubClass(TEXT("DarkBall"));
 
-	if (nullptr == DarkBall)
+	if (nullptr == DarkBall || false == DarkBall->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
-	if (nullptr == Lich)
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-
 	ADarkBall* SpawnDarkBall = GetWorld()->SpawnActor<ADarkBall>(DarkBall);
 
-	if (nullptr == SpawnDarkBall)
+	if (nullptr == SpawnDarkBall || false == SpawnDarkBall->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -137,8 +149,9 @@ void ULichAnimInstance::AnimNotify_CreateDarkBall()
 	FName AttackType = Lich->GetAttackTypeTag();
 	USphereComponent* SpherComponent = SpawnDarkBall->GetSphereComponent();
 
-	if (nullptr == SpherComponent)
+	if (nullptr == SpherComponent || false == SpherComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -157,15 +170,17 @@ void ULichAnimInstance::AnimNotify_DarkBallShot()
 {
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
-	if (nullptr == Lich)
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	ADarkBall* Ball = Cast<ADarkBall>(Lich->GetDarkBall());
 
-	if (nullptr == Ball)
+	if (nullptr == Ball || false == Ball->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -181,37 +196,42 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 {
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Inst)
+	if (nullptr == Inst || false == Inst->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	TSubclassOf<UObject> Tornado = Inst->GetSubClass(TEXT("Tornado"));
 
-	if (nullptr == Tornado)
+	if (nullptr == Tornado || false == Tornado->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
-	if (nullptr == Lich)
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	ATornado* SpawnTornado = GetWorld()->SpawnActor<ATornado>(Tornado);
 
-	if (nullptr == SpawnTornado)
+	if (nullptr == SpawnTornado || false == SpawnTornado->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	// 컨트롤러 설정
 	AController* CurController = Lich->GetController();
 
-	if (nullptr == CurController)
+	if (nullptr == CurController || false == CurController->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -225,23 +245,25 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 	AActor* TargetActor = Lich->GetTargetActor();
 	AGlobalCharacter* TargetCharacter = Cast<AGlobalCharacter>(TargetActor);
 
-	if (nullptr == TargetCharacter)
+	if (nullptr == TargetCharacter || false == TargetCharacter->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	FVector TargetPos = TargetActor->GetActorLocation();
 
-	UCapsuleComponent* CapsuleComponent = SpawnTornado->GetCapsuleComponent();
+	UCapsuleComponent* TornadoCapsuleComponent = SpawnTornado->GetCapsuleComponent();
 
-	if (nullptr == CapsuleComponent)
+	if (nullptr == TornadoCapsuleComponent || false == TornadoCapsuleComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 
 	float TargetCapsuleSize = TargetCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-	float PlusZPos = CapsuleComponent->GetScaledCapsuleHalfHeight();
+	float PlusZPos = TornadoCapsuleComponent->GetScaledCapsuleHalfHeight();
 	PlusZPos = PlusZPos - TargetCapsuleSize;
 
 	FVector SetPos({ TargetPos.X, TargetPos.Y, TargetPos.Z + PlusZPos });
@@ -258,8 +280,9 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 {
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
-	if (nullptr == Lich)
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -275,8 +298,9 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Inst)
+	if (nullptr == Inst || false == Inst->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -284,14 +308,16 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 
 	if (nullptr == Frostbolt || false == Frostbolt->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	// Frostbolt 스폰
 	AFrostbolt* SpawnFrostbolt = GetWorld()->SpawnActor<AFrostbolt>(Frostbolt);
 
-	if (nullptr == SpawnFrostbolt)
+	if (nullptr == SpawnFrostbolt || false == SpawnFrostbolt->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -301,8 +327,9 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 	// 컨트롤러 설정
 	AController* CurController = Lich->GetController();
 
-	if (nullptr == CurController)
+	if (nullptr == CurController || false == CurController->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -313,8 +340,9 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 
 	USphereComponent* SpherComponent = SpawnFrostbolt->GetSphereComponent();
 
-	if (nullptr == SpherComponent)
+	if (nullptr == SpherComponent || false == SpherComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -323,8 +351,9 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 	// FrostboltSoket 위치로 변경하기
 	USkeletalMeshComponent* LichMesh = Lich->GetMesh();
 
-	if (nullptr == LichMesh)
+	if (nullptr == LichMesh || false == LichMesh->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -343,8 +372,9 @@ void ULichAnimInstance::AnimNotify_FrostboltSpawn()
 
 	AActor* TargetActor = Lich->GetTargetActor();
 
-	if (nullptr == TargetActor)
+	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -355,8 +385,9 @@ void ULichAnimInstance::AnimNotify_FrostboltShot()
 {
 	ALich* Lich = Cast<ALich>(GetOwningActor());
 
-	if (nullptr == Lich)
+	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -373,6 +404,7 @@ void ULichAnimInstance::AnimNotify_FrostboltShot()
 
 		if (nullptr == Frostbolt || false == Frostbolt->IsValidLowLevel())
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 			continue;
 		}
 
@@ -399,6 +431,7 @@ void ULichAnimInstance::AnimNotify_Death()
 
 	if (nullptr == Lich || false == Lich->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -426,8 +459,9 @@ void ULichAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
 	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwningActor());
 
-	if (nullptr == Character)
+	if (nullptr == Character || false == Character->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 

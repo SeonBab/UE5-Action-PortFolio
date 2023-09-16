@@ -6,8 +6,9 @@ EBTNodeResult::Type UBTTask_Boss_Attack_DarkBall::ExecuteTask(UBehaviorTreeCompo
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character)
+    if (nullptr == Character || false == Character->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 
@@ -22,12 +23,20 @@ void UBTTask_Boss_Attack_DarkBall::TickTask(UBehaviorTreeComponent& OwnerComp, u
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character)
+    if (nullptr == Character || false == Character->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return;
     }
 
     UAnimMontage* Montage = Character->GetAnimMontage(Character->GetAnimState());
+
+    if (nullptr == Montage || false == Montage->IsValidLowLevel())
+    {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        return;
+    }
+
     float Time = Montage->CalculateSequenceLength();
 
     if (Time <= GetStateTime(OwnerComp))

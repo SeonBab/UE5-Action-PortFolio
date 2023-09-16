@@ -91,8 +91,9 @@ int ALich::GetPhase()
 {
 	UBlackboardComponent* Blackboard = GetBlackboardComponent();
 
-	if (nullptr == Blackboard)
+	if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return 0;
 	}
 	
@@ -105,22 +106,18 @@ AActor* ALich::GetTargetActor()
 {
 	UBlackboardComponent* Blackboard = GetBlackboardComponent();
 
-	if (nullptr == Blackboard)
+	if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 
 	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
-
-	if (nullptr == TargetObject)
-	{
-		return nullptr;
-	}
-
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 
-	if (nullptr == TargetActor)
+	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 
@@ -133,29 +130,40 @@ void ALich::BeginPlay()
 	
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr != Inst)
+	if (nullptr == Inst || false == Inst->IsValidLowLevel())
 	{
-		CurBossData = Inst->GetBossData(DataName);
-
-		SetAllAnimation<BossAnimState>(CurBossData->MapAnimation);
-		SetHP(CurBossData->HP);
-		SetMaxHP(GetHP());
-		SetAnimState(BossAnimState::Idle);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
 	}
 
-	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), this);
-	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
-	GetBlackboardComponent()->SetValueAsObject(TEXT("NavPath"), nullptr);
-	GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), false);
-	GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), false);
-	GetBlackboardComponent()->SetValueAsBool(TEXT("IsBattle"), false);
-	GetBlackboardComponent()->SetValueAsInt(TEXT("Phase"), 1);
-	GetBlackboardComponent()->SetValueAsInt(TEXT("RandAttack"), 0);
-	GetBlackboardComponent()->SetValueAsInt(TEXT("NavPathIndex"), 1);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("MeleeAttackRange"), 300.f);
-	GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
-	GetBlackboardComponent()->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
+	CurBossData = Inst->GetBossData(DataName);
+
+	SetAllAnimation<BossAnimState>(CurBossData->MapAnimation);
+	SetHP(CurBossData->HP);
+	SetMaxHP(GetHP());
+	SetAnimState(BossAnimState::Idle);
+
+	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
+
+	if (nullptr == CurBlackboardComponent || false == CurBlackboardComponent->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBlackboardComponent->SetValueAsObject(TEXT("SelfActor"), this);
+	CurBlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
+	CurBlackboardComponent->SetValueAsObject(TEXT("NavPath"), nullptr);
+	CurBlackboardComponent->SetValueAsBool(TEXT("IsDeath"), false);
+	CurBlackboardComponent->SetValueAsBool(TEXT("IsReturn"), false);
+	CurBlackboardComponent->SetValueAsBool(TEXT("IsBattle"), false);
+	CurBlackboardComponent->SetValueAsInt(TEXT("Phase"), 1);
+	CurBlackboardComponent->SetValueAsInt(TEXT("RandAttack"), 0);
+	CurBlackboardComponent->SetValueAsInt(TEXT("NavPathIndex"), 1);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("StateTime"), 0.f);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 300.f);
+	CurBlackboardComponent->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
+	CurBlackboardComponent->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
 
 	MeleeCapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ALich::MeleeBeginOverlap);
 }
@@ -166,14 +174,16 @@ void ALich::Tick(float DeltaTime)
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent();
 
-	if (Blackboard == nullptr)
+	if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
 
-	if (nullptr == TargetObject)
+	// 타겟을 잃었다면
+	if (nullptr == TargetObject || false == Blackboard->IsValidLowLevel())
 	{
 		LostTarget();
 		BpEventCallBossInfoOff();
@@ -199,8 +209,9 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 	// PointDamage를 전달 받았다.
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
-		if (nullptr == EventInstigator)
+		if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 
@@ -252,8 +263,9 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			// 블랙보드 변수 값 변경
 			UBlackboardComponent* Blackboard = GetBlackboardComponent();
 
-			if (nullptr == Blackboard)
+			if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 				return 0.f;
 			}
 
@@ -264,8 +276,9 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
 
 			// 플레이어의 락온 해제
-			if (nullptr == EventInstigator)
+			if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 				return 0.f;
 			}
 
@@ -275,9 +288,10 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			{
 				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigator->GetPawn());
 
-				if (nullptr != MainChar)
+				if (nullptr == MainChar || false == MainChar->IsValidLowLevel())
 				{
-					MainChar->LostLockedOnTargetActor();
+					UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+					return 0.f;
 				}
 			}
 		}
@@ -294,6 +308,7 @@ void ALich::LostTarget()
 	{
 		DarkBall->Destroyed();
 	}
+
 	DarkBall = nullptr;
 
 	for (int i = 0; i < FrostboltArray.Num(); i++)
@@ -303,6 +318,7 @@ void ALich::LostTarget()
 			FrostboltArray[i]->Destroy();
 		}
 	}
+
 	FrostboltArray.Empty();
 }
 

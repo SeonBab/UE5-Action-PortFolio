@@ -37,8 +37,9 @@ void ADarkBall::ShotDarkBall(FVector _FVector)
 {
 	SetDeathCheck(true);
 
-	if (nullptr == ProjectileMovement)
+	if (nullptr == ProjectileMovement || false == ProjectileMovement->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -52,8 +53,9 @@ void ADarkBall::DarkBallBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 	AController* Controller = GetCurController();
 
-	if (nullptr == Controller)
+	if (nullptr == Controller || false == Controller->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -77,12 +79,19 @@ void ADarkBall::Tick(float DeltaTime)
 
 void ADarkBall::DestroyProjectile(AActor* _Destroy)
 {
-	if (nullptr == DeathCreateObject)
+	if (nullptr == DeathCreateObject || false == DeathCreateObject->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	AActor* Actor = GetWorld()->SpawnActor<AActor>(DeathCreateObject);
+
+	if (nullptr == Actor || false == Actor->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
 
 	Actor->SetActorLocation(GetActorLocation());
 	Actor->SetActorRotation(GetActorRotation());

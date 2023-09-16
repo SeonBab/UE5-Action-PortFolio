@@ -44,8 +44,9 @@ USphereComponent* AFrostbolt::GetSphereComponent()
 
 void AFrostbolt::SetTargetActor(AActor* _TargetActor)
 {
-	if (nullptr == _TargetActor)
+	if (nullptr == _TargetActor || false == _TargetActor->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -58,8 +59,9 @@ void AFrostbolt::FrostboltBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	AController* Controller = GetCurController();
 
-	if (nullptr == Controller)
+	if (nullptr == Controller || false == Controller->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -73,15 +75,17 @@ void AFrostbolt::ParticleSystemFinished(UParticleSystemComponent* _ParticleSyste
 	// 고드름 파티클로 생성
 	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Inst)
+	if (nullptr == Inst || false == Inst->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UParticleSystem* FrostboltAttackParticle = Inst->GetParticleAsset(TEXT("FrostboltAttack"));
 
-	if (nullptr == FrostboltAttackParticle)
+	if (nullptr == FrostboltAttackParticle || false == FrostboltAttackParticle->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -109,12 +113,19 @@ void AFrostbolt::Tick(float DeltaTime)
 
 void AFrostbolt::DestroyProjectile(AActor* _Destroy)
 {
-	if (nullptr == DeathCreateObject)
+	if (nullptr == DeathCreateObject || false == DeathCreateObject->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	AActor* Actor = GetWorld()->SpawnActor<AActor>(DeathCreateObject);
+
+	if (nullptr == Actor || false == Actor->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
 
 	Actor->SetActorLocation(GetActorLocation());
 	Actor->SetActorRotation(GetActorRotation());
@@ -123,8 +134,9 @@ void AFrostbolt::DestroyProjectile(AActor* _Destroy)
 void AFrostbolt::AimTarget(float _DeltaTime)
 {
 	// 발사 전까지 타겟을 향해 방향을 돌림
-	if (nullptr == TargetActor)
+	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -158,8 +170,9 @@ void AFrostbolt::ShotFrostbolt()
 {
 	SetDeathCheck(true);
 
-	if (nullptr == TargetActor)
+	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -169,8 +182,9 @@ void AFrostbolt::ShotFrostbolt()
 	FVector Dir = TargetPos - CurPos;
 	Dir.Normalize();
 
-	if (nullptr == ProjectileMovement)
+	if (nullptr == ProjectileMovement || false == ProjectileMovement->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
