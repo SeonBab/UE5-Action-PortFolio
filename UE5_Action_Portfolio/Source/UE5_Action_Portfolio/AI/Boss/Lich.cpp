@@ -304,21 +304,19 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 
 void ALich::LostTarget()
 {
-	if (DarkBall != nullptr || true == DarkBall->IsValidLowLevel())
+	if (DarkBall != nullptr)
 	{
 		DarkBall->Destroyed();
+		DarkBall = nullptr;
 	}
-
-	DarkBall = nullptr;
 
 	for (int i = 0; i < FrostboltArray.Num(); i++)
 	{
-		if (nullptr != FrostboltArray[i] || true == FrostboltArray[i]->IsValidLowLevel())
+		if (nullptr != FrostboltArray[i])
 		{
 			FrostboltArray[i]->Destroy();
+			FrostboltArray[i] = nullptr;
 		}
 	}
-
-	FrostboltArray.Empty();
 }
 
