@@ -18,7 +18,7 @@ ATornado::ATornado()
 
 	Speed = 300.f;
 	DeathTime = 5.f;
-	Damage = 2.f;
+	Damage = 5.f;
 	HitTime = 1.f;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));

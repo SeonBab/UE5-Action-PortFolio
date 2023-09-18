@@ -4,25 +4,32 @@
 #include "Global/Data/WeaponData.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AArrow::AArrow()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	ArrowScene = CreateDefaultSubobject<USceneComponent>(TEXT("Arrowcene"));
-	ArrowSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ArrowMesh"));
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	InitialLifeSpan = 5.f;
 
+	ArrowScene = CreateDefaultSubobject<USceneComponent>(TEXT("Arrowcene"));
 	SetRootComponent(ArrowScene);
 
+	ArrowSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ArrowMesh"));
 	ArrowSkeletalMesh->SetupAttachment(ArrowScene);
 	ArrowSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"), true);
 	ArrowSkeletalMesh->SetRelativeScale3D({ 2.f, 2.f, 1.5f });
 
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = 0.f;
 	ProjectileMovement->MaxSpeed = 10000.f;
 
-	InitialLifeSpan = 5.f;
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComponent"));
+	ParticleComponent->SetupAttachment(ArrowSkeletalMesh);
+	ParticleComponent->AddLocalOffset({ 0.f, 0.f, 20.f });
+	ParticleComponent->SetWorldScale3D({ 0.05f, 0.05f, 0.3f });
+	ParticleComponent->CustomTimeDilation = 2.f;
+
 }
 
 void AArrow::ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -30,8 +37,9 @@ void AArrow::ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	// 공격 충돌 처리
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Instance)
+	if (nullptr == Instance || false == Instance->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -72,6 +80,14 @@ void AArrow::ArrowChangeCollision(FName _FName)
 
 void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator, AController* _Controller)
 {
+	if (nullptr == _Controller || false == _Controller->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurController = _Controller;
+
 	ProjectileMovement->SetUpdatedComponent(ArrowSkeletalMesh);
 	ProjectileMovement->InitialSpeed = 10000.f;
 
@@ -80,12 +96,24 @@ void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator, AController* 
 
 	ArrowSkeletalMesh->SetGenerateOverlapEvents(true);
 
-	if (nullptr == _Controller)
+
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Instance || false == Instance->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	CurController = _Controller;
+	 UParticleSystem* ParticleSystem = Instance->GetParticleAsset(TEXT("ArrowIceCircle"));
+
+	 if (nullptr == ParticleSystem || false == ParticleSystem->IsValidLowLevel())
+	 {
+		 UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		 return;
+	 }
+
+	ParticleComponent->SetTemplate(ParticleSystem);
 }
 
 void AArrow::BeginPlay()
