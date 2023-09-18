@@ -36,7 +36,10 @@ private:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
-	bool IsLocationAndRotation = true;
+	bool IsLocationAndRotation;
+	bool Shot;
+	float ShotTime;
+
 	UPROPERTY()
 	AController* CurController;
 };

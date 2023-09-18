@@ -10,7 +10,10 @@ AArrow::AArrow()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	InitialLifeSpan = 5.f;
+	InitialLifeSpan = 0.f;
+	IsLocationAndRotation = true;
+	Shot = false;
+	ShotTime = 0.f;
 
 	ArrowScene = CreateDefaultSubobject<USceneComponent>(TEXT("Arrowcene"));
 	SetRootComponent(ArrowScene);
@@ -91,7 +94,9 @@ void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator, AController* 
 	ProjectileMovement->SetUpdatedComponent(ArrowSkeletalMesh);
 	ProjectileMovement->InitialSpeed = 10000.f;
 
+	Shot = true;
 	SetActorRotation(_FRotator);
+	AddActorLocalOffset({ 0.f, 0.f, 15.f });
 	ProjectileMovement->Velocity = _FVector * ProjectileMovement->InitialSpeed;
 
 	ArrowSkeletalMesh->SetGenerateOverlapEvents(true);
@@ -135,6 +140,16 @@ void AArrow::BeginPlay()
 void AArrow::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (true == Shot)
+	{
+		ShotTime += DeltaTime;
+
+		if (3.f <= ShotTime)
+		{
+			Destroy();
+		}
+	}
 
 }
 
