@@ -11,6 +11,7 @@ class AGlobalAICharacter;
 class USpringArmComponent;
 class UCameraComponent;
 class UWeaponComponent;
+class UPostProcessComponent;
 
 UCLASS()
 class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AGlobalCharacter
@@ -111,6 +112,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* WeaponComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPostProcessComponent* PostProcessComponent;
 
 	protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

@@ -2,6 +2,7 @@
 #include "Global/GlobalAICharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/WeaponComponent.h"
@@ -54,6 +55,12 @@ AMainCharacter::AMainCharacter()
 
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon"));
 	WeaponComponent->SetMeshAttach(GetMesh());
+
+	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcess"));
+	//PostProcessComponent->AddOrUpdateBlendable()
+	//PostProcessComponent->Settings.WeightedBlendables.Array.Add();
+	//PostProcessComponent->Settings.WeightedBlendables.Array[0].Weight = 0;
+	//PostProcessComponent->Settings.WeightedBlendables.Array[0].Object = nullptr;
 }
 
 void AMainCharacter::BeginPlay()
@@ -81,6 +88,8 @@ void AMainCharacter::BeginPlay()
 
 	SetHP(1000.f);
 	SetMaxHP(GetHP());
+
+	GetWorld();
 }
 
 void AMainCharacter::Tick(float _DeltaTime)
