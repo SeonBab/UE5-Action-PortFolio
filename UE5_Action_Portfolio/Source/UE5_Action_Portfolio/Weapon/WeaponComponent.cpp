@@ -936,6 +936,7 @@ void UWeaponComponent::AimorBlockAtion(float _Value)
 
 		ArrowReady = false;
 		ReadyArrow->Destroy();
+		ReadyArrow = nullptr;
 
 		return;
 	}
@@ -1072,8 +1073,9 @@ AArrow* UWeaponComponent::GetReadyArrow()
 
 FVector UWeaponComponent::GetBowJointLocation()
 {
-	if (nullptr == BowWeaponMesh)
+	if (nullptr == BowWeaponMesh || false == BowWeaponMesh->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return FVector::ZeroVector;
 	}
 
@@ -1192,6 +1194,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 
 			ArrowReady = false;
 			ReadyArrow->Destroy();
+			ReadyArrow = nullptr;
 		}
 		else if (EWeaponType::Sword == WeaponType)
 		{
@@ -1232,6 +1235,7 @@ void UWeaponComponent::Death()
 
 		ArrowReady = false;
 		ReadyArrow->Destroy();
+		ReadyArrow = nullptr;
 	}
 }
 
