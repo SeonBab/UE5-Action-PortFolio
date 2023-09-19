@@ -1,5 +1,6 @@
 #include "Character/MainCharacter.h"
 #include "Global/GlobalAICharacter.h"
+#include "Global/GlobalGameInstance.h"
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PostProcessComponent.h"
@@ -13,6 +14,7 @@
 #include "GameUI/GameUIHUD.h"
 #include "CollisionShape.h"
 #include "DrawDebugHelpers.h"
+#include "Materials/Material.h"
 #include "AI/Monster/CloneMonster.h"
 
 AMainCharacter::AMainCharacter()
@@ -26,6 +28,8 @@ AMainCharacter::AMainCharacter()
 
 	Tags.Add(GetActorTypeTag());
 
+	AimZoomTimelineLength = 1.f;
+
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
 	MainCameraSpringArmComponent->SetRelativeLocation(FVector(0.0f, 0.0f, BaseEyeHeight * 1.5f));
@@ -38,6 +42,7 @@ AMainCharacter::AMainCharacter()
 	BaseLookUpRate = 30.f;
 	
 	FOVUpdateDelegate.BindUFunction(this, FName("AimZoomTimelineUpdate"));
+	AimScreenUpdateDelegate.BindUFunction(this, FName("AimScreenTimelineUpdate"));
 	ArmUpdateDelegate.BindUFunction(this, FName("ArmTimelineUpdate"));
 	TimelineFinishDelegate.BindUFunction(this, FName("AimZoomOnFinish"));
 
@@ -57,10 +62,10 @@ AMainCharacter::AMainCharacter()
 	WeaponComponent->SetMeshAttach(GetMesh());
 
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcess"));
-	//PostProcessComponent->AddOrUpdateBlendable()
-	//PostProcessComponent->Settings.WeightedBlendables.Array.Add();
-	//PostProcessComponent->Settings.WeightedBlendables.Array[0].Weight = 0;
-	//PostProcessComponent->Settings.WeightedBlendables.Array[0].Object = nullptr;
+	FWeightedBlendable WeightedBlendable;
+	WeightedBlendable.Weight = 0;
+	WeightedBlendable.Object = nullptr;
+	PostProcessComponent->Settings.WeightedBlendables.Array.Add(WeightedBlendable);
 }
 
 void AMainCharacter::BeginPlay()
@@ -70,10 +75,11 @@ void AMainCharacter::BeginPlay()
 	this->bUseControllerRotationYaw = false;
 
 	// 타임라인 설정
-	if (nullptr != FOVCurveFloat && nullptr != CameraSpringArmVector)
+	if (nullptr != FOVCurveFloat && nullptr != AimScreenCurveFloat && nullptr != CameraSpringArmVector)
 	{
 		// 커브와 커브를 사용할 함수
 		ChangeViewFTimeline.AddInterpFloat(FOVCurveFloat, FOVUpdateDelegate);
+		ChangeViewFTimeline.AddInterpFloat(AimScreenCurveFloat, AimScreenUpdateDelegate);
 		ChangeViewFTimeline.AddInterpVector(CameraSpringArmVector, ArmUpdateDelegate);
 
 		// 끝날 때 호출 할 함수
@@ -89,7 +95,25 @@ void AMainCharacter::BeginPlay()
 	SetHP(1000.f);
 	SetMaxHP(GetHP());
 
-	GetWorld();
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (nullptr == Instance || false == Instance->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	UMaterial* AimScreen = Instance->GetMaterialAsset(TEXT("AimScreen"));
+
+	if (nullptr == AimScreen || false == AimScreen->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	DynMAimScreen = UMaterialInstanceDynamic::Create(AimScreen, this);
+
+	PostProcessComponent->Settings.WeightedBlendables.Array[0].Object = DynMAimScreen;
 }
 
 void AMainCharacter::Tick(float _DeltaTime)
@@ -98,6 +122,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -112,8 +137,15 @@ void AMainCharacter::Tick(float _DeltaTime)
 	APlayerController* HUDController = Cast<APlayerController>(GetController());
 	AGameUIHUD* HUD = HUDController->GetHUD<AGameUIHUD>();
 
-	if (nullptr == HUD && false == HUD->IsValidLowLevel())
+	if (nullptr == HUD || false == HUD->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	if (nullptr == DynMAimScreen || false == DynMAimScreen->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -125,10 +157,13 @@ void AMainCharacter::Tick(float _DeltaTime)
 		CharTurnAim(_DeltaTime);
 
 		HUD->GetMainWidget()->SetCrosshairOnOff(true);
+
+		PostProcessComponent->Settings.WeightedBlendables.Array[0].Weight = 1;
 	}
 	else if (EWeaponType::Bow == CurWeponT && false == IsAim)
 	{
 		ChangeViewFTimeline.Reverse();
+
 		HUD->GetMainWidget()->SetCrosshairOnOff(false);
 
 		if (false == WeaponComponent->GetIsLockOn())
@@ -677,6 +712,11 @@ void AMainCharacter::AimZoomTimelineUpdate(float _Value)
 {
 	// FOV의 값이 작아진다
 	MainCameraComponent->FieldOfView = _Value;
+}
+
+void AMainCharacter::AimScreenTimelineUpdate(float _Value)
+{
+	DynMAimScreen->SetScalarParameterValue(TEXT("Alpha"), _Value);
 }
 
 void AMainCharacter::ArmTimelineUpdate(FVector _Value)

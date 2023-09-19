@@ -6,6 +6,7 @@
 #include "Global/Data/NiagaraData.h"
 #include "Global/Data/ParticleData.h"
 #include "Global/Data/SubClassData.h"
+#include "Global/Data/MaterialData.h"
 
 FRandomStream UGlobalGameInstance::MainRandom;
 
@@ -85,6 +86,17 @@ UGlobalGameInstance::UGlobalGameInstance()
 		if (DataTable.Succeeded())
 		{
 			SubClassDatas = DataTable.Object;
+		}
+	}
+
+	{
+		// 머티리얼 데이터
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_MaterialData.DT_MaterialData'");
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			MaterialDatas = DataTable.Object;
 		}
 	}
 }
@@ -249,6 +261,23 @@ TSubclassOf<UObject> UGlobalGameInstance::GetSubClass(FName _Name)
 	}
 
 	return FindTable->Object;
+}
+
+UMaterial* UGlobalGameInstance::GetMaterialAsset(FName _Name)
+{
+	if (nullptr == MaterialDatas)
+	{
+		return nullptr;
+	}
+
+	FMaterialData* FindTable = MaterialDatas->FindRow<FMaterialData>(_Name, _Name.ToString());
+
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
+
+	return FindTable->MaterialAsset;
 }
 
 FAnimaitionData* UGlobalGameInstance::GetAllAnimaitionDatas(FName _Name)

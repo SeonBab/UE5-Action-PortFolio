@@ -9,7 +9,9 @@
 class UNiagaraSystem;
 class UParticleSystem;
 class UPaperSprite;
+class UMaterial;
 
+struct FAnimaitionData;
 struct FWeaponData;
 struct FMonsterData;
 struct FBossData;
@@ -23,17 +25,16 @@ public:
 	UGlobalGameInstance();
 	~UGlobalGameInstance();
 
+	FWeaponData* GetWeaponData(FName _Name);
 	USkeletalMesh* GetWeaponMesh(FName _Name);
+	TMap<EWeaponType, UPaperSprite*> GetWeaponDataTMap();
+	FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
+	FMonsterData* GetMonsterData(FName _Name);
+	FBossData* GetBossData(FName _Name);
 	UNiagaraSystem* GetNiagaraAsset(FName _Name);
 	UParticleSystem* GetParticleAsset(FName _Name);
 	TSubclassOf<UObject> GetSubClass(FName _Name);
-
-	FWeaponData* GetWeaponData(FName _Name);
-	TMap<EWeaponType, UPaperSprite*> GetWeaponDataTMap();
-	FMonsterData* GetMonsterData(FName _Name);
-	FBossData* GetBossData(FName _Name);
-
-	struct FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
+	UMaterial* GetMaterialAsset(FName _Name);
 
 public:
 	static FRandomStream MainRandom;
@@ -53,4 +54,6 @@ private:
 	UDataTable* ParticleDatas;
 	UPROPERTY()
 	UDataTable* SubClassDatas;
+	UPROPERTY()
+	UDataTable* MaterialDatas;
 };

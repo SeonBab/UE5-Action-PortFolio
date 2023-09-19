@@ -56,19 +56,21 @@ void AGlobalAICharacter::BeginPlay()
 
     UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
 
-    if (nullptr == Instance)
+    if (nullptr == Instance || false == Instance->IsValidLowLevel())
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
         return;
     }
 
-    TSubclassOf<UUserWidget> WBPLockOnMark = Instance->GetSubClass(TEXT("LockOnMark"));
+    //TSubclassOf<UObject> ObjLockOnMark = Instance->GetSubClass(TEXT("LockOnMark"));
+    //TSubclassOf<UUserWidget> WBPLockOnMark = Cast<TSubclassOf<UUserWidget>>(ObjLockOnMark);
 
-    if (nullptr == WBPLockOnMark || false == WBPLockOnMark->IsValidLowLevel())
-    {
-        return;
-    }
+    //if (nullptr == WBPLockOnMark)
+    //{
+    //    return;
+    //}
 
-    LockOnMarkWidget->SetWidgetClass(WBPLockOnMark);
+    //LockOnMarkWidget->SetWidgetClass(WBPLockOnMark);
 }
 
 void AGlobalAICharacter::Tick(float _DeltaTime)

@@ -73,6 +73,8 @@ private:
 	UFUNCTION()
 	void AimZoomTimelineUpdate(float _Value);
 	UFUNCTION()
+	void AimScreenTimelineUpdate(float _Value);
+	UFUNCTION()
 	void ArmTimelineUpdate(FVector _Value);
 	UFUNCTION()
 	void AimZoomOnFinish();
@@ -96,16 +98,24 @@ private:
 	float MouseTimeCheck = 0.f;
 
 
-	FTimeline ChangeViewFTimeline;
+	// 활 조준할 때 사용하는 커브
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UCurveFloat* FOVCurveFloat;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UCurveFloat* AimScreenCurveFloat;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UCurveVector* CameraSpringArmVector;
+	// 타임라인의 길이를 설정할 변수
+	FTimeline ChangeViewFTimeline;
+	float AimZoomTimelineLength;
+	// 델리게이트를 사용해 커브와 함수 바인드
 	FOnTimelineFloat FOVUpdateDelegate;
+	FOnTimelineFloat AimScreenUpdateDelegate;
 	FOnTimelineVector ArmUpdateDelegate;
 	FOnTimelineEvent TimelineFinishDelegate;
-	float AimZoomTimelineLength = 1.f;
 
+
+	// FootIKTwoBone
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UFootIKComponent* FootIKComponent;
 	FFootIKOffset FootIKOffset;
@@ -128,4 +138,8 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float FootOffsetRight;
 	float CurCapsuleSize;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* DynMAimScreen;
+	float AimMaterialAlpha;
 };
