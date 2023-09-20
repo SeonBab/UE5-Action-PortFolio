@@ -7,6 +7,7 @@
 #include "Global/Data/ParticleData.h"
 #include "Global/Data/SubClassData.h"
 #include "Global/Data/MaterialData.h"
+#include "Global/Data/SubClassUserWidgetData.h"
 
 FRandomStream UGlobalGameInstance::MainRandom;
 
@@ -90,6 +91,17 @@ UGlobalGameInstance::UGlobalGameInstance()
 	}
 
 	{
+		// 서브 클레스 유저위젯 데이터
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_SubClassUserWidgetData.DT_SubClassUserWidgetData'");
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			SubClassUserWidgetDatas = DataTable.Object;
+		}
+	}
+
+	{
 		// 머티리얼 데이터
 		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_MaterialData.DT_MaterialData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
@@ -107,10 +119,7 @@ UGlobalGameInstance::~UGlobalGameInstance()
 
 USkeletalMesh* UGlobalGameInstance::GetWeaponMesh(FName _Name)
 {
-	if (nullptr == WeaponDatas)
-	{
-		return nullptr;
-	}
+	checkf(nullptr != WeaponDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FWeaponData* FindTable = WeaponDatas->FindRow<FWeaponData>(_Name, _Name.ToString());
 
@@ -131,10 +140,7 @@ USkeletalMesh* UGlobalGameInstance::GetWeaponMesh(FName _Name)
 
 UNiagaraSystem* UGlobalGameInstance::GetNiagaraAsset(FName _Name)
 {
-	if (nullptr == NiagaraDatas)
-	{
-		return nullptr;
-	}
+	checkf(nullptr != NiagaraDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FNiagaraData* FindTable = NiagaraDatas->FindRow<FNiagaraData>(_Name, _Name.ToString());
 
@@ -155,10 +161,7 @@ UNiagaraSystem* UGlobalGameInstance::GetNiagaraAsset(FName _Name)
 
 UParticleSystem* UGlobalGameInstance::GetParticleAsset(FName _Name)
 {
-	if (nullptr == ParticleDatas)
-	{
-		return nullptr;
-	}
+	checkf(nullptr != ParticleDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FParticleData* FindTable = ParticleDatas->FindRow<FParticleData>(_Name, _Name.ToString());
 
@@ -179,11 +182,14 @@ UParticleSystem* UGlobalGameInstance::GetParticleAsset(FName _Name)
 
 FWeaponData* UGlobalGameInstance::GetWeaponData(FName _Name)
 {
-	check(nullptr != WeaponDatas)
+	checkf(nullptr != WeaponDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FWeaponData* FindTable = WeaponDatas->FindRow<FWeaponData>(_Name, _Name.ToString());
 	
-	check(nullptr != FindTable)
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
 
 	return FindTable;
 }
@@ -192,10 +198,7 @@ TMap<EWeaponType, UPaperSprite*> UGlobalGameInstance::GetWeaponDataTMap()
 {
 	TMap<EWeaponType, UPaperSprite*> WeaponArray;
 
-	if (nullptr == WeaponDatas)
-	{
-		return WeaponArray;
-	}
+	checkf(nullptr != WeaponDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	TArray<FName> ArrayName = WeaponDatas->GetRowNames();
 
@@ -214,10 +217,7 @@ TMap<EWeaponType, UPaperSprite*> UGlobalGameInstance::GetWeaponDataTMap()
 
 FMonsterData* UGlobalGameInstance::GetMonsterData(FName _Name)
 {
-	if (nullptr == MonsterDatas)
-	{
-		return nullptr;
-	}
+	checkf(nullptr != MonsterDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FMonsterData* FindTable = MonsterDatas->FindRow<FMonsterData>(_Name, _Name.ToString());
 
@@ -231,10 +231,7 @@ FMonsterData* UGlobalGameInstance::GetMonsterData(FName _Name)
 
 FBossData* UGlobalGameInstance::GetBossData(FName _Name)
 {
-	if (nullptr == BossDatas)
-	{
-		return nullptr;
-	}
+	checkf(nullptr != BossDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FBossData* FindTable = BossDatas->FindRow<FBossData>(_Name, _Name.ToString());
 
@@ -248,10 +245,7 @@ FBossData* UGlobalGameInstance::GetBossData(FName _Name)
 
 TSubclassOf<UObject> UGlobalGameInstance::GetSubClass(FName _Name)
 {
-	if (nullptr == SubClassDatas)
-	{
-		return nullptr;
-	}
+	checkf(nullptr != SubClassDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FSubClassData* FindTable = SubClassDatas->FindRow<FSubClassData>(_Name, _Name.ToString());
 	
@@ -263,12 +257,23 @@ TSubclassOf<UObject> UGlobalGameInstance::GetSubClass(FName _Name)
 	return FindTable->Object;
 }
 
-UMaterial* UGlobalGameInstance::GetMaterialAsset(FName _Name)
+TSubclassOf<UUserWidget> UGlobalGameInstance::GetSubClassUserWidget(FName _Name)
 {
-	if (nullptr == MaterialDatas)
+	checkf(nullptr != SubClassUserWidgetDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
+
+	FSubClassUserWidgetData* FindTable = SubClassUserWidgetDatas->FindRow<FSubClassUserWidgetData>(_Name, _Name.ToString());
+
+	if (nullptr == FindTable)
 	{
 		return nullptr;
 	}
+
+	return FindTable->UserWidget;
+}
+
+UMaterial* UGlobalGameInstance::GetMaterialAsset(FName _Name)
+{
+	checkf(nullptr != MaterialDatas, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FMaterialData* FindTable = MaterialDatas->FindRow<FMaterialData>(_Name, _Name.ToString());
 
@@ -282,11 +287,14 @@ UMaterial* UGlobalGameInstance::GetMaterialAsset(FName _Name)
 
 FAnimaitionData* UGlobalGameInstance::GetAllAnimaitionDatas(FName _Name)
 {
-	check(nullptr != Animations)
+	checkf(nullptr != Animations, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 
 	FAnimaitionData* FindTable = Animations->FindRow<FAnimaitionData>(_Name, _Name.ToString());
 
-	check(nullptr != FindTable)
+	if (nullptr == FindTable)
+	{
+		return nullptr;
+	}
 
 	return FindTable;
 }

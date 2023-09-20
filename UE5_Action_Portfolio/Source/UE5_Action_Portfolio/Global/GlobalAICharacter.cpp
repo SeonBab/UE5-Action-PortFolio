@@ -26,12 +26,19 @@ UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
     {
         AAICon* AICon = GetController<AAICon>();
         
-        if (nullptr == AICon)
+        if (false == IsValid(AICon))
         {
+            UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
             return nullptr;
         }
 
         BlackboardComponent = AICon->GetBlackboardComponent();
+    }
+
+    if (false == IsValid(BlackboardComponent))
+    {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+        return nullptr;
     }
 
     return BlackboardComponent;
@@ -42,8 +49,9 @@ void AGlobalAICharacter::LockOnMarkOnOff(bool _Value)
     UUserWidget* Widget = LockOnMarkWidget->GetWidget();
     ULockOnMark* LockOnMark= Cast<ULockOnMark>(Widget);
 
-    if (nullptr == LockOnMark || false == LockOnMark->IsValidLowLevel())
+    if (false == IsValid(LockOnMark))
     {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return;
     }
 
@@ -56,21 +64,21 @@ void AGlobalAICharacter::BeginPlay()
 
     UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
 
-    if (nullptr == Instance || false == Instance->IsValidLowLevel())
+    if (false == IsValid(Instance))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return;
     }
 
-    //TSubclassOf<UObject> ObjLockOnMark = Instance->GetSubClass(TEXT("LockOnMark"));
-    //TSubclassOf<UUserWidget> WBPLockOnMark = Cast<TSubclassOf<UUserWidget>>(ObjLockOnMark);
+    TSubclassOf<UUserWidget> WBPLockOnMark = Instance->GetSubClassUserWidget(TEXT("LockOnMark"));
 
-    //if (nullptr == WBPLockOnMark)
-    //{
-    //    return;
-    //}
+    if (false == IsValid(WBPLockOnMark))
+    {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+        return;
+    }
 
-    //LockOnMarkWidget->SetWidgetClass(WBPLockOnMark);
+    LockOnMarkWidget->SetWidgetClass(WBPLockOnMark);
 }
 
 void AGlobalAICharacter::Tick(float _DeltaTime)

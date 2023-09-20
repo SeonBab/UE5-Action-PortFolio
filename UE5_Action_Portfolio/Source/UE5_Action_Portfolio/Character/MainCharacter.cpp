@@ -181,8 +181,6 @@ void AMainCharacter::Tick(float _DeltaTime)
 	{
 		FootIKOffset = FootIKComponent->GetFootIKOffset(this, _DeltaTime);
 
-		//TTuple<float, FVector> LeftTrace = IKFootLineTrace(TEXT("LeftFoot"), 45.f);
-		//TTuple<float, FVector> RightTrace = IKFootLineTrace(TEXT("RightFoot"), 45.f);
 		TTuple<float, FVector> LeftTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("LeftFoot"), 45.f);
 		TTuple<float, FVector> RightTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("RightFoot"), 45.f);
 
@@ -752,7 +750,7 @@ FVector AMainCharacter::CameraLineTrace()
 
 	// 끝 지점은 카메라로부터 X값으로 직선이다.
 	FVector CameraForwardVector = MainCameraComponent->GetForwardVector();
-	FVector End = StartLocationVector + (CameraForwardVector * 2000.f);
+	FVector End = StartLocationVector + (CameraForwardVector * 4000.f);
 
 	// 라인 트레이스 채널
 	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;

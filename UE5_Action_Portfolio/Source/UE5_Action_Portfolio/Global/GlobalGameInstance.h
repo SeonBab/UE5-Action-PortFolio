@@ -34,6 +34,7 @@ public:
 	UNiagaraSystem* GetNiagaraAsset(FName _Name);
 	UParticleSystem* GetParticleAsset(FName _Name);
 	TSubclassOf<UObject> GetSubClass(FName _Name);
+	TSubclassOf<UUserWidget> GetSubClassUserWidget(FName _Name);
 	UMaterial* GetMaterialAsset(FName _Name);
 
 public:
@@ -54,6 +55,8 @@ private:
 	UDataTable* ParticleDatas;
 	UPROPERTY()
 	UDataTable* SubClassDatas;
+	UPROPERTY()
+	UDataTable* SubClassUserWidgetDatas;
 	UPROPERTY()
 	UDataTable* MaterialDatas;
 };

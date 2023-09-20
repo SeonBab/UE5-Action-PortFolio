@@ -42,7 +42,6 @@ private:
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent = nullptr;
 	UPROPERTY()
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfigSight = nullptr;
-	//TObjectPtr<class UAISenseConfig_Hearing> AISenseConfigHearing = nullptr;
 
 	UPROPERTY()
 	AActor* PerceivedActor = nullptr;
