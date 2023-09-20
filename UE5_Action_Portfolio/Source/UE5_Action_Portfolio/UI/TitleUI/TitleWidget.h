@@ -2,16 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "TitleScreenWidget.generated.h"
+#include "TitleWidget.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UTitleScreenWidget : public UUserWidget
+class UE5_ACTION_PORTFOLIO_API UTitleWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetEntryTitleScreenOnOff(bool _Value);
+	void SetPressAnyKeyWidgetOnOff(bool _Value);
 
 protected:
 	void NativeConstruct() override;
@@ -19,5 +19,5 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	ESlateVisibility EntryTitleScreenOnOff;
+	ESlateVisibility PressAnyKeyWidgetOnOff;
 };
