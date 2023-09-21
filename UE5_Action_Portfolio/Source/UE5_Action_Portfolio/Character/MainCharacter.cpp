@@ -743,14 +743,14 @@ FVector AMainCharacter::CameraLineTrace()
 	}
 
 	FHitResult HitRes;
+	FVector CameraForwardVector = MainCameraComponent->GetForwardVector();
 
 	// 시작 지점은 카메라로부터 스프링암 만큼 앞으로 간다.
 	FVector StartLocationVector = MainCameraComponent->GetComponentTransform().GetTranslation();
-	StartLocationVector += MainCameraComponent->GetForwardVector() * MainCameraSpringArmComponent->TargetArmLength;
+	StartLocationVector += CameraForwardVector * MainCameraSpringArmComponent->TargetArmLength;
 
 	// 끝 지점은 카메라로부터 X값으로 직선이다.
-	FVector CameraForwardVector = MainCameraComponent->GetForwardVector();
-	FVector End = StartLocationVector + (CameraForwardVector * 4000.f);
+	FVector End = StartLocationVector + (CameraForwardVector * 2000.f);
 
 	// 라인 트레이스 채널
 	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;

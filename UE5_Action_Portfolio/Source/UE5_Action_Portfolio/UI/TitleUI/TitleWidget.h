@@ -12,6 +12,10 @@ class UE5_ACTION_PORTFOLIO_API UTitleWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetPressAnyKeyWidgetOnOff(bool _Value);
+	UFUNCTION(BlueprintCallable)
+	void SetLogoWidgetOnOff(bool _Value);
+	UFUNCTION(BlueprintCallable)
+	void SetMenuButtenWidgetOnOff(bool _Value);
 
 protected:
 	void NativeConstruct() override;
@@ -20,4 +24,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	ESlateVisibility PressAnyKeyWidgetOnOff;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	ESlateVisibility LogoWidgetOnOff;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	ESlateVisibility MenuButtenWidgetOnOff;
 };
