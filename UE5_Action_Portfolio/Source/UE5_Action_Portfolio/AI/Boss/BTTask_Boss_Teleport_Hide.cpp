@@ -6,9 +6,9 @@ EBTNodeResult::Type UBTTask_Boss_Teleport_Hide::ExecuteTask(UBehaviorTreeCompone
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character || false == Character->IsValidLowLevel())
+    if (false == IsValid(Character))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 
@@ -23,22 +23,29 @@ void UBTTask_Boss_Teleport_Hide::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character || false == Character->IsValidLowLevel())
+    if (false == IsValid(Character))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return;
     }
 
     UAnimMontage* Montage = Character->GetAnimMontage(Character->GetAnimState());
+
+    if (false == IsValid(Montage))
+    {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+        return;
+    }
+
     float Time = Montage->CalculateSequenceLength();
 
     if (Time <= GetStateTime(OwnerComp))
     {
         UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-        if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
+        if (false == IsValid(Blackboard))
         {
-            UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+            UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
             return;
         }
 

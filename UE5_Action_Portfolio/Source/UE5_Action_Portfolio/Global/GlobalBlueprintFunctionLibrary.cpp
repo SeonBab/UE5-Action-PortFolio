@@ -8,22 +8,25 @@ void UGlobalBlueprintFunctionLibrary::MainUIOnOff(ESlateVisibility _Value)
 {
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetCurrentWorld(), 0);
 
-	if (nullptr == Controller || false == Controller->IsValidLowLevel())
+	if (false == IsValid(Controller))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	AGameUIHUD* HUD = Cast<AGameUIHUD>(Controller->GetHUD());
 
-	if (nullptr == HUD || false == HUD->IsValidLowLevel())
+	if (false == IsValid(HUD))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UMainWidget* MainWidget = HUD->GetMainWidget();
 
-	if (nullptr == MainWidget || false == MainWidget->IsValidLowLevel())
+	if (false == IsValid(MainWidget))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

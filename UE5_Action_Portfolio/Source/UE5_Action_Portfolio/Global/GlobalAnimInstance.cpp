@@ -43,7 +43,7 @@ void UGlobalAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwningActor());
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}

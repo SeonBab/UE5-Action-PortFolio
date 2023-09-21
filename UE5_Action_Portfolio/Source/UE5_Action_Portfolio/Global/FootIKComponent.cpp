@@ -37,7 +37,7 @@ FFootIKOffset UFootIKComponent::GetFootIKOffset(AGlobalCharacter* _Character, fl
 
 	UCapsuleComponent* CapsuleComponent = _Character->GetCapsuleComponent();
 
-	if (nullptr == CapsuleComponent || false == CapsuleComponent->IsValidLowLevel())
+	if (false == IsValid(CapsuleComponent))
 	{
 		return FootIKOffset;
 	}

@@ -26,9 +26,9 @@ void UBTTask_BossBase::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-	if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

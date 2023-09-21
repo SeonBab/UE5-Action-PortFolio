@@ -6,25 +6,25 @@ EBTNodeResult::Type UBTTask_Boss_RandAttack::ExecuteTask(UBehaviorTreeComponent&
 
     UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-    if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
+    if (false == IsValid(Blackboard))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 
     UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
     
-    if (nullptr == TargetObject || false == TargetObject->IsValidLowLevel())
+    if (false == IsValid(TargetObject))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
     
     AActor* TargetActor = Cast<AActor>(TargetObject);
 
-    if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
+    if (false == IsValid(TargetActor))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 

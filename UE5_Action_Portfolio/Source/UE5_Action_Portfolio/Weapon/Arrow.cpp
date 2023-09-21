@@ -40,9 +40,9 @@ void AArrow::ArrowBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	// 공격 충돌 처리
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Instance || false == Instance->IsValidLowLevel())
+	if (false == IsValid(Instance))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -83,9 +83,9 @@ void AArrow::ArrowChangeCollision(FName _FName)
 
 void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator, AController* _Controller)
 {
-	if (nullptr == _Controller || false == _Controller->IsValidLowLevel())
+	if (false == IsValid(_Controller))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -104,9 +104,9 @@ void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator, AController* 
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Instance || false == Instance->IsValidLowLevel())
+	if (false == IsValid(Instance))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -114,7 +114,7 @@ void AArrow::FireInDirection(FVector _FVector, FRotator _FRotator, AController* 
 
 	 if (nullptr == ParticleSystem || false == ParticleSystem->IsValidLowLevel())
 	 {
-		 UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		 UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		 return;
 	 }
 

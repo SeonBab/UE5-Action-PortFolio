@@ -9,22 +9,22 @@
 
 void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
 		return;
 	}
 
-	CharacterAnimState AnimState = static_cast<CharacterAnimState>(character->GetAnimState());
+	CharacterAnimState AnimState = static_cast<CharacterAnimState>(Character->GetAnimState());
 
 	if (CharacterAnimState::Death == AnimState)
 	{
@@ -42,26 +42,26 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	{
 		if (false == WeaponComponent->GetIsLockOn())
 		{
-			character->SetAnimState(CharacterAnimState::Idle);
+			Character->SetAnimState(CharacterAnimState::Idle);
 		}
 		else if (true == WeaponComponent->GetIsLockOn())
 		{
-			character->SetAnimState(CharacterAnimState::LockOnIdle);
+			Character->SetAnimState(CharacterAnimState::LockOnIdle);
 		}
-		Montage_Play(AllAnimations[character->GetAnimState()], 1.f);
+		Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);
 		WeaponComponent->SetCharacterAirControl(1.f);
 	}
 	else if (GetAnimMontage(CharacterAnimState::EquipOrDisArmBow) == Anim || GetAnimMontage(CharacterAnimState::EquipOrDisArmSwordAndShield) == Anim)
 	{
 		if (false == WeaponComponent->GetIsLockOn())
 		{
-			character->SetAnimState(CharacterAnimState::Idle);
+			Character->SetAnimState(CharacterAnimState::Idle);
 		}
 		else if (true == WeaponComponent->GetIsLockOn())
 		{
-			character->SetAnimState(CharacterAnimState::LockOnIdle);
+			Character->SetAnimState(CharacterAnimState::LockOnIdle);
 		}
-		Montage_Play(AllAnimations[character->GetAnimState()], 1.f);
+		Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);
 		AnimSpeed = 1.f;
 
 		if (true == WeaponComponent->SwordAndSheiledToBow)
@@ -79,8 +79,8 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	{
 		if (EWeaponType::Bow == WeaponComponent->GetWeaponType())
 		{
-			character->SetAnimState(CharacterAnimState::Idle);
-			Montage_Play(AllAnimations[character->GetAnimState()], 1.f);
+			Character->SetAnimState(CharacterAnimState::Idle);
+			Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);
 			WeaponComponent->ArrowReady = false;
 			WeaponComponent->EarlyArrowCheck = false;
 		}
@@ -88,13 +88,13 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		{
 			if (false == WeaponComponent->GetIsLockOn())
 			{
-				character->SetAnimState(CharacterAnimState::Idle);
+				Character->SetAnimState(CharacterAnimState::Idle);
 			}
 			else if (true == WeaponComponent->GetIsLockOn())
 			{
-				character->SetAnimState(CharacterAnimState::LockOnIdle);
+				Character->SetAnimState(CharacterAnimState::LockOnIdle);
 			}
-			Montage_Play(AllAnimations[character->GetAnimState()], 1.f);
+			Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);
 			WeaponComponent->SetCharacterAirControl(1.f);
 		}
 	}
@@ -102,12 +102,12 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	{
 		if (EWeaponType::Sword == WeaponComponent->GetWeaponType())
 		{
-			character->SetAnimState(CharacterAnimState::AimOrBlock);
+			Character->SetAnimState(CharacterAnimState::AimOrBlock);
 
 			// 다시 블락
 			FName SectionName = "AimorBlock2";
 
-			UAnimMontage* Montage = AllAnimations[character->GetAnimState()];
+			UAnimMontage* Montage = AllAnimations[Character->GetAnimState()];
 
 			if (nullptr == Montage)
 			{
@@ -118,25 +118,25 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		}
 		else if (false == WeaponComponent->IsLockOn)
 		{
-			character->SetAnimState(CharacterAnimState::Idle);
+			Character->SetAnimState(CharacterAnimState::Idle);
 		}
 		else if (true == WeaponComponent->IsLockOn)
 		{
-			character->SetAnimState(CharacterAnimState::LockOnIdle);
+			Character->SetAnimState(CharacterAnimState::LockOnIdle);
 		}
 	}
 }
 
 void UMainCharAnimInstance::AnimNotify_RollStop()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -148,26 +148,26 @@ void UMainCharAnimInstance::AnimNotify_RollStop()
 
 void UMainCharAnimInstance::AnimNotify_JumpStart()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	character->Jump();
+	Character->Jump();
 }
 
 void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -175,7 +175,7 @@ void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 	}
 
 	EWeaponType CurWeaponType = WeaponComponent->GetWeaponType();
-	CharacterAnimState CurAnimState = static_cast<CharacterAnimState>(character->GetAnimState());
+	CharacterAnimState CurAnimState = static_cast<CharacterAnimState>(Character->GetAnimState());
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
@@ -226,16 +226,16 @@ void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 
 void UMainCharAnimInstance::AnimNotify_AttackCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	CharacterAnimState AnimState = static_cast<CharacterAnimState>(character->GetAnimState());
+	CharacterAnimState AnimState = static_cast<CharacterAnimState>(Character->GetAnimState());
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -250,13 +250,13 @@ void UMainCharAnimInstance::AnimNotify_AttackCheck()
 		{
 			if (false == WeaponComponent->GetIsLockOn())
 			{
-				character->SetAnimState(CharacterAnimState::Idle);
+				Character->SetAnimState(CharacterAnimState::Idle);
 			}
 			else if (true == WeaponComponent->GetIsLockOn())
 			{
-				character->SetAnimState(CharacterAnimState::LockOnIdle);
+				Character->SetAnimState(CharacterAnimState::LockOnIdle);
 			}
-			Montage_Play(AllAnimations[character->GetAnimState()], 1.0f);
+			Montage_Play(AllAnimations[Character->GetAnimState()], 1.0f);
 		}
 		else
 		{
@@ -267,21 +267,21 @@ void UMainCharAnimInstance::AnimNotify_AttackCheck()
 
 void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	CharacterAnimState AnimState = static_cast<CharacterAnimState>(character->GetAnimState());
+	CharacterAnimState AnimState = static_cast<CharacterAnimState>(Character->GetAnimState());
 
 	if (CharacterAnimState::AimOrBlock == AnimState)
 	{
 		// 다시 에임or 블락
 		FName SectionName = "AimorBlock2";
 
-		UAnimMontage* Montage = AllAnimations[character->GetAnimState()];
+		UAnimMontage* Montage = AllAnimations[Character->GetAnimState()];
 
 		if (nullptr == Montage)
 		{
@@ -294,16 +294,17 @@ void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 
 void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	CharacterAnimState AnimState = static_cast<CharacterAnimState>(character->GetAnimState());
+	CharacterAnimState AnimState = static_cast<CharacterAnimState>(Character->GetAnimState());
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -316,8 +317,8 @@ void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 		WeaponComponent->ArrowReady = false;
 		WeaponComponent->EarlyArrowCheck = false;
 
-		character->SetAnimState(CharacterAnimState::ParryorFire);
-		Montage_Play(AllAnimations[character->GetAnimState()], 1.f);
+		Character->SetAnimState(CharacterAnimState::ParryorFire);
+		Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);
 	}
 	// 발사가 준비된 후 입력을 확인할 때
 	else if (false == WeaponComponent->EarlyArrowCheck && CharacterAnimState::AimOrBlock == AnimState)
@@ -328,14 +329,15 @@ void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 
 void UMainCharAnimInstance::AnimNotify_ChordToHand()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -344,7 +346,7 @@ void UMainCharAnimInstance::AnimNotify_ChordToHand()
 
 	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(WeaponComponent->BowWeaponMesh->GetAnimInstance());
 
-	if (nullptr == BowAnim || false == BowAnim->IsValidLowLevel())
+	if (false == IsValid(BowAnim))
 	{
 		return;
 	}
@@ -354,14 +356,15 @@ void UMainCharAnimInstance::AnimNotify_ChordToHand()
 
 void UMainCharAnimInstance::AnimNotify_ReRoad()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -373,14 +376,15 @@ void UMainCharAnimInstance::AnimNotify_ReRoad()
 
 void UMainCharAnimInstance::AnimNotify_StartAttack()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -406,14 +410,14 @@ void UMainCharAnimInstance::AnimNotify_StartAttack()
 
 			bool IsAim = WeaponComponent->GetIsAimOn();
 
-			if (nullptr == character->GetController())
+			if (nullptr == Character->GetController())
 			{
 				return;
 			}
 			
-			FRotator ArrowRotationValue = character->GetControlRotation();
+			FRotator ArrowRotationValue = Character->GetControlRotation();
 
-			AController* CharController = character->GetController();
+			AController* CharController = Character->GetController();
 
 			if (nullptr == CharController)
 			{
@@ -423,13 +427,13 @@ void UMainCharAnimInstance::AnimNotify_StartAttack()
 			// 발사 방향
 			if (false == IsAim)
 			{
-				FVector CharForwardVector = character->GetActorForwardVector();
+				FVector CharForwardVector = Character->GetActorForwardVector();
 
 				CurArrow->FireInDirection(CharForwardVector, ArrowRotationValue, CharController);
 			}
-			else if (true == IsAim && nullptr != character->GetController())
+			else if (true == IsAim && nullptr != Character->GetController())
 			{
-				AMainCharacter* MainChar = Cast<AMainCharacter>(character);
+				AMainCharacter* MainChar = Cast<AMainCharacter>(Character);
 				FVector TraceTarget = MainChar->CameraLineTrace();
 
 				CurArrow->FireInDirection(TraceTarget, ArrowRotationValue, CharController);
@@ -449,14 +453,14 @@ void UMainCharAnimInstance::AnimNotify_StartAttack()
 
 void UMainCharAnimInstance::AnimNotify_EndAttack()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character && false == character->IsValidLowLevel())
+	if (nullptr == Character && false == Character->IsValidLowLevel())
 	{
 		return;
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -468,26 +472,26 @@ void UMainCharAnimInstance::AnimNotify_EndAttack()
 
 void UMainCharAnimInstance::AnimNotify_Death()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	character->Destroy();
+	Character->Destroy();
 }
 
 void UMainCharAnimInstance::AnimNotify_ParryOnOff()
 {
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
@@ -541,28 +545,28 @@ void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		return;
 	}
 
-	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
+	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
 
-	if (nullptr == character || false == character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
 
-	CharacterAnimState AnimState = static_cast<CharacterAnimState>(character->GetAnimState());
+	CharacterAnimState AnimState = static_cast<CharacterAnimState>(Character->GetAnimState());
 
-	UWeaponComponent* WeaponComponent = character->GetWeaponComponent();
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
 		return;
 	}
 
-	if (false == AllAnimations.Contains(character->GetAnimState()))
+	if (false == AllAnimations.Contains(Character->GetAnimState()))
 	{
 		return;
 	}
 
-	UAnimMontage* Montage = AllAnimations[character->GetAnimState()];
+	UAnimMontage* Montage = AllAnimations[Character->GetAnimState()];
 
 	if (nullptr == Montage)
 	{
@@ -574,13 +578,13 @@ void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		// 무기가 있는 상태에서 없는 상태로 갈 땐 역재생
 		if (EWeaponType::UnArmed == WeaponComponent->GetWeaponType() && (CharacterAnimState::EquipOrDisArmBow == AnimState || CharacterAnimState::EquipOrDisArmSwordAndShield == AnimState))
 		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, character->GetAnimState());
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, Character->GetAnimState());
 			Montage_Play(Montage, AnimSpeed, EMontagePlayReturnType::MontageLength, 1.f);
 		}
 		// 나머지 일반적인 애니메이션 재생
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, character->GetAnimState());
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, Character->GetAnimState());
 			Montage_Play(Montage, AnimSpeed);
 		}
 	}

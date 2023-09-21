@@ -44,9 +44,9 @@ USphereComponent* AFrostbolt::GetSphereComponent()
 
 void AFrostbolt::SetTargetActor(AActor* _TargetActor)
 {
-	if (nullptr == _TargetActor || false == _TargetActor->IsValidLowLevel())
+	if (false == IsValid(TargetActor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -59,9 +59,9 @@ void AFrostbolt::FrostboltBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	AController* Controller = GetCurController();
 
-	if (nullptr == Controller || false == Controller->IsValidLowLevel())
+	if (false == IsValid(Controller))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -73,19 +73,19 @@ void AFrostbolt::FrostboltBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 void AFrostbolt::ParticleSystemFinished(UParticleSystemComponent* _ParticleSystemComponent)
 {
 	// 고드름 파티클로 생성
-	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Inst || false == Inst->IsValidLowLevel())
+	if (false == IsValid(Instance))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	UParticleSystem* FrostboltAttackParticle = Inst->GetParticleAsset(TEXT("FrostboltAttack"));
+	UParticleSystem* FrostboltAttackParticle = Instance->GetParticleAsset(TEXT("FrostboltAttack"));
 
-	if (nullptr == FrostboltAttackParticle || false == FrostboltAttackParticle->IsValidLowLevel())
+	if (false == IsValid(FrostboltAttackParticle))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -113,17 +113,17 @@ void AFrostbolt::Tick(float DeltaTime)
 
 void AFrostbolt::DestroyProjectile(AActor* _Destroy)
 {
-	if (nullptr == DeathCreateObject || false == DeathCreateObject->IsValidLowLevel())
+	if (false == IsValid(DeathCreateObject))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	AActor* Actor = GetWorld()->SpawnActor<AActor>(DeathCreateObject);
 
-	if (nullptr == Actor || false == Actor->IsValidLowLevel())
+	if (false == IsValid(Actor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -134,9 +134,9 @@ void AFrostbolt::DestroyProjectile(AActor* _Destroy)
 void AFrostbolt::AimTarget(float _DeltaTime)
 {
 	// 발사 전까지 타겟을 향해 방향을 돌림
-	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
+	if (false == IsValid(TargetActor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -170,9 +170,9 @@ void AFrostbolt::ShotFrostbolt()
 {
 	SetDeathCheck(true);
 
-	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
+	if (false == IsValid(TargetActor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -182,9 +182,9 @@ void AFrostbolt::ShotFrostbolt()
 	FVector Dir = TargetPos - CurPos;
 	Dir.Normalize();
 
-	if (nullptr == ProjectileMovement || false == ProjectileMovement->IsValidLowLevel())
+	if (false == IsValid(ProjectileMovement))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

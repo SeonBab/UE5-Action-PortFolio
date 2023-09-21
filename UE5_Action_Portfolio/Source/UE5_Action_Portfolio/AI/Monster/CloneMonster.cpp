@@ -102,14 +102,14 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	// PointDamage를 전달 받았다.
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
-		if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
+		if (false == IsValid(EventInstigator))
 		{
 			return 0.f;
 		}
 
 		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
 
-		if (nullptr == EventInstigatorPawn || false == EventInstigatorPawn->IsValidLowLevel())
+		if (false == IsValid(EventInstigatorPawn))
 		{
 			return 0.f;
 		}

@@ -6,9 +6,9 @@ EBTNodeResult::Type UBTTask_Boss_Attack_Melee::ExecuteTask(UBehaviorTreeComponen
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character || false == Character->IsValidLowLevel())
+    if (false == IsValid(Character))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 
@@ -23,17 +23,17 @@ void UBTTask_Boss_Attack_Melee::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 
     AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-    if (nullptr == Character || false == Character->IsValidLowLevel())
+    if (false == IsValid(Character))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return;
     }
 
     UAnimMontage* Montage = Character->GetAnimMontage(Character->GetAnimState());
 
-    if (nullptr == Montage || false == Montage->IsValidLowLevel())
+    if (false == IsValid(Montage))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return;
     }
 

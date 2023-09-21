@@ -16,15 +16,15 @@ AGlobalCharacter* UBTTask_AIBase::GetGlobalCharacter(UBehaviorTreeComponent& Own
 
 	if (nullptr == AICon || false == AICon->IsValidLowLevel())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == AICon || false == AICon->IsValidLowLevel())"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 
 	AGlobalCharacter* Character = AICon->GetPawn<AGlobalCharacter>();
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == Character || false == Character->IsValidLowLevel())"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 

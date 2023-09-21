@@ -13,26 +13,26 @@ void UBTTask_Boss_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-	if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
 	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 	
-	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
+	if (false == IsValid(TargetActor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
 	AGlobalCharacter* CurCharacter = GetGlobalCharacter(OwnerComp);
 	 
-	if (nullptr == CurCharacter || false == CurCharacter->IsValidLowLevel())
+	if (false == IsValid(CurCharacter))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 	

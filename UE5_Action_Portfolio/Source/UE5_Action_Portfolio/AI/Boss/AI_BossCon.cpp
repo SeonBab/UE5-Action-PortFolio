@@ -27,25 +27,25 @@ void AAI_BossCon::OnPossess(APawn* _InPawn)
 
 	AGlobalAICharacter* AICharacter = Cast<AGlobalAICharacter>(_InPawn);
 
-	if (nullptr == AICharacter || false == AICharacter->IsValidLowLevel())
+	if (false == IsValid(AICharacter))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
 	UBehaviorTree* BehaviorTree = AICharacter->GetBehaviorTree();
 	
-	if (nullptr == BehaviorTree || false == BehaviorTree->IsValidLowLevel())
+	if (false == IsValid(BehaviorTree))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
 
-	if (nullptr == CurBlackboardComponent || false == CurBlackboardComponent->IsValidLowLevel())
+	if (false == IsValid(CurBlackboardComponent))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
@@ -54,9 +54,9 @@ void AAI_BossCon::OnPossess(APawn* _InPawn)
 	
 	UBehaviorTreeComponent* CurBehaviorTreeComponent = GetBehaviorTreeComponent();
 
-	if (nullptr == CurBehaviorTreeComponent && false == CurBehaviorTreeComponent->IsValidLowLevel())
+	if (false == IsValid(CurBehaviorTreeComponent))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

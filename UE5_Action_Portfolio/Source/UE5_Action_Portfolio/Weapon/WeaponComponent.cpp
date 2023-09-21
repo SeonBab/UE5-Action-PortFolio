@@ -51,7 +51,7 @@ void UWeaponComponent::SetMeshAttach(USkeletalMeshComponent* _Mesh)
 
 	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
@@ -63,7 +63,7 @@ void UWeaponComponent::ChangeCollisionAttackType()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -122,7 +122,7 @@ void UWeaponComponent::ArrowSpawn()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -147,7 +147,7 @@ void UWeaponComponent::SetCharacterAirControl(float _Value)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -191,7 +191,7 @@ void UWeaponComponent::IsRollMoveToFalse()
 
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -203,7 +203,7 @@ void UWeaponComponent::ChangeWeapon(FName _Weapon)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -232,7 +232,7 @@ void UWeaponComponent::ChangeSetUnArmed()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -273,7 +273,7 @@ void UWeaponComponent::ChangeSetBow()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -309,7 +309,7 @@ void UWeaponComponent::ChangeSetSwordAndSheiled()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -346,7 +346,7 @@ void UWeaponComponent::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -409,7 +409,7 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -530,7 +530,7 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -649,7 +649,7 @@ void UWeaponComponent::RollorRunAction(float _Value)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -783,7 +783,7 @@ void UWeaponComponent::ShiftButtonAction()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -834,7 +834,7 @@ void UWeaponComponent::AttackAction()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -896,7 +896,7 @@ void UWeaponComponent::AimorBlockAtion(float _Value)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -922,7 +922,7 @@ void UWeaponComponent::AimorBlockAtion(float _Value)
 
 		 UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
 
-		if (nullptr == BowAnim || false == BowAnim->IsValidLowLevel())
+		if (false == IsValid(BowAnim))
 		{
 			return;
 		}
@@ -980,7 +980,7 @@ void UWeaponComponent::ParryAction()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -1041,7 +1041,7 @@ bool UWeaponComponent::LockOnAfterRun()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return false;
 	}
@@ -1073,9 +1073,9 @@ AArrow* UWeaponComponent::GetReadyArrow()
 
 FVector UWeaponComponent::GetBowJointLocation()
 {
-	if (nullptr == BowWeaponMesh || false == BowWeaponMesh->IsValidLowLevel())
+	if (false == IsValid(BowWeaponMesh))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return FVector::ZeroVector;
 	}
 
@@ -1110,7 +1110,7 @@ bool UWeaponComponent::GetIsMove()
 
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return IsMove;
 	}
@@ -1148,7 +1148,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -1180,7 +1180,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 
 			UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
 
-			if (nullptr == BowAnim || false == BowAnim->IsValidLowLevel())
+			if (false == IsValid(BowAnim))
 			{
 				return;
 			}
@@ -1210,7 +1210,7 @@ void UWeaponComponent::Death()
 {
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -1221,7 +1221,7 @@ void UWeaponComponent::Death()
 	{
 		UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
 
-		if (nullptr == BowAnim || false == BowAnim->IsValidLowLevel())
+		if (false == IsValid(BowAnim))
 		{
 			return;
 		}
@@ -1246,7 +1246,7 @@ void UWeaponComponent::BeginPlay()
 	
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
@@ -1288,7 +1288,7 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return;
 	}
@@ -1365,7 +1365,7 @@ void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
 		return;
 	}
@@ -1388,7 +1388,7 @@ void UWeaponComponent::BowChordMove()
 	{
 		ACharacter* Character = Cast<ACharacter>(GetOwner());
 
-		if (nullptr == Character || false == Character->IsValidLowLevel())
+		if (false == IsValid(Character))
 		{
 			return;
 		}
@@ -1412,7 +1412,7 @@ CharacterAnimState UWeaponComponent::GetAnimState()
 
 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
-	if (nullptr == GlobalCharacter || false == GlobalCharacter->IsValidLowLevel())
+	if (false == IsValid(GlobalCharacter))
 	{
 		return AnimState;
 	}

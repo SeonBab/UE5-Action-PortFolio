@@ -97,9 +97,9 @@ void AMainCharacter::BeginPlay()
 
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Instance || false == Instance->IsValidLowLevel())
+	if (false == IsValid(Instance))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -107,7 +107,7 @@ void AMainCharacter::BeginPlay()
 
 	if (nullptr == AimScreen || false == AimScreen->IsValidLowLevel())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -122,7 +122,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -139,13 +139,13 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 	if (nullptr == HUD || false == HUD->IsValidLowLevel())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	if (nullptr == DynMAimScreen || false == DynMAimScreen->IsValidLowLevel())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -270,15 +270,17 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	// PointDamage를 전달 받았다.
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
-		if (nullptr == EventInstigator || false == EventInstigator->IsValidLowLevel())
+		if (false == IsValid(EventInstigator))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 
 		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
 
-		if (nullptr == EventInstigatorPawn || false == EventInstigatorPawn->IsValidLowLevel())
+		if (false == IsValid(EventInstigatorPawn))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 

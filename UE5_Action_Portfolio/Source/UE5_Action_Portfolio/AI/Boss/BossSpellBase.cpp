@@ -31,9 +31,9 @@ float ABossSpellBase::GetSpeed()
 
 void ABossSpellBase::SetCurController(AController* _Controller)
 {
-	if (nullptr == _Controller || false == _Controller->IsValidLowLevel())
+	if (false == IsValid(_Controller))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

@@ -6,9 +6,9 @@ EBTNodeResult::Type UBTTask_Boss_Teleport_Rand::ExecuteTask(UBehaviorTreeCompone
 
     UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-    if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
+    if (false == IsValid(Blackboard))
     {
-        UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
         return EBTNodeResult::Failed;
     }
 

@@ -8,17 +8,17 @@ EBTNodeResult::Type UBTTask_Boss_Return::ExecuteTask(UBehaviorTreeComponent& Own
 
 	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return EBTNodeResult::Failed;
 	}
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return EBTNodeResult::Failed;
 	}
 
@@ -38,17 +38,17 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
 
-	if (nullptr == Character || false == Character->IsValidLowLevel())
+	if (false == IsValid(Character))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-	if (nullptr == Blackboard || false == Blackboard->IsValidLowLevel())
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -60,9 +60,9 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	{
 		UNavigationPath* NewNavPath = PathFindNavPath(OwnerComp, ReturnPos);
 
-		if (nullptr == NewNavPath || false == NewNavPath->IsValidLowLevel())
+		if (false == IsValid(NewNavPath))
 		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 
@@ -72,9 +72,9 @@ void UBTTask_Boss_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	UObject* NavObject = Blackboard->GetValueAsObject(TEXT("NavPath"));
 	UNavigationPath* NavPath = Cast<UNavigationPath>(NavObject);
 
-	if (nullptr == NavPath || false == NavPath->IsValidLowLevel())
+	if (false == IsValid(NavPath))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

@@ -50,9 +50,9 @@ void ATornado::SetAttackType(FName _AttackType)
 
 void ATornado::SetTargetActor(AActor* _TargetActor)
 {
-	if (nullptr == _TargetActor || false == _TargetActor->IsValidLowLevel())
+	if (false == IsValid(TargetActor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -87,27 +87,27 @@ void ATornado::Tick(float DeltaTime)
 	if ((DecalFadeStartDelay + DecalFadeDuration) <= DecalTime && false == TornadoSpawnCheck)
 	{
 		// 나이아가라 설정
-		UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+		UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-		if (nullptr == Inst || false == Inst->IsValidLowLevel())
+		if (false == IsValid(Instance))
 		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 
-		UNiagaraSystem* StormNiagara = Inst->GetNiagaraAsset(TEXT("Storm"));
+		UNiagaraSystem* StormNiagara = Instance->GetNiagaraAsset(TEXT("Storm"));
 
-		if (nullptr == StormNiagara || false == StormNiagara->IsValidLowLevel())
+		if (false == IsValid(StormNiagara))
 		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 
 		UNiagaraComponent* CurNiagaraComponent = GetNiagaraComponent();
 
-		if (nullptr == CurNiagaraComponent || false == CurNiagaraComponent->IsValidLowLevel())
+		if (false == IsValid(CurNiagaraComponent))
 		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 		
@@ -124,24 +124,27 @@ void ATornado::Tick(float DeltaTime)
 
 	AController* Controller = GetCurController();
 
-	if (nullptr != Controller)
+	if (false == IsValid(Controller))
 	{
-		FPointDamageEvent DamageEvent;
-		
-		if (1.f > HitTime)
-		{
-			HitTime += DeltaTime;
-		}
-		else if (1.f <= HitTime && nullptr != OverlapOtherActor)
-		{
-			OverlapOtherActor->TakeDamage(Damage, DamageEvent, Controller, this);
-			HitTime = 0.f;
-		}
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
 	}
 
-	if (nullptr == TargetActor || false == TargetActor->IsValidLowLevel())
+	FPointDamageEvent DamageEvent;
+	
+	if (1.f > HitTime)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr or IsValidLowLevel"), __FUNCTION__, __LINE__);
+		HitTime += DeltaTime;
+	}
+	else if (1.f <= HitTime && nullptr != OverlapOtherActor)
+	{
+		OverlapOtherActor->TakeDamage(Damage, DamageEvent, Controller, this);
+		HitTime = 0.f;
+	}
+
+	if (false == IsValid(TargetActor))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
