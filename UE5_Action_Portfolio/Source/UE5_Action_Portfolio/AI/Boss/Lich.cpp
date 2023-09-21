@@ -183,7 +183,7 @@ void ALich::Tick(float DeltaTime)
 	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
 
 	// Å¸°ÙÀ» ÀÒ¾ú´Ù¸é
-	if (nullptr == TargetObject)
+	if (false == IsValid(TargetObject))
 	{
 		LostTarget();
 		BpEventCallBossInfoOff();

@@ -50,7 +50,7 @@ void UGlobalAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	UAnimMontage* Montage = AllAnimations[Character->GetAnimState()];
 
-	if (nullptr == Montage)
+	if (false == IsValid(Montage))
 	{
 		return;
 	}

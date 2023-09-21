@@ -6,15 +6,17 @@ EBTNodeResult::Type UBTTask_Clone_Return::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
-	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	if (false == IsValid(CloneMonster))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return EBTNodeResult::Failed;
 	}
 
 	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
 
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return EBTNodeResult::Failed;
 	}
 
@@ -29,22 +31,25 @@ void UBTTask_Clone_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-	if (nullptr == Blackboard)
+	if (false == IsValid(Blackboard))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
-	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	if (false == IsValid(CloneMonster))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
 
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

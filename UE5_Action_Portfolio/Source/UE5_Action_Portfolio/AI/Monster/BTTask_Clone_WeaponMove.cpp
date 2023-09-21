@@ -15,15 +15,17 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
-	if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+	if (false == IsValid(CloneMonster))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
 
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -31,6 +33,12 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
+
+	if (false == IsValid(TargetActor))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
 
 	FVector TargetPos = TargetActor->GetActorLocation();
 	FVector CurPos = CloneMonster->GetActorLocation();
@@ -146,7 +154,6 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	}
-	// 버그로인한 실패
 	else
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);

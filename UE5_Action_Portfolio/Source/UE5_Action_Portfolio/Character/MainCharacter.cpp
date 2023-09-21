@@ -120,7 +120,7 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -335,15 +335,17 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 			ACloneMonster* EnemyChar = Cast<ACloneMonster>(GlobalChar);
 
-			if (nullptr == EnemyChar)
+			if (false == IsValid(EnemyChar))
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return 0.f;
 			}
 
 			UWeaponComponent* EnemyWeaponComponent = EnemyChar->GetWeaponComponent();
 
-			if (nullptr == EnemyWeaponComponent || false == EnemyWeaponComponent->IsValidLowLevel())
+			if (false == IsValid(EnemyWeaponComponent))
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return 0.f;
 			}
 
@@ -412,7 +414,7 @@ void AMainCharacter::ZoomOut()
 
 void AMainCharacter::Attack()
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -422,7 +424,7 @@ void AMainCharacter::Attack()
 
 void AMainCharacter::MoveForward(float _Value)
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -432,7 +434,7 @@ void AMainCharacter::MoveForward(float _Value)
 
 void AMainCharacter::MoveRight(float _Value)
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -442,7 +444,7 @@ void AMainCharacter::MoveRight(float _Value)
 
 void AMainCharacter::RollorRun(float _Value)
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -452,7 +454,7 @@ void AMainCharacter::RollorRun(float _Value)
 
 void AMainCharacter::JumpAction()
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -462,7 +464,7 @@ void AMainCharacter::JumpAction()
 
 void AMainCharacter::ChangeUnArmed()
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -472,7 +474,7 @@ void AMainCharacter::ChangeUnArmed()
 
 void AMainCharacter::ChangeBow()
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -482,7 +484,7 @@ void AMainCharacter::ChangeBow()
 
 void AMainCharacter::ChangeSwordAndSheiled()
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -492,7 +494,7 @@ void AMainCharacter::ChangeSwordAndSheiled()
 
 void AMainCharacter::Parry()
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -502,7 +504,7 @@ void AMainCharacter::Parry()
 
 void AMainCharacter::AimorBlock(float _Value)
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -512,7 +514,7 @@ void AMainCharacter::AimorBlock(float _Value)
 
 void AMainCharacter::LockOnTarget()
 {
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -592,7 +594,7 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 	{
 		return;
 	}
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}
@@ -739,7 +741,7 @@ FVector AMainCharacter::CameraLineTrace()
 		return TargetVector;
 	}
 
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return TargetVector;
 	}
@@ -808,7 +810,7 @@ void AMainCharacter::LostLockedOnTargetActor()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
+	if (false == IsValid(WeaponComponent))
 	{
 		return;
 	}

@@ -6,8 +6,9 @@ EBTNodeResult::Type UBTTask_Clone_Patrol::ExecuteTask(UBehaviorTreeComponent& Ow
 {
     UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
-    if (nullptr == Blackboard)
+    if (false == IsValid(Blackboard))
     {
+
         return EBTNodeResult::Failed;
     }
 
@@ -36,7 +37,7 @@ EBTNodeResult::Type UBTTask_Clone_Patrol::ExecuteTask(UBehaviorTreeComponent& Ow
 
     ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
-    if (nullptr == CloneMonster || false == CloneMonster->IsValidLowLevel())
+    if (false == IsValid(CloneMonster))
     {
         return EBTNodeResult::Failed;
     }

@@ -14,9 +14,9 @@ ACloneMonster* UBTTask_Clone_Base::GetCloneMonster(UBehaviorTreeComponent& Owner
 
 	ACloneMonster* CloneCharacter = Cast<ACloneMonster>(GlobalCharacter);
 
-	if (nullptr == CloneCharacter || false == CloneCharacter->IsValidLowLevel())
+	if (false == IsValid(CloneCharacter))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == CloneCharacter || false == CloneCharacter->IsValidLowLevel())"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 
@@ -27,10 +27,26 @@ EBTNodeResult::Type UBTTask_Clone_Base::ExecuteTask(UBehaviorTreeComponent& Owne
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	GetCloneMonster(OwnerComp)->GetWeaponComponent()->WAndSButtonAction(0);
-	GetCloneMonster(OwnerComp)->GetWeaponComponent()->DAndAButtonAction(0);
-	GetCloneMonster(OwnerComp)->GetWeaponComponent()->RollorRunAction(0);
-	GetCloneMonster(OwnerComp)->GetWeaponComponent()->AimorBlockAtion(0);
+	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
+
+	if (false == IsValid(CloneMonster))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return EBTNodeResult::Failed;
+	}
+
+	UWeaponComponent* WeaponComponent = CloneMonster->GetWeaponComponent();
+
+	if (false == IsValid(WeaponComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return EBTNodeResult::Failed;
+	}
+
+	WeaponComponent->WAndSButtonAction(0);
+	WeaponComponent->DAndAButtonAction(0);
+	WeaponComponent->RollorRunAction(0);
+	WeaponComponent->AimorBlockAtion(0);
 
 	return EBTNodeResult::InProgress;
 }

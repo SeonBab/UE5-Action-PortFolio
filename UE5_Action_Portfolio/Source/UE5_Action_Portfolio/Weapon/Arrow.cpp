@@ -127,7 +127,7 @@ void AArrow::BeginPlay()
 	
 	UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Instance)
+	if (false == IsValid(Instance))
 	{
 		return;
 	}

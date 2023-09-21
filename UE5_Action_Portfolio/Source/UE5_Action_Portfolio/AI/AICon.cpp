@@ -70,25 +70,31 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 {
 	APawn const* OtherPawn = Cast<APawn>(&Other);
 
-	if (nullptr != OtherPawn)
+	if (false == IsValid(OtherPawn))
 	{
-		const IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController());
-
-		if (nullptr != TeamAgent)
-		{
-			FGenericTeamId OtehrTeamID = TeamAgent->GetGenericTeamId();
-
-			if (1 == OtehrTeamID)
-			{
-				return ETeamAttitude::Friendly;
-			}
-			else
-			{
-				return ETeamAttitude::Hostile;
-			}
-
-		}
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return ETeamAttitude::Friendly;
 	}
+
+	const IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController());
+
+	if (nullptr == TeamAgent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == TeamAgent"), __FUNCTION__, __LINE__);
+		return ETeamAttitude::Friendly;
+	}
+
+	FGenericTeamId OtehrTeamID = TeamAgent->GetGenericTeamId();
+
+	if (1 == OtehrTeamID)
+	{
+		return ETeamAttitude::Friendly;
+	}
+	else
+	{
+		return ETeamAttitude::Hostile;
+	}
+
 	return ETeamAttitude::Neutral;
 }
 
@@ -115,16 +121,11 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 			else if (nullptr != PerceivedActor)
 			{
 				UObject* TargetObject = GetBlackboardComponent()->GetValueAsObject(TEXT("TargetActor"));
-
-				if (nullptr == TargetObject)
-				{
-					return;
-				}
-
 				AActor* TargetActor = Cast<AActor>(TargetObject);
 
-				if (nullptr == TargetActor)
+				if (false == IsValid(TargetActor))
 				{
+					UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 					return;
 				}
 
@@ -147,11 +148,15 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 				// ex) 다른 타겟이 새로 들어오거나 나갈때
 				else
 				{
-					if (nullptr == GetPawn() && false == GetPawn()->IsValidLowLevel())
+					APawn* CurPawn = GetPawn();
+
+					if (IsValid(CurPawn))
 					{
+						UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 						return;
 					}
-					FVector CurLocation = GetPawn()->GetActorLocation();
+
+					FVector CurLocation = CurPawn->GetActorLocation();
 
 					FVector PerceivedActorDis = PerceivedActor->GetActorLocation() - CurLocation;
 					FVector TargetdActorDis = _Actor->GetActorLocation() - CurLocation;
@@ -170,7 +175,7 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 			GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
 		}
 		break;
-	case _Stimulus.SensingFailed: // 타깃 인식 실패
+	case _Stimulus.SensingFailed: // 타겟 인식 실패
 		PerceivedActor = nullptr;
 		GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 		break;

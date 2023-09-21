@@ -41,25 +41,36 @@ void ACloneMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UGlobalGameInstance* Inst = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr != Inst)
+	if (false == IsValid(Instance))
 	{
-		CurMonsterData = Inst->GetMonsterData(DataName);
-		SetHP(CurMonsterData->HP);
-		SetMaxHP(GetHP());
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
 	}
 
-	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), this);
-	GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("StateTime"), 0.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("PatrolRange"), 800.f);
-	GetBlackboardComponent()->SetValueAsFloat(TEXT("MeleeAttackRange"), 180.f);
-	GetBlackboardComponent()->SetValueAsInt(TEXT("PatrolCount"), 0);
-	GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
-	GetBlackboardComponent()->SetValueAsVector(TEXT("PatrolPos"), GetActorLocation());
-	GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), false);
-	GetBlackboardComponent()->SetValueAsBool(TEXT("IsDeath"), false);
+	CurMonsterData = Instance->GetMonsterData(DataName);
+	SetHP(CurMonsterData->HP);
+	SetMaxHP(GetHP());
+
+	UBlackboardComponent* CurBlackboardComponent =GetBlackboardComponent();
+
+	if (false == IsValid(CurBlackboardComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBlackboardComponent->SetValueAsObject(TEXT("SelfActor"), this);
+	CurBlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("StateTime"), 0.f);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("PatrolRange"), 800.f);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 180.f);
+	CurBlackboardComponent->SetValueAsInt(TEXT("PatrolCount"), 0);
+	CurBlackboardComponent->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
+	CurBlackboardComponent->SetValueAsVector(TEXT("PatrolPos"), GetActorLocation());
+	CurBlackboardComponent->SetValueAsBool(TEXT("IsReturn"), false);
+	CurBlackboardComponent->SetValueAsBool(TEXT("IsDeath"), false);
 
 	this->bUseControllerRotationYaw = false;
 }
@@ -104,6 +115,7 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	{
 		if (false == IsValid(EventInstigator))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 
@@ -111,6 +123,7 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 		if (false == IsValid(EventInstigatorPawn))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 
@@ -142,8 +155,9 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
 
-		if (nullptr == GlobalChar)
+		if (false == IsValid(GlobalChar))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 
@@ -165,15 +179,17 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 			AMainCharacter* EnemyChar = Cast<AMainCharacter>(GlobalChar);
 
-			if (nullptr == EnemyChar)
+			if (false == IsValid(EnemyChar))
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return 0.f;
 			}
 
 			UWeaponComponent* EnemyWeaponComponent = EnemyChar->GetWeaponComponent();
 
-			if (nullptr == EnemyWeaponComponent || false == EnemyWeaponComponent->IsValidLowLevel())
+			if (false == IsValid(EnemyWeaponComponent))
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return 0.f;
 			}
 
@@ -212,10 +228,13 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 			{
 				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
 
-				if (nullptr != MainChar)
+				if (false == IsValid(MainChar))
 				{
-					MainChar->LostLockedOnTargetActor();
+					UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+					return 0.f;
 				}
+
+				MainChar->LostLockedOnTargetActor();
 			}
 
 			return FinalDamage;

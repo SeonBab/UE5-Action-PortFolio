@@ -1253,7 +1253,7 @@ void UWeaponComponent::BeginPlay()
 
 	UGlobalGameInstance* Instance = Character->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Instance)
+	if (false == IsValid(Instance))
 	{
 		return;
 	}
@@ -1342,7 +1342,7 @@ void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 	// 공격 충돌 처리
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	if (nullptr == Instance)
+	if (false == IsValid(Instance))
 	{
 		return;
 	}

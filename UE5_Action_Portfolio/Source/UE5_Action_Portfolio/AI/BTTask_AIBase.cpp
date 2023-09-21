@@ -14,7 +14,7 @@ AGlobalCharacter* UBTTask_AIBase::GetGlobalCharacter(UBehaviorTreeComponent& Own
 {
 	AAIController* AICon = OwnerComp.GetOwner<AAIController>();
 
-	if (nullptr == AICon || false == AICon->IsValidLowLevel())
+	if (false == IsValid(AICon))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return nullptr;
@@ -48,8 +48,9 @@ TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& _OwnerComp, FVe
 	PathObject = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), StartPos, _Pos);
 
 	// 경로가 잘 나왔는지 체크
-	if (nullptr == PathObject || false == PathObject->IsValid())
+	if (false == IsValid(PathObject))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return TArray<FVector>();
 	}
 
@@ -69,8 +70,9 @@ UNavigationPath* UBTTask_AIBase::PathFindNavPath(UBehaviorTreeComponent& _OwnerC
 
 	AGlobalCharacter* Character = GetGlobalCharacter(_OwnerComp);
 
-	if (nullptr == Character)
+	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 
@@ -86,9 +88,9 @@ float UBTTask_AIBase::GetStateTime(UBehaviorTreeComponent& OwnerComp)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 
-	if (nullptr == Blackboard)
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if(nullptr == Blackboard)"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if(false == IsValid(Blackboard))"), __FUNCTION__, __LINE__);
 		return 0.f;
 	}
 
@@ -101,9 +103,9 @@ void UBTTask_AIBase::ResetStateTime(UBehaviorTreeComponent& OwnerComp)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 
-	if (nullptr == Blackboard)
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == Blackboard)"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (false == IsValid(Blackboard))"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -114,9 +116,9 @@ UBlackboardComponent* UBTTask_AIBase::GetBlackboardComponent(UBehaviorTreeCompon
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 
-	if (nullptr == Blackboard)
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == Blackboard)"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (false == IsValid(Blackboard))"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 
@@ -136,9 +138,9 @@ void UBTTask_AIBase::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 
-	if (nullptr == Blackboard)
+	if (false == IsValid(Blackboard))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == Blackboard)"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (false == IsValid(Blackboard))"), __FUNCTION__, __LINE__);
 		return;
 	}
 

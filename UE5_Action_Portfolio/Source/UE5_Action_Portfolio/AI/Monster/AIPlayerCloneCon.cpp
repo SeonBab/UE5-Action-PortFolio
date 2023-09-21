@@ -25,25 +25,36 @@ void AAIPlayerCloneCon::OnPossess(APawn* _InPawn)
 {
 	Super::OnPossess(_InPawn);
 
-	if (nullptr == GetBehaviorTreeComponent() && false == GetBehaviorTreeComponent()->IsValidLowLevel())
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == BehaviorTreeComponent && false == BehaviorTreeComponent->IsValidLowLevel())"), __FUNCTION__, __LINE__);
-		return;
-	}
-
 	ACloneMonster* AIPawn = Cast<ACloneMonster>(_InPawn);
 	
 	UBehaviorTree* BehaviorTree = AIPawn->GetBehaviorTree();
 
-	if (nullptr == BehaviorTree || false == BehaviorTree->IsValidLowLevel())
+	if (false == IsValid(BehaviorTree))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	GetBlackboardComponent()->SetValueAsObject(TEXT("SelfActor"), _InPawn);
+	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
 
-	GetBehaviorTreeComponent()->StartTree(*BehaviorTree);
+	if (false == IsValid(CurBlackboardComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	CurBlackboardComponent->SetValueAsObject(TEXT("SelfActor"), _InPawn);
+
+	UBehaviorTreeComponent* CurBehaviorTreeComponent = GetBehaviorTreeComponent();
+
+	if (false == IsValid(CurBehaviorTreeComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBehaviorTreeComponent->StartTree(*BehaviorTree);
 }
 
 void AAIPlayerCloneCon::BeginPlay()
