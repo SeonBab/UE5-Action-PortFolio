@@ -13,15 +13,9 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 
-	}
-
-	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
-
-	if (nullptr == WeaponComponent || false == WeaponComponent->IsValidLowLevel())
-	{
-		return;
 	}
 
 	CharacterAnimState AnimState = static_cast<CharacterAnimState>(Character->GetAnimState());
@@ -35,6 +29,13 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		return;
 	}
 
+	UWeaponComponent* WeaponComponent = Character->GetWeaponComponent();
+
+	if (false == IsValid(WeaponComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
 
 	if (GetAnimMontage(CharacterAnimState::WalkJump) == Anim || GetAnimMontage(CharacterAnimState::RunJump) == Anim ||
 		GetAnimMontage(CharacterAnimState::Roll) == Anim || GetAnimMontage(CharacterAnimState::Attack) == Anim ||

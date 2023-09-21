@@ -22,16 +22,16 @@ ATornado::ATornado()
 	HitTime = 1.f;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
-	CapsuleComponent->SetupAttachment(RootComponent);
+	RootComponent = CapsuleComponent;
 	CapsuleComponent->SetCollisionProfileName("NoCollision", true);
 	CapsuleComponent->SetCapsuleHalfHeight(300.f);
 	CapsuleComponent->SetCapsuleRadius(40.f);
 	CapsuleComponent->SetGenerateOverlapEvents(true);
 
-	GetNiagaraComponent()->SetupAttachment(CapsuleComponent);
+	GetNiagaraComponent()->SetupAttachment(RootComponent);
 
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
-	DecalComponent->SetupAttachment(CapsuleComponent);
+	DecalComponent->SetupAttachment(RootComponent);
 	DecalComponent->DecalSize.Set(10.f, CapsuleComponent->GetScaledCapsuleRadius(), CapsuleComponent->GetUnscaledCapsuleRadius());
 	DecalComponent->FadeStartDelay = 1.f;
 	DecalComponent->FadeDuration = 1.f;
@@ -50,7 +50,7 @@ void ATornado::SetAttackType(FName _AttackType)
 
 void ATornado::SetTargetActor(AActor* _TargetActor)
 {
-	if (false == IsValid(TargetActor))
+	if (false == IsValid(_TargetActor))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -110,6 +110,8 @@ void ATornado::Tick(float DeltaTime)
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
+
+		CurNiagaraComponent->SetAsset(StormNiagara);
 		
 		// 콜리전 변경
 		CapsuleComponent->SetCollisionProfileName(AttackType);

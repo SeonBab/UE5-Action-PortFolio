@@ -466,6 +466,13 @@ void ULichAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 		return;
 	}
 
+	BossAnimState AnimState = static_cast<BossAnimState>(Character->GetAnimState());
+
+	if (BossAnimState::Death == AnimState)
+	{
+		return;
+	}
+
 	if (Anim == GetAnimMontage(BossAnimState::Attack_Left) || Anim == GetAnimMontage(BossAnimState::Attack_Right) ||
 		Anim == GetAnimMontage(BossAnimState::Attack_SpawnTornado) || Anim == GetAnimMontage(BossAnimState::Attack_FrostboltShot) ||
 		Anim == GetAnimMontage(BossAnimState::GotHit) || Anim == GetAnimMontage(BossAnimState::Visible))

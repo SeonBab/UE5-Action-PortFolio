@@ -17,24 +17,24 @@ AFrostbolt::AFrostbolt()
 	TargetActor = nullptr;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	SphereComponent->SetupAttachment(RootComponent);
+	RootComponent = SphereComponent;
 	SphereComponent->SetCollisionProfileName(TEXT("NoCollision"));
 
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComponent"));
-	ParticleComponent->SetupAttachment(SphereComponent);
+	ParticleComponent->SetupAttachment(RootComponent);
 	ParticleComponent->SetWorldScale3D({ 2.f, 2.f, 2.f });
 
 	ShotParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ShotParticleComponent"));
-	ShotParticleComponent->SetupAttachment(SphereComponent);
+	ShotParticleComponent->SetupAttachment(RootComponent);
 	ShotParticleComponent->SetWorldScale3D({ 1.f, 1.5f, 1.5f });
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ProjectileMovement->SetUpdatedComponent(SphereComponent);
+	ProjectileMovement->SetUpdatedComponent(RootComponent);
 	ProjectileMovement->InitialSpeed = 0.f;
 	ProjectileMovement->MaxSpeed = 10000.f;
 	ProjectileMovement->ProjectileGravityScale = false;
 
-	GetNiagaraComponent()->SetupAttachment(SphereComponent);
+	GetNiagaraComponent()->SetupAttachment(RootComponent);
 }
 
 USphereComponent* AFrostbolt::GetSphereComponent()
@@ -44,7 +44,7 @@ USphereComponent* AFrostbolt::GetSphereComponent()
 
 void AFrostbolt::SetTargetActor(AActor* _TargetActor)
 {
-	if (false == IsValid(TargetActor))
+	if (false == IsValid(_TargetActor))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;

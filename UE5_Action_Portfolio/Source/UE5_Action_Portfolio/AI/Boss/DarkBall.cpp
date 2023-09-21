@@ -13,16 +13,17 @@ ADarkBall::ADarkBall()
 	DeathTime = 3.f;
 	Damage = 10.f;
 
+
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	SphereComponent->SetupAttachment(RootComponent);
+	RootComponent = SphereComponent;
 	SphereComponent->SetCollisionProfileName("NoCollision", true);
 	SphereComponent->SetWorldScale3D({ 1.3f, 1.3f, 1.3f });
 
-	GetNiagaraComponent()->SetupAttachment(SphereComponent);
+	GetNiagaraComponent()->SetupAttachment(RootComponent);
 	GetNiagaraComponent()->SetWorldScale3D({ 1.f, 1.f, 1.f });
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	ProjectileMovement->SetUpdatedComponent(SphereComponent);
+	ProjectileMovement->SetUpdatedComponent(RootComponent);
 	ProjectileMovement->InitialSpeed = 0.f;
 	ProjectileMovement->MaxSpeed = 10000.f;
 	ProjectileMovement->ProjectileGravityScale = false;

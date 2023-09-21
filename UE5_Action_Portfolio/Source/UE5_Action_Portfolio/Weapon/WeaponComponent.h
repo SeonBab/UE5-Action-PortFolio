@@ -28,7 +28,6 @@ public:
 	void SetIsBlock(bool _Value);
 	void SetIsParry(bool _Value);
 	void SetnullReadyArrow();
-	//void SetAnimState(CharacterAnimState _State);
 	void IsRollMoveToFalse();
 	void ChangeWeapon(FName _Weapon);
 	void ChangeSetUnArmed();
@@ -53,10 +52,6 @@ public:
 	AArrow* GetReadyArrow();
 	FVector GetBowJointLocation();
 
-	//UFUNCTION(BlueprintCallable)
-	//CharacterAnimState GetAnimState();
-	//UFUNCTION(BlueprintCallable)
-	//int GetAnimStateToInt();
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetWeaponType();
 	UFUNCTION(BlueprintCallable)
@@ -86,8 +81,6 @@ private:
 	CharacterAnimState GetAnimState();
 	
 public:
-	//CharacterAnimState AnimState = CharacterAnimState::Idle;
-
 	// ¹«±â
 	EWeaponType WeaponType = EWeaponType::UnArmed;
 
