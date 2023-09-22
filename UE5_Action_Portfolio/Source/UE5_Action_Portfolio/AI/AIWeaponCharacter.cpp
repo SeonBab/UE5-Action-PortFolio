@@ -187,8 +187,14 @@ float AAIWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		}
 		else if (0.f >= GetHP())
 		{
-			// 플레이어 캐릭터는 죽지 않게
-			CurWeaponComponent->GotHit(Dir);
+			//죽음
+			
+			// 체력은 음수값이 되지하지 않아야한다.
+			SetHP(0.f);
+
+			// 플레이어 캐릭터는 죽으면 안되므로 죽음 처리는 각자 자식이 처리한다.
+
+			return FinalDamage;
 		}
 	}
 

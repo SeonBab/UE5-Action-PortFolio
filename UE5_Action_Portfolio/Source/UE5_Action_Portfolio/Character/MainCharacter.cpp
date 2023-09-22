@@ -67,7 +67,7 @@ void AMainCharacter::BeginPlay()
 	this->bUseControllerRotationYaw = false;
 
 	// 체력 설정
-	SetHP(1000.f);
+	SetHP(100.f);
 	SetMaxHP(GetHP());
 
 	// 타임라인 설정
@@ -232,6 +232,39 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	BpEventCallHPBar();
+	
+	if (0.f >= GetHP())
+	{	
+		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
+
+		if (false == IsValid(EventInstigatorPawn))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+		if (false == IsValid(CurWeaponComponent))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		FVector HitDir = EventInstigatorPawn->GetActorLocation();
+		HitDir.Z = 0;
+
+		FVector CurPos = GetActorLocation();
+		CurPos.Z = 0;
+
+		FVector Dir = HitDir - CurPos;
+		Dir.Normalize();
+
+		// 플레이어 캐릭터는 죽지 않게
+		CurWeaponComponent->GotHit(Dir);
+
+		return FinalDamage;
+	}
 
 	return FinalDamage;
 }

@@ -410,7 +410,7 @@ void UWeaponComponent::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 void UWeaponComponent::WAndSButtonAction(float _Value)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+ 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
 
 	if (false == IsValid(GlobalCharacter))
 	{
@@ -434,6 +434,8 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 	case CharacterAnimState::Death:
 	case CharacterAnimState::Dizzy:
 		MoveXValue = 0;
+		IsForwardWalk = false;
+		IsBackwardWalk = false;
 		return;
 		break;
 	}
@@ -556,6 +558,8 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 	case CharacterAnimState::Death:
 	case CharacterAnimState::Dizzy:
 		MoveYValue = 0;
+		IsLeftWalk = false;
+		IsRightWalk = false;
 		return;
 		break;
 	}

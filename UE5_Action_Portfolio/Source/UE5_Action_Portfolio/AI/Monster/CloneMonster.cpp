@@ -71,5 +71,71 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	if (0.f >= GetHP())
+	{
+		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
+
+		if (false == IsValid(EventInstigatorPawn))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+		if (false == IsValid(CurWeaponComponent))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
+
+		if (false == IsValid(CurBlackboardComponent))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		UCapsuleComponent* CurCapsuleComponent = GetCapsuleComponent();
+
+		if (false == IsValid(CurCapsuleComponent))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		USkeletalMeshComponent* CurSkeletalMeshComponent = GetMesh();
+
+		if (false == IsValid(CurCapsuleComponent))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		// Á×À½
+		CurBlackboardComponent->SetValueAsBool(TEXT("IsDeath"), true);
+		CurCapsuleComponent->SetCollisionProfileName(TEXT("NoCollision"), true);
+		CurSkeletalMeshComponent->SetCollisionProfileName(TEXT("NoCollision"), true);
+		CurWeaponComponent->Death();
+
+		bool PlayerCheck = EventInstigatorPawn->ActorHasTag("Player");
+
+		if (true == PlayerCheck)
+		{
+			AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
+
+			if (false == IsValid(MainChar))
+			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+				return 0.f;
+			}
+
+			MainChar->LostLockedOnTargetActor();
+		}
+		
+		return FinalDamage;
+	}
+
 	return FinalDamage;
 }
