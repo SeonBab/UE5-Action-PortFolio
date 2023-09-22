@@ -1,6 +1,5 @@
 #include "AI/Monster/BTTask_MonsterBase.h"
 #include "Kismet/GamePlayStatics.h"
-#include "AI/Monster/AIPlayerCloneCon.h"
 
 UBTTask_MonsterBase::UBTTask_MonsterBase()
 {
