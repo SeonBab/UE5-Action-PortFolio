@@ -1,5 +1,5 @@
 #include "AI/Boss/LichAnimInstance.h"
-#include "AI/Boss/Enums_Boss.h"
+#include "Global/Enums.h"
 #include "AI/Boss/Lich.h"
 #include "AI/Boss/DarkBall.h"
 #include "AI/Boss/Tornado.h"

@@ -1,5 +1,5 @@
 #include "AI/Boss/Lich.h"
-#include "AI/Boss/Enums_Boss.h"
+#include "Global/Enums.h"
 #include "Global/GlobalGameInstance.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"

@@ -40,3 +40,19 @@ enum class CharacterAnimState : uint8
 	Death,
 	Dizzy,
 };
+
+UENUM(BlueprintType)
+enum class BossAnimState : uint8
+{
+	None,
+	Idle,
+	Walk,
+	Attack_Left,
+	Attack_Right,
+	Attack_SpawnTornado,
+	Attack_FrostboltShot,
+	GotHit,
+	Death,
+	Hide,
+	Visible,
+};
