@@ -9,7 +9,7 @@
 
 void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -130,7 +130,7 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 void UMainCharAnimInstance::AnimNotify_RollStop()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -149,7 +149,7 @@ void UMainCharAnimInstance::AnimNotify_RollStop()
 
 void UMainCharAnimInstance::AnimNotify_JumpStart()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -161,7 +161,7 @@ void UMainCharAnimInstance::AnimNotify_JumpStart()
 
 void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -227,7 +227,7 @@ void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 
 void UMainCharAnimInstance::AnimNotify_AttackCheck()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -268,7 +268,7 @@ void UMainCharAnimInstance::AnimNotify_AttackCheck()
 
 void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -295,7 +295,7 @@ void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 
 void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -330,7 +330,7 @@ void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 
 void UMainCharAnimInstance::AnimNotify_ChordToHand()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -357,7 +357,7 @@ void UMainCharAnimInstance::AnimNotify_ChordToHand()
 
 void UMainCharAnimInstance::AnimNotify_ReRoad()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -377,7 +377,7 @@ void UMainCharAnimInstance::AnimNotify_ReRoad()
 
 void UMainCharAnimInstance::AnimNotify_StartAttack()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -467,7 +467,7 @@ void UMainCharAnimInstance::AnimNotify_StartAttack()
 
 void UMainCharAnimInstance::AnimNotify_EndAttack()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -488,7 +488,7 @@ void UMainCharAnimInstance::AnimNotify_EndAttack()
 
 void UMainCharAnimInstance::AnimNotify_Death()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -501,7 +501,7 @@ void UMainCharAnimInstance::AnimNotify_Death()
 
 void UMainCharAnimInstance::AnimNotify_ParryOnOff()
 {
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -563,10 +563,11 @@ void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 {
 	if (0 == AllAnimations.Num())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> 0 == AllAnimations.Num()"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	AMainCharacter* Character = Cast<AMainCharacter>(GetOwningActor());
+	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -586,6 +587,7 @@ void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	if (false == AllAnimations.Contains(Character->GetAnimState()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == AllAnimations.Contains(Character->GetAnimState())"), __FUNCTION__, __LINE__);
 		return;
 	}
 

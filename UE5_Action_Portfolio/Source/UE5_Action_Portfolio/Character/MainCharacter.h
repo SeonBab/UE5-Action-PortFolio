@@ -1,20 +1,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Global/GlobalCharacter.h"
+#include "AI/AIWeaponCharacter.h"
 #include "Global/Enums.h"
-#include "Global/FootIKComponent.h"
 #include "Components/TimelineComponent.h"
 #include "MainCharacter.generated.h"
 
-class AGlobalAICharacter;
 class USpringArmComponent;
 class UCameraComponent;
-class UWeaponComponent;
 class UPostProcessComponent;
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AGlobalCharacter
+class UE5_ACTION_PORTFOLIO_API AMainCharacter : public AAIWeaponCharacter
 {
 	GENERATED_BODY()
 
@@ -49,14 +46,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LockOnTarget();
 
+	// 락온
 	void LookAtTarget(float _DeltaTime);
 	void CharTurnAim(float _DeltaTime);
 	FVector CameraLineTrace();
 
 	UFUNCTION(BlueprintCallable)
 	void LostLockedOnTargetActor();
-	UFUNCTION(BlueprintCallable)
-	UWeaponComponent* GetWeaponComponent();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BpEventCallHPBar();
@@ -91,11 +87,12 @@ public:
 	AGlobalAICharacter* LockedOnTargetActor = nullptr;
 
 private:
-	bool IsLookAtTartget = false;
-	bool MouseInput = false;
-	float MouseX = 0.f;
-	float MouseY = 0.f;
-	float MouseTimeCheck = 0.f;
+	// 락온에 사용하는 변수
+	bool IsLookAtTartget;
+	bool MouseInput;
+	float MouseX;
+	float MouseY;
+	float MouseTimeCheck;
 
 
 	// 활 조준할 때 사용하는 커브
@@ -114,31 +111,9 @@ private:
 	FOnTimelineVector ArmUpdateDelegate;
 	FOnTimelineEvent TimelineFinishDelegate;
 
-
-	// FootIKTwoBone
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UFootIKComponent* FootIKComponent;
-	FFootIKOffset FootIKOffset;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UWeaponComponent* WeaponComponent;
-
+	// 조준 포스트 프로세스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UPostProcessComponent* PostProcessComponent;
-
-	protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	FRotator FootRotatorLeft;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	FRotator FootRotatorRight;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float HipOffset;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float FootOffsetLeft;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float FootOffsetRight;
-	float CurCapsuleSize;
-
 	UPROPERTY()
 	UMaterialInstanceDynamic* DynMAimScreen;
 	float AimMaterialAlpha;

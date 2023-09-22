@@ -24,7 +24,6 @@ public:
 	void SetCharacterAirControl(float _Value);
 	void SetAttackCheck(bool _Value);
 	void SetIsLockOn(bool _Value);
-	void SetAttackType(FName _AttackType);
 	void SetIsBlock(bool _Value);
 	void SetIsParry(bool _Value);
 	void SetnullReadyArrow();
@@ -139,8 +138,6 @@ public:
 
 
 private:
-	FName AttackType;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AArrow> ArrowClass;
 	UPROPERTY()

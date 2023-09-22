@@ -31,8 +31,9 @@ UWeaponComponent::UWeaponComponent()
 
 void UWeaponComponent::SetMeshAttach(USkeletalMeshComponent* _Mesh)
 {
-	if (nullptr == _Mesh || false == _Mesh->IsValidLowLevel())
+	if (false == IsValid(_Mesh))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -48,15 +49,6 @@ void UWeaponComponent::SetMeshAttach(USkeletalMeshComponent* _Mesh)
 	UnArmedWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &UWeaponComponent::WeaponBeginOverlap);
 	BowWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &UWeaponComponent::WeaponBeginOverlap);
 	SwordWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &UWeaponComponent::WeaponBeginOverlap);
-
-	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwner());
-
-	if (false == IsValid(Character))
-	{
-		return;
-	}
-
-	SetAttackType(Character->GetAttackTypeTag());
 }
 
 void UWeaponComponent::ChangeCollisionAttackType()
@@ -65,11 +57,15 @@ void UWeaponComponent::ChangeCollisionAttackType()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
+	FName AttackType= GlobalCharacter->GetAttackTypeTag();
+
 	if (TEXT("") == AttackType)
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> TEXT("") == AttackType"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -92,8 +88,9 @@ void UWeaponComponent::ChangeCollisionAttackType()
 	}
 	else if (EWeaponType::Bow == WeaponType)
 	{
-		if (nullptr == ReadyArrow)
+		if (false == IsValid(ReadyArrow))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 
@@ -124,6 +121,7 @@ void UWeaponComponent::ArrowSpawn()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -135,8 +133,9 @@ void UWeaponComponent::ArrowSpawn()
 	SParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 
-	if (nullptr == ArrowClass)
+	if (false == IsValid(ArrowClass))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -149,6 +148,7 @@ void UWeaponComponent::SetCharacterAirControl(float _Value)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -163,11 +163,6 @@ void UWeaponComponent::SetAttackCheck(bool _Value)
 void UWeaponComponent::SetIsLockOn(bool _Value)
 {
 	IsLockOn = _Value;
-}
-
-void UWeaponComponent::SetAttackType(FName _AttackType)
-{
-	AttackType = _AttackType;
 }
 
 void UWeaponComponent::SetIsBlock(bool _Value)
@@ -193,6 +188,7 @@ void UWeaponComponent::IsRollMoveToFalse()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -205,13 +201,15 @@ void UWeaponComponent::ChangeWeapon(FName _Weapon)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	UGlobalAnimInstance* Ptr = Cast<UGlobalAnimInstance>(GlobalCharacter->GetMesh()->GetAnimInstance());
 
-	if (nullptr == Ptr)
+	if (false == IsValid(Ptr))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -234,6 +232,7 @@ void UWeaponComponent::ChangeSetUnArmed()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -248,8 +247,9 @@ void UWeaponComponent::ChangeSetUnArmed()
 	// 역재생을 위한 AnimInstance
 	UGlobalAnimInstance* Ptr = Cast<UGlobalAnimInstance>(GlobalCharacter->GetMesh()->GetAnimInstance());
 
-	if (nullptr == Ptr)
+	if (false == IsValid(Ptr))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -275,6 +275,7 @@ void UWeaponComponent::ChangeSetBow()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -311,6 +312,7 @@ void UWeaponComponent::ChangeSetSwordAndSheiled()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -348,6 +350,7 @@ void UWeaponComponent::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -411,6 +414,7 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -532,6 +536,7 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -651,6 +656,7 @@ void UWeaponComponent::RollorRunAction(float _Value)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -785,6 +791,7 @@ void UWeaponComponent::ShiftButtonAction()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -836,6 +843,7 @@ void UWeaponComponent::AttackAction()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -898,6 +906,7 @@ void UWeaponComponent::AimorBlockAtion(float _Value)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -982,6 +991,7 @@ void UWeaponComponent::ParryAction()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1043,6 +1053,7 @@ bool UWeaponComponent::LockOnAfterRun()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return false;
 	}
 
@@ -1112,6 +1123,7 @@ bool UWeaponComponent::GetIsMove()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return IsMove;
 	}
 
@@ -1150,6 +1162,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1187,7 +1200,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 
 			BowAnim->SetBowChordCheck(false);
 
-			if (nullptr == ReadyArrow || false == ReadyArrow->IsValidLowLevel())
+			if (false == IsValid(ReadyArrow))
 			{
 				return;
 			}
@@ -1212,6 +1225,7 @@ void UWeaponComponent::Death()
 
 	if (false == IsValid(GlobalCharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1223,13 +1237,15 @@ void UWeaponComponent::Death()
 
 		if (false == IsValid(BowAnim))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 
 		BowAnim->SetBowChordCheck(false);
 
-		if (nullptr == ReadyArrow || false == ReadyArrow->IsValidLowLevel())
+		if (false == IsValid(ReadyArrow))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 

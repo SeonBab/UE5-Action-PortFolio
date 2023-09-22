@@ -1,7 +1,6 @@
 #include "Character/MainCharacter.h"
 #include "Global/GlobalAICharacter.h"
 #include "Global/GlobalGameInstance.h"
-#include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -15,13 +14,10 @@
 #include "CollisionShape.h"
 #include "DrawDebugHelpers.h"
 #include "Materials/Material.h"
-#include "AI/Monster/CloneMonster.h"
 
 AMainCharacter::AMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 
 	SetActorTypeTag(TEXT("Player"));
 	SetAttackTypeTag(TEXT("PlayerAttack"));
@@ -29,6 +25,16 @@ AMainCharacter::AMainCharacter()
 	Tags.Add(GetActorTypeTag());
 
 	AimZoomTimelineLength = 1.f;
+
+	BaseTurnRate = 30.f;
+	BaseLookUpRate = 30.f;
+
+	// 락온에 사용할 변수
+	IsLookAtTartget = false;
+	MouseInput = false;
+	MouseX = 0.f;
+	MouseY = 0.f;
+	MouseTimeCheck = 0.f;
 
 	MainCameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	MainCameraSpringArmComponent->SetupAttachment(GetCapsuleComponent());
@@ -38,8 +44,6 @@ AMainCharacter::AMainCharacter()
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
 	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 55.f, 0.f));
-	BaseTurnRate = 30.f;
-	BaseLookUpRate = 30.f;
 	
 	FOVUpdateDelegate.BindUFunction(this, FName("AimZoomTimelineUpdate"));
 	AimScreenUpdateDelegate.BindUFunction(this, FName("AimScreenTimelineUpdate"));
@@ -48,18 +52,6 @@ AMainCharacter::AMainCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate.Yaw = 360.f;
-
-	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
-	float CapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-	CurCapsuleSize = CapsuleSize;
-
-	FootIKComponent = CreateDefaultSubobject<UFootIKComponent>(TEXT("FootIK"));
-	FootIKComponent->SetBeginCapsuleSize(CapsuleSize);
-	FootIKComponent->SetTraceDis(45.f);
-	FootIKComponent->SetFootSoket(TEXT("LeftFoot"), TEXT("RightFoot"));
-
-	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon"));
-	WeaponComponent->SetMeshAttach(GetMesh());
 
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcess"));
 	FWeightedBlendable WeightedBlendable;
@@ -73,6 +65,10 @@ void AMainCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	this->bUseControllerRotationYaw = false;
+
+	// 체력 설정
+	SetHP(1000.f);
+	SetMaxHP(GetHP());
 
 	// 타임라인 설정
 	if (nullptr != FOVCurveFloat && nullptr != AimScreenCurveFloat && nullptr != CameraSpringArmVector)
@@ -92,9 +88,7 @@ void AMainCharacter::BeginPlay()
 		ChangeViewFTimeline.SetLooping(false);
 	}
 
-	SetHP(1000.f);
-	SetMaxHP(GetHP());
-
+	// 포스트 프로세스 조준 머티리얼 설정
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
 	if (false == IsValid(Instance))
@@ -105,7 +99,7 @@ void AMainCharacter::BeginPlay()
 
 	UMaterial* AimScreen = Instance->GetMaterialAsset(TEXT("AimScreen"));
 
-	if (nullptr == AimScreen || false == AimScreen->IsValidLowLevel())
+	if (false == IsValid(AimScreen))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -120,7 +114,9 @@ void AMainCharacter::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	if (false == IsValid(WeaponComponent))
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -129,8 +125,8 @@ void AMainCharacter::Tick(float _DeltaTime)
 	// 락온 타겟에 고정
 	LookAtTarget(_DeltaTime);
 
-	EWeaponType CurWeponT = WeaponComponent->GetWeaponType();
-	bool IsAim = WeaponComponent->GetIsAimOn();
+	EWeaponType CurWeponT = CurWeaponComponent->GetWeaponType();
+	bool IsAim = CurWeaponComponent->GetIsAimOn();
 
 	ChangeViewFTimeline.TickTimeline(_DeltaTime);
 
@@ -166,43 +162,11 @@ void AMainCharacter::Tick(float _DeltaTime)
 
 		HUD->GetMainWidget()->SetCrosshairOnOff(false);
 
-		if (false == WeaponComponent->GetIsLockOn())
+		if (false == CurWeaponComponent->GetIsLockOn())
 		{
 			this->bUseControllerRotationYaw = false;
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 		}
-	}
-
-	CharacterAnimState CurState = static_cast<CharacterAnimState>(GetAnimState());
-	bool IsFall = GetMovementComponent()->IsFalling();
-
-	// 공중에 있으면 본의 위치를 변경 하지 않는다
-	if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState) && false == IsFall)
-	{
-		FootIKOffset = FootIKComponent->GetFootIKOffset(this, _DeltaTime);
-
-		TTuple<float, FVector> LeftTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("LeftFoot"), 45.f);
-		TTuple<float, FVector> RightTrace = FootIKComponent->FootIKLineTrace(this, GetCapsuleComponent(), TEXT("RightFoot"), 45.f);
-
-		//UpdateFootRotation(_DeltaTime, NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
-		//UpdateFootRotation(_DeltaTime, NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
-		//FootRotatorLeft = FootIKOffset.FootIKRotatorLeft;
-		//FootRotatorRight = FootIKOffset.FootIKRotatorRight;
-		FootIKComponent->UpdateFootRotation(_DeltaTime, FootIKComponent->NormalToRotator(LeftTrace.Get<1>()), &FootRotatorLeft, 20.f);
-		FootIKComponent->UpdateFootRotation(_DeltaTime, FootIKComponent->NormalToRotator(RightTrace.Get<1>()), &FootRotatorRight, 20.f);
-
-		float HipOffsetValue = UKismetMathLibrary::Min(LeftTrace.Get<0>(), RightTrace.Get<0>());
-
-		if (0.f < HipOffsetValue)
-		{
-			HipOffsetValue = 0.f;
-		}
-
-		FootIKComponent->UpdateFootOffset(_DeltaTime, HipOffsetValue, &HipOffset, 20.f);
-		FootIKComponent->UpdateCapsuleHalfHeight(GetCapsuleComponent(), _DeltaTime, HipOffsetValue, false);
-
-		FootIKComponent->UpdateFootOffset(_DeltaTime, LeftTrace.Get<0>() - HipOffsetValue, &FootOffsetLeft, 20.f);
-		FootIKComponent->UpdateFootOffset(_DeltaTime, RightTrace.Get<0>() - HipOffsetValue, &FootOffsetRight, 20.f);
 	}
 }
 
@@ -267,112 +231,6 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	// PointDamage를 전달 받았다.
-	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
-	{
-		if (false == IsValid(EventInstigator))
-		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-			return 0.f;
-		}
-
-		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
-
-		if (false == IsValid(EventInstigatorPawn))
-		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-			return 0.f;
-		}
-
-		bool IsRoll = WeaponComponent->GetIsRollMove();
-
-		if (true == IsRoll)
-		{
-			return 0.f;
-		}
-
-		FVector HitDir = EventInstigatorPawn->GetActorLocation();
-		HitDir.Z = 0;
-
-		FVector CurPos = GetActorLocation();
-		CurPos.Z = 0;
-
-		FVector Dir = HitDir - CurPos;
-		Dir.Normalize();
-
-		FVector CurForward = GetActorForwardVector();
-		CurForward.Normalize();
-
-		float Angle0 = Dir.Rotation().Yaw;
-		float Angle1 = CurForward.Rotation().Yaw;
-
-		bool BlockCheck = WeaponComponent->GetIsBlock();
-		bool ParryCheck = WeaponComponent->GetIsParry();
-		bool IsInvincibilityCheck = GetIsInvincibility();
-
-		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
-
-		if (nullptr == GlobalChar)
-		{
-			return 0.f;
-		}
-
-		bool EnemyParrybool = GlobalChar->GetParrybool();
-
-		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
-		{
-			FinalDamage *= 0.1f;
-		}
-		else if (true == IsInvincibilityCheck)
-		{
-			FinalDamage = 0.f;
-
-			return FinalDamage;
-		}
-		else if (160.f >= FMath::Abs(Angle0 - Angle1) && (true == ParryCheck && true == EnemyParrybool))
-		{
-			FinalDamage = 0.f;
-
-			ACloneMonster* EnemyChar = Cast<ACloneMonster>(GlobalChar);
-
-			if (false == IsValid(EnemyChar))
-			{
-				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-				return 0.f;
-			}
-
-			UWeaponComponent* EnemyWeaponComponent = EnemyChar->GetWeaponComponent();
-
-			if (false == IsValid(EnemyWeaponComponent))
-			{
-				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-				return 0.f;
-			}
-
-			EnemyWeaponComponent->OverlapEnd();
-
-			EnemyChar->SetAnimState(CharacterAnimState::Dizzy);
-
-			return FinalDamage;
-		}
-
-		if (0.f < GetHP() && 0.f < FinalDamage)
-		{
-			SetHP(GetHP() - FinalDamage);
-		}
-
-		if (0.f < GetHP())
-		{
-			// 생존
-			WeaponComponent->GotHit(Dir);
-		}
-		else if (0.f >= GetHP())
-		{
-			// 플레이어 캐릭터는 죽지 않게
-			WeaponComponent->GotHit(Dir);
-		}
-	}
-
 	BpEventCallHPBar();
 
 	return FinalDamage;
@@ -380,8 +238,9 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void AMainCharacter::ZoomIn()
 {
-	if (nullptr == MainCameraSpringArmComponent || false == MainCameraSpringArmComponent->IsValidLowLevel())
+	if (false == IsValid(MainCameraSpringArmComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -397,8 +256,9 @@ void AMainCharacter::ZoomIn()
 
 void AMainCharacter::ZoomOut()
 {
-	if (nullptr == MainCameraSpringArmComponent || false == MainCameraSpringArmComponent->IsValidLowLevel())
+	if (false == IsValid(MainCameraSpringArmComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -414,113 +274,126 @@ void AMainCharacter::ZoomOut()
 
 void AMainCharacter::Attack()
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->AttackAction();
+	GetWeaponComponent()->AttackAction();
 }
 
 void AMainCharacter::MoveForward(float _Value)
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->WAndSButtonAction(_Value);
+	GetWeaponComponent()->WAndSButtonAction(_Value);
 }
 
 void AMainCharacter::MoveRight(float _Value)
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->DAndAButtonAction(_Value);
+	GetWeaponComponent()->DAndAButtonAction(_Value);
 }
 
 void AMainCharacter::RollorRun(float _Value)
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->RollorRunAction(_Value);
+	GetWeaponComponent()->RollorRunAction(_Value);
 }
 
 void AMainCharacter::JumpAction()
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->ShiftButtonAction();
+	GetWeaponComponent()->ShiftButtonAction();
 }
 
 void AMainCharacter::ChangeUnArmed()
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->ChangeSetUnArmed();
+	GetWeaponComponent()->ChangeSetUnArmed();
 }
 
 void AMainCharacter::ChangeBow()
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->ChangeSetBow();
+	GetWeaponComponent()->ChangeSetBow();
 }
 
 void AMainCharacter::ChangeSwordAndSheiled()
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->ChangeSetSwordAndSheiled();
+	GetWeaponComponent()->ChangeSetSwordAndSheiled();
 }
 
 void AMainCharacter::Parry()
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->ParryAction();
+	GetWeaponComponent()->ParryAction();
 }
 
 void AMainCharacter::AimorBlock(float _Value)
 {
-	if (false == IsValid(WeaponComponent))
+	if (false == IsValid(GetWeaponComponent()))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->AimorBlockAtion(_Value);
+	GetWeaponComponent()->AimorBlockAtion(_Value);
 }
 
 void AMainCharacter::LockOnTarget()
 {
-	if (false == IsValid(WeaponComponent))
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	// 플립/플롭
-	if (false == WeaponComponent->GetIsLockOn())
+	if (false == CurWeaponComponent->GetIsLockOn())
 	{
 		FVector Start = GetActorLocation(); // 시작 지점
 		Start.Z += BaseEyeHeight;
@@ -563,12 +436,13 @@ void AMainCharacter::LockOnTarget()
 		// 가장 가까운 몬스터 락온
 		if (nullptr != HitNearActor)
 		{
-			WeaponComponent->SetIsLockOn(true);
+			CurWeaponComponent->SetIsLockOn(true);
 			LockedOnTargetActor = Cast<AGlobalAICharacter>(HitNearActor);
 			LockedOnTargetActor->LockOnMarkOnOff(true);
+			IsLookAtTartget = true;
 		}
 	}
-	else if (true == WeaponComponent->GetIsLockOn())
+	else if (true == CurWeaponComponent->GetIsLockOn())
 	{
 		LostLockedOnTargetActor();
 	}
@@ -576,6 +450,12 @@ void AMainCharacter::LockOnTarget()
 
 void AMainCharacter::LookAtTarget(float _DeltaTime)
 {
+	if (false == IsLookAtTartget)
+	{
+		// 락온 중이 아니다
+		return;
+	}
+
 	// 일정 시간 후 MouseInput는 false가 되며 화면 고정
 	if (true == MouseInput)
 	{
@@ -590,27 +470,35 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 		MouseY = 0.f;
 	}
 
-	if (nullptr == LockedOnTargetActor)
+	if (false == IsValid(LockedOnTargetActor))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
-	if (false == IsValid(WeaponComponent))
+
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
-	bool IsAim = WeaponComponent->GetIsAimOn();
+
+	bool IsAim = CurWeaponComponent->GetIsAimOn();
+
 	if (true == IsAim)
 	{
 		return;
 	}
-	if (true == WeaponComponent->GetLockOnCheck())
+	if (true == CurWeaponComponent->GetLockOnCheck())
 	{
 		return;
 	}
 
 	APlayerController* PlayerCon = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (nullptr == PlayerCon)
+	if (false == IsValid(PlayerCon))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -718,6 +606,7 @@ void AMainCharacter::AimZoomTimelineUpdate(float _Value)
 
 void AMainCharacter::AimScreenTimelineUpdate(float _Value)
 {
+	// 조준시 화면 테두리가 어두워진다
 	DynMAimScreen->SetScalarParameterValue(TEXT("Alpha"), _Value);
 }
 
@@ -736,13 +625,16 @@ FVector AMainCharacter::CameraLineTrace()
 {
 	FVector TargetVector = FVector::ZeroVector;
 
-	if (nullptr == MainCameraSpringArmComponent || nullptr == MainCameraComponent)
+	if (false == IsValid(MainCameraSpringArmComponent))
 	{
 		return TargetVector;
 	}
 
-	if (false == IsValid(WeaponComponent))
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return TargetVector;
 	}
 
@@ -781,7 +673,7 @@ FVector AMainCharacter::CameraLineTrace()
 	}
 
 	// 화살이 날아갈 방향을 구한다
-	FVector Joint = WeaponComponent->GetBowJointLocation();
+	FVector Joint = CurWeaponComponent->GetBowJointLocation();
 	FVector ReturnVector = TargetVector - Joint;
 
 	// Normalize 해줘야한다.
@@ -792,15 +684,16 @@ FVector AMainCharacter::CameraLineTrace()
 
 void AMainCharacter::LostLockedOnTargetActor()
 {
-	if (nullptr != LockedOnTargetActor || false != LockedOnTargetActor->IsValidLowLevel())
+
+	if (nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel()"), __FUNCTION__, __LINE__);
 		LockedOnTargetActor->LockOnMarkOnOff(false);
 		LockedOnTargetActor = nullptr;
 	}
-	else if (nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel())
-	{
-		
-	}
+
+	LockedOnTargetActor->LockOnMarkOnOff(false);
+	LockedOnTargetActor = nullptr;
 
 	IsLookAtTartget = false;
 	MouseInput = false;
@@ -810,16 +703,14 @@ void AMainCharacter::LostLockedOnTargetActor()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	if (false == IsValid(WeaponComponent))
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	WeaponComponent->SetIsLockOn(false);
-	WeaponComponent->SetLockOnCheck(false);
-}
-
-UWeaponComponent* AMainCharacter::GetWeaponComponent()
-{
-	return WeaponComponent;
+	CurWeaponComponent->SetIsLockOn(false);
+	CurWeaponComponent->SetLockOnCheck(false);
 }
