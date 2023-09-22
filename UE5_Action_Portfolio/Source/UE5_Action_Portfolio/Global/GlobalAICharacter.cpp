@@ -46,6 +46,12 @@ UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
 
 void AGlobalAICharacter::LockOnMarkOnOff(bool _Value)
 {
+    if (false == IsValid(LockOnMarkWidget))
+    {
+        UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+        return;
+    }
+
     UUserWidget* Widget = LockOnMarkWidget->GetWidget();
     ULockOnMark* LockOnMark= Cast<ULockOnMark>(Widget);
 

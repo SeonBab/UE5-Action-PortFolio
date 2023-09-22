@@ -718,15 +718,15 @@ FVector AMainCharacter::CameraLineTrace()
 void AMainCharacter::LostLockedOnTargetActor()
 {
 
-	if (nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel())
+	if (true == IsValid(LockedOnTargetActor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel()"), __FUNCTION__, __LINE__);
 		LockedOnTargetActor->LockOnMarkOnOff(false);
 		LockedOnTargetActor = nullptr;
 	}
-
-	LockedOnTargetActor->LockOnMarkOnOff(false);
-	LockedOnTargetActor = nullptr;
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel()"), __FUNCTION__, __LINE__);
+	}
 
 	IsLookAtTartget = false;
 	MouseInput = false;
