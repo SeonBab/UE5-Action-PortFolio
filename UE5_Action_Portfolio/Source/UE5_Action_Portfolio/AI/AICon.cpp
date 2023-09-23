@@ -1,6 +1,7 @@
 #include "AI/AICon.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Global/Enums.h"
 
 AAICon::AAICon()
 {
@@ -13,6 +14,15 @@ AAICon::AAICon()
 	AIPerceptionComponent->ConfigureSense(*AISenseConfigSight);
 	AIPerceptionComponent->SetDominantSense(UAISenseConfig_Sight::StaticClass());
 	AIPerceptionComponent->SetDominantSense(AISenseConfigSight->GetSenseImplementation());
+
+	// 각 인덱스별로 팀을 구분하고, 팀별로 서로 적대적인지 친구인지 중립인지 구분한다.
+	Attitudes = {
+		{ETeamAttitude::Friendly, ETeamAttitude::Neutral, ETeamAttitude::Neutral, ETeamAttitude::Neutral, ETeamAttitude::Neutral }, // Neutral
+		{ETeamAttitude::Neutral, ETeamAttitude::Friendly, ETeamAttitude::Hostile, ETeamAttitude::Hostile, ETeamAttitude::Hostile }, // PlayerTeam
+		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Hostile, ETeamAttitude::Friendly }, // CloneTeam
+		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Friendly }, // MonsterTeam
+		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Friendly, ETeamAttitude::Friendly }, // BossTeam
+	};
 }
 
 void AAICon::Tick(float _DeltaTime)
@@ -73,7 +83,7 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 	if (false == IsValid(OtherPawn))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return ETeamAttitude::Friendly;
+		return ETeamAttitude::Neutral;
 	}
 
 	const IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController());
@@ -81,18 +91,18 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 	if (nullptr == TeamAgent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == TeamAgent"), __FUNCTION__, __LINE__);
-		return ETeamAttitude::Friendly;
+		return ETeamAttitude::Neutral;
 	}
 
+	FGenericTeamId CurTeamID = this->GetGenericTeamId();
 	FGenericTeamId OtehrTeamID = TeamAgent->GetGenericTeamId();
 
-	if (1 == OtehrTeamID)
+	bool CurTeamIDValid = Attitudes.IsValidIndex(CurTeamID.GetId());
+	bool OtehrTeamIDValid = Attitudes.IsValidIndex(OtehrTeamID.GetId());
+
+	if (true == CurTeamIDValid && true == OtehrTeamIDValid)
 	{
-		return ETeamAttitude::Friendly;
-	}
-	else
-	{
-		return ETeamAttitude::Hostile;
+		return Attitudes[CurTeamID.GetId()][OtehrTeamID.GetId()];
 	}
 
 	return ETeamAttitude::Neutral;

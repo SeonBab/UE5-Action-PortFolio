@@ -3,6 +3,16 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
+enum class TeamType : uint8
+{
+	Neutral,
+	PlayerTeam,
+	CloneTeam,
+	MonsterTeam,
+	BossTeam,
+};
+
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	None,
@@ -12,7 +22,6 @@ enum class EWeaponType : uint8
 	Shiled,
 	Arrow,
 };
-
 
 UENUM(BlueprintType)
 enum class CharacterAnimState : uint8
@@ -39,6 +48,17 @@ enum class CharacterAnimState : uint8
 	AimOrBlockGotHit,
 	Death,
 	Dizzy,
+};
+
+UENUM(BlueprintType)
+enum class MonsterAnimState : uint8
+{
+	None,
+	Idle,
+	Walk,
+	Attack,
+	GotHit,
+	Death,
 };
 
 UENUM(BlueprintType)

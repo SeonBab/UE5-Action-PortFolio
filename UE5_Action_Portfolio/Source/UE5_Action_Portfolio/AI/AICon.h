@@ -18,7 +18,6 @@ class UE5_ACTION_PORTFOLIO_API AAICon : public AAIController
 
 public:
 	AAICon();
-	void Tick(float _DeltaTime) override;
 
 	UBehaviorTreeComponent* GetBehaviorTreeComponent();
 	UBlackboardComponent* GetBlackboardComponent();
@@ -26,6 +25,7 @@ public:
 	UAISenseConfig_Sight* GetAISenseConfigSight();
 
 protected:
+	void Tick(float _DeltaTime) override;
 	virtual void OnPossess(APawn* _InPawn) override;
 	virtual void BeginPlay() override;
 	ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
@@ -47,4 +47,7 @@ private:
 	AActor* PerceivedActor = nullptr;
 	bool TargetLost = false;
 	float LostTimer = 0.f;
+
+	// ÆÀ ÀÎ½Ä ¹è¿­
+	TArray<TArray<ETeamAttitude::Type>> Attitudes;
 };

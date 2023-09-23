@@ -13,7 +13,8 @@ AAIPlayerCloneCon::AAIPlayerCloneCon()
 	GetAISenseConfigSight()->PeripheralVisionAngleDegrees = 90.f;
 	GetAISenseConfigSight()->SetMaxAge(5.f);
 
-	AAIController::SetGenericTeamId(FGenericTeamId(1));
+	int Team = static_cast<int>(TeamType::CloneTeam);
+	AAIController::SetGenericTeamId(FGenericTeamId(Team));
 }
 
 void AAIPlayerCloneCon::Tick(float _DeltaTime)
