@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/AIWeaponCharacter.h"
+#include "AI/Monster/AIWeaponCharacter.h"
 #include "Global/Enums.h"
 #include "Components/TimelineComponent.h"
 #include "MainCharacter.generated.h"

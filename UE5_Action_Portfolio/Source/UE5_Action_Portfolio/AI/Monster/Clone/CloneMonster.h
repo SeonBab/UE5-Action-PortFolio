@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/AIWeaponCharacter.h"
+#include "AI/Monster/AIWeaponCharacter.h"
 #include "Global/Data/MonsterData.h"
 #include "CloneMonster.generated.h"
 
@@ -19,7 +19,7 @@ protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 private:
-	const struct FMonsterData* CurMonsterData;
+	const struct FMonsterData* MonsterData;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName;
 };

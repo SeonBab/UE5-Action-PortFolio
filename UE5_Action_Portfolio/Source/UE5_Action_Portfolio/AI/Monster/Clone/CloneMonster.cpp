@@ -36,8 +36,8 @@ void ACloneMonster::BeginPlay()
 		return;
 	}
 
-	CurMonsterData = Instance->GetMonsterData(DataName);
-	SetHP(CurMonsterData->HP);
+	MonsterData = Instance->GetMonsterData(DataName);
+	SetHP(MonsterData->HP);
 	SetMaxHP(GetHP());
 
 	UBlackboardComponent* CurBlackboardComponent =GetBlackboardComponent();

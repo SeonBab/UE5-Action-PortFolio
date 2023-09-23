@@ -14,6 +14,8 @@ class UE5_ACTION_PORTFOLIO_API UHealthBar : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetHPInfo(float _HP, float _MaxHP);
+	UFUNCTION(BlueprintCallable)
+	void SetHealthBarOnOff(bool _Value);
 	
 protected:
 	void NativeConstruct() override;
@@ -22,4 +24,7 @@ protected:
 private:
 	UImage* HPBar;
 	UImage* MaxHPBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	ESlateVisibility HealthBarOnOff;
 };

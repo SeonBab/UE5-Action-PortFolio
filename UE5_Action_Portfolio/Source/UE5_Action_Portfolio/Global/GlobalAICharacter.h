@@ -19,7 +19,7 @@ public:
 	UBlackboardComponent* GetBlackboardComponent();
 
 	UFUNCTION(BlueprintCallable)
-	void LockOnMarkOnOff(bool _Value);
+	void SetAILockOnMarkOnOff(bool _Value);
 
 protected:
 	virtual void BeginPlay() override;

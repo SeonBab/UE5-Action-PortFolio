@@ -11,12 +11,12 @@ class UE5_ACTION_PORTFOLIO_API ULockOnMark : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void LockOnMarkOnOff(bool _Value);
+	void SetLockOnMarkOnOff(bool _Value);
 
 protected:
 	void NativeConstruct() override;
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	ESlateVisibility CrosshairOnOff;
+	ESlateVisibility LockOnMarkOnOff;
 };

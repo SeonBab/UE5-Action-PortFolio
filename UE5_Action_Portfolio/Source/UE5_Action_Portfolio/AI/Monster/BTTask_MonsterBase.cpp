@@ -11,8 +11,6 @@ EBTNodeResult::Type UBTTask_MonsterBase::ExecuteTask(UBehaviorTreeComponent& Own
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	ResetStateTime(OwnerComp);
-
 	return EBTNodeResult::InProgress;
 }
 

@@ -70,6 +70,9 @@ void AMainCharacter::BeginPlay()
 	SetHP(100.f);
 	SetMaxHP(GetHP());
 
+	// 플레이어는 체력바가 캐릭터 위에 뜰 필요가 없다
+	SetMonsterHealthBarOnOff(false);
+
 	// 타임라인 설정
 	if (nullptr != FOVCurveFloat && nullptr != AimScreenCurveFloat && nullptr != CameraSpringArmVector)
 	{
@@ -471,7 +474,7 @@ void AMainCharacter::LockOnTarget()
 		{
 			CurWeaponComponent->SetIsLockOn(true);
 			LockedOnTargetActor = Cast<AGlobalAICharacter>(HitNearActor);
-			LockedOnTargetActor->LockOnMarkOnOff(true);
+			LockedOnTargetActor->SetAILockOnMarkOnOff(true);
 			IsLookAtTartget = true;
 		}
 	}
@@ -720,7 +723,7 @@ void AMainCharacter::LostLockedOnTargetActor()
 
 	if (true == IsValid(LockedOnTargetActor))
 	{
-		LockedOnTargetActor->LockOnMarkOnOff(false);
+		LockedOnTargetActor->SetAILockOnMarkOnOff(false);
 		LockedOnTargetActor = nullptr;
 	}
 	else

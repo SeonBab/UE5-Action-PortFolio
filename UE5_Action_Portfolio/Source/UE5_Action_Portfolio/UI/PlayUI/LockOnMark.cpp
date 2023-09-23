@@ -1,18 +1,18 @@
 #include "UI/PlayUI/LockOnMark.h"
 
-void ULockOnMark::LockOnMarkOnOff(bool _Value)
+void ULockOnMark::SetLockOnMarkOnOff(bool _Value)
 {
 	if (true == _Value)
 	{
-		CrosshairOnOff = ESlateVisibility::Visible;
+		LockOnMarkOnOff = ESlateVisibility::Visible;
 	}
 	else if (false == _Value)
 	{
-		CrosshairOnOff = ESlateVisibility::Hidden;
+		LockOnMarkOnOff = ESlateVisibility::Hidden;
 	}
 }
 
 void ULockOnMark::NativeConstruct()
 {
-	CrosshairOnOff = ESlateVisibility::Hidden;
+	LockOnMarkOnOff = ESlateVisibility::Hidden;
 }

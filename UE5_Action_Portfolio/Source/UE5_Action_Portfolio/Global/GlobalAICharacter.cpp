@@ -44,7 +44,7 @@ UBlackboardComponent* AGlobalAICharacter::GetBlackboardComponent()
     return BlackboardComponent;
 }
 
-void AGlobalAICharacter::LockOnMarkOnOff(bool _Value)
+void AGlobalAICharacter::SetAILockOnMarkOnOff(bool _Value)
 {
     if (false == IsValid(LockOnMarkWidget))
     {
@@ -61,7 +61,7 @@ void AGlobalAICharacter::LockOnMarkOnOff(bool _Value)
         return;
     }
 
-    LockOnMark->LockOnMarkOnOff(_Value);
+    LockOnMark->SetLockOnMarkOnOff(_Value);
 }
 
 void AGlobalAICharacter::BeginPlay()
