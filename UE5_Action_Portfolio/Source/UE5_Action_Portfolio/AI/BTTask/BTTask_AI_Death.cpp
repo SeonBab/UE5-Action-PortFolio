@@ -19,5 +19,5 @@ EBTNodeResult::Type UBTTask_AI_Death::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 void UBTTask_AI_Death::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-    Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+    
 }

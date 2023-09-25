@@ -4,7 +4,9 @@
 #include "Global/Enums.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Engine/DamageEvents.h"
-
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Character/MainCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 ASkeletonMonster::ASkeletonMonster()
 {
@@ -56,7 +58,7 @@ void ASkeletonMonster::BeginPlay()
 	CurBlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
 	CurBlackboardComponent->SetValueAsObject(TEXT("NavPath"), nullptr);
 	CurBlackboardComponent->SetValueAsFloat(TEXT("StateTime"), 0.f);
-	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 100.f);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 120.f);
 	CurBlackboardComponent->SetValueAsInt(TEXT("NavPathIndex"), 1);
 	CurBlackboardComponent->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
 	CurBlackboardComponent->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
@@ -74,6 +76,99 @@ void ASkeletonMonster::Tick(float _DeltaTime)
 float ASkeletonMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// PointDamage를 전달 받았다.
+if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+{
+	if (false == IsValid(EventInstigator))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	if (0.f < GetHP() && 0.f < FinalDamage)
+	{
+		// 체력 변경
+		SetHP(GetHP() - FinalDamage);
+
+		// 체력은 음수값이 되지하지 않아야한다.
+		if (0.f >= GetHP())
+		{
+			SetHP(0.f);
+		}
+	}
+
+	APawn* EventInstigatorPawn = EventInstigator->GetPawn();
+
+	if (false == IsValid(EventInstigatorPawn))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	FVector HitDir = EventInstigatorPawn->GetActorLocation();
+	HitDir.Z = 0;
+
+	FVector CurPos = GetActorLocation();
+	CurPos.Z = 0;
+
+	FVector Dir = HitDir - CurPos;
+	Dir.Normalize();
+
+	SetActorRotation(Dir.Rotation());
+
+	if (0.f < GetHP())
+	{
+		// 생존
+		if (AIAnimState::Idle == GetAnimState<AIAnimState>() || AIAnimState::Walk == GetAnimState<AIAnimState>())
+		{
+			SetAnimState(AIAnimState::GotHit);
+		}
+	}
+	else if (0.f >= GetHP())
+	{
+
+		// 죽음
+		SetAnimState(AIAnimState::Death);
+
+		// 블랙보드 변수 값 변경
+		UBlackboardComponent* Blackboard = GetBlackboardComponent();
+
+		if (false == IsValid(Blackboard))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		Blackboard->SetValueAsBool(TEXT("IsDeath"), true);
+
+		// 콜리전 변경
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"), true);
+		GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
+
+		// 플레이어의 락온 해제
+		if (false == IsValid(EventInstigator))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		bool PlayerCheck = EventInstigator->GetPawn()->ActorHasTag("Player");
+
+		if (true == PlayerCheck)
+		{
+			AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigator->GetPawn());
+
+			if (nullptr == MainChar || false == MainChar->IsValidLowLevel())
+			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+				return 0.f;
+			}
+		}
+	}
+
+	return FinalDamage;
+}
 
     return FinalDamage;
 }

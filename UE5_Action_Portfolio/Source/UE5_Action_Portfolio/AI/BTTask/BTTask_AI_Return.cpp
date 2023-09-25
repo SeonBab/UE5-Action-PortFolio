@@ -35,6 +35,14 @@ void UBTTask_AI_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		return;
 	}
 
+	AIAnimState AnimCheck = Character->GetAnimState<AIAnimState>();
+
+	// 맞은 상태에선 리턴
+	if (AIAnimState::GotHit == AnimCheck)
+	{
+		return;
+	}
+
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
 	if (false == IsValid(Blackboard))

@@ -15,7 +15,6 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
-
 	}
 
 	CharacterAnimState AnimState = static_cast<CharacterAnimState>(Character->GetAnimState());

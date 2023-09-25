@@ -35,4 +35,10 @@ void UMonsterAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 	{
 		return;
 	}
+
+	if (Anim == GetAnimMontage(BossAnimState::GotHit))
+	{
+		Character->SetAnimState(BossAnimState::Idle);
+		Montage_Play(AllAnimations[Character->GetAnimState()], 1.f);
+	}
 }

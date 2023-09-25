@@ -62,8 +62,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetIsMove();
 	UFUNCTION(BlueprintCallable)
-	bool GetLockOnCheck();
-	void SetLockOnCheck(bool _Value);
+	bool GetIsCameraStares();
+	void SetIsCameraStares(bool _Value);
 
 	void GotHit(FVector _Value);
 	void Death();
@@ -101,7 +101,7 @@ public:
 	bool AttackCheck = false;
 	bool ArrowReady = false;
 	bool EarlyArrowCheck = false;
-	bool LockOnCheck = false;
+	bool IsCameraStares = false;
 	float PressSpacebarTime = 0.f;
 	float LockOnAfterRunTime = 0.f;
 	const float LockOnAfterRunCount = 2.f;

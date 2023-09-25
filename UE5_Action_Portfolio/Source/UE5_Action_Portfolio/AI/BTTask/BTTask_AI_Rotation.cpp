@@ -11,6 +11,14 @@ void UBTTask_AI_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
+	AGlobalCharacter* CurCharacter = GetGlobalCharacter(OwnerComp);
+	 
+	if (false == IsValid(CurCharacter))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
 	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
 
 	if (false == IsValid(Blackboard))
@@ -26,15 +34,7 @@ void UBTTask_AI_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
-	}
-	
-	AGlobalCharacter* CurCharacter = GetGlobalCharacter(OwnerComp);
-	 
-	if (false == IsValid(CurCharacter))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return;
-	}
+	}	
 	
 	FVector TargetPos = TargetActor->GetActorLocation();
 	FVector CurPos = CurCharacter->GetActorLocation();

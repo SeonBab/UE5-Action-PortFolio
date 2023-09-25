@@ -366,7 +366,7 @@ void UWeaponComponent::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 	{
 		// 이렇게 if문 4개가 아닌 FVector로 할 수 있는가???
 		// 방향 돌리기
-		if ((true == IsLockOn && false == LockOnCheck) || (EWeaponType::Bow == WeaponType && CharacterAnimState::AimOrBlock == AnimState))
+		if ((true == IsLockOn && false == IsCameraStares) || (EWeaponType::Bow == WeaponType && CharacterAnimState::AimOrBlock == AnimState))
 		{
 			FRotator Rotation;
 			FVector Angle;
@@ -471,7 +471,7 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 				GlobalCharacter->SetAnimState(CharacterAnimState::Walk);
 			}
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
-			else if (true == LockOnCheck)
+			else if (true == IsCameraStares)
 			{
 				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;
@@ -595,7 +595,7 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 				GlobalCharacter->SetAnimState(CharacterAnimState::Walk);
 			}
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
-			else if (true == LockOnCheck)
+			else if (true == IsCameraStares)
 			{
 				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;
@@ -750,7 +750,7 @@ void UWeaponComponent::RollorRunAction(float _Value)
 		{
 			if (true == IsLockOn)
 			{
-				LockOnCheck = false;
+				IsCameraStares = false;
 				LockOnAfterRunTime = 0.f;
 				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
 			}
@@ -777,7 +777,7 @@ void UWeaponComponent::RollorRunAction(float _Value)
 		// 달린다
 		if (true == IsLockOn)
 		{
-			LockOnCheck = true;
+			IsCameraStares = true;
 			LockOnAfterRunTime = 0.f;
 			GlobalCharacter->bUseControllerRotationYaw = false;
 			GlobalCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -833,7 +833,7 @@ void UWeaponComponent::ShiftButtonAction()
 		GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 
-	if (true == LockOnCheck)
+	if (true == IsCameraStares)
 	{
 		LockOnAfterRunTime = 0.f;
 	}
@@ -1065,14 +1065,14 @@ bool UWeaponComponent::LockOnAfterRun()
 
 	if (LockOnAfterRunCount <= LockOnAfterRunTime)
 	{
-		LockOnCheck = false;
+		IsCameraStares = false;
 		LockOnAfterRunTime = 0.f;
 
 		return true;
 	}
 	else if (CharacterAnimState::Attack == AnimState)
 	{
-		LockOnCheck = false;
+		IsCameraStares = false;
 		LockOnAfterRunTime = 0.f;
 
 		return true;
@@ -1150,14 +1150,14 @@ bool UWeaponComponent::GetIsMove()
 	return IsMove;
 }
 
-bool UWeaponComponent::GetLockOnCheck()
+bool UWeaponComponent::GetIsCameraStares()
 {
-	return LockOnCheck;
+	return IsCameraStares;
 }
 
-void UWeaponComponent::SetLockOnCheck(bool _Value)
+void UWeaponComponent::SetIsCameraStares(bool _Value)
 {
-	LockOnCheck = _Value;
+	IsCameraStares = _Value;
 }
 
 void UWeaponComponent::GotHit(FVector _Value)
@@ -1325,14 +1325,14 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	}
 
 	// 락온시 달리고 난 후 다시 회전할 때까지의 시간
-	if (true == LockOnCheck)
+	if (true == IsCameraStares)
 	{
 		LockOnAfterRunTime += DeltaTime;
 
 		if (LockOnAfterRunCount <= LockOnAfterRunTime || CharacterAnimState::Attack == AnimState)
 		{
 			LockOnAfterRunTime = 0.f;
-			LockOnCheck = false;
+			IsCameraStares = false;
 		}
 	}
 

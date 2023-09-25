@@ -526,7 +526,7 @@ void AMainCharacter::LookAtTarget(float _DeltaTime)
 	{
 		return;
 	}
-	if (true == CurWeaponComponent->GetLockOnCheck())
+	if (true == CurWeaponComponent->GetIsCameraStares())
 	{
 		return;
 	}
@@ -663,6 +663,7 @@ FVector AMainCharacter::CameraLineTrace()
 
 	if (false == IsValid(MainCameraSpringArmComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return TargetVector;
 	}
 
@@ -720,15 +721,25 @@ FVector AMainCharacter::CameraLineTrace()
 
 void AMainCharacter::LostLockedOnTargetActor()
 {
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	bool LockOnCheck = CurWeaponComponent->GetIsLockOn();
 
 	if (true == IsValid(LockedOnTargetActor))
 	{
 		LockedOnTargetActor->SetAILockOnMarkOnOff(false);
 		LockedOnTargetActor = nullptr;
 	}
-	else
+	else if (true == LockOnCheck && false == IsValid(LockedOnTargetActor))
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == LockedOnTargetActor || false == LockedOnTargetActor->IsValidLowLevel()"), __FUNCTION__, __LINE__);
+		// 락온 중인데 락온 타겟의 IsValid() 값이 false이므로 Error
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> true == LockOnCheck && false == IsValid(LockedOnTargetActor)"), __FUNCTION__, __LINE__);
 	}
 
 	IsLookAtTartget = false;
@@ -739,14 +750,6 @@ void AMainCharacter::LostLockedOnTargetActor()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
-
-	if (false == IsValid(CurWeaponComponent))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return;
-	}
-
 	CurWeaponComponent->SetIsLockOn(false);
-	CurWeaponComponent->SetLockOnCheck(false);
+	CurWeaponComponent->SetIsCameraStares(false);
 }
