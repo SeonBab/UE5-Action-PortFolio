@@ -6,6 +6,19 @@ void UGlobalAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 }
 
+void UGlobalAnimInstance::AnimNotify_Death()
+{
+	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwningActor());
+
+	if (false == IsValid(Character))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	Character->Destroy();
+}
+
 UAnimMontage* UGlobalAnimInstance::GetAnimMontage(int _Index)
 {
 	if (false == AllAnimations.Contains(_Index))
@@ -38,6 +51,7 @@ void UGlobalAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	if (0 == AllAnimations.Num())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> 0 == AllAnimations.Num()"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -45,6 +59,7 @@ void UGlobalAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -52,6 +67,7 @@ void UGlobalAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	if (false == IsValid(Montage))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 

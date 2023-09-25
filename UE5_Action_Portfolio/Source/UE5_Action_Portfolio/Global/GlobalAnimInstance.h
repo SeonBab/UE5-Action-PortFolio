@@ -10,6 +10,9 @@ class UE5_ACTION_PORTFOLIO_API UGlobalAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
+	void AnimNotify_Death();
+
 	UAnimMontage* GetAnimMontage(int _Index);
 	template<typename EnumType>
 	UAnimMontage* GetAnimMontage(EnumType _Index)

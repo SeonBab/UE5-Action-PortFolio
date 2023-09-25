@@ -37,7 +37,7 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 	{
 		// 몬스터 데이터
-		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/AI/Monster/DT_MonsterData.DT_MonsterData'");
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_MonsterData.DT_MonsterData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
 
 		if (DataTable.Succeeded())
@@ -48,7 +48,7 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 	{
 		// 보스 데이터
-		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/AI/BOSS/DT_BossData.DT_BossData'");
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_BossData.DT_BossData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
 
 		if (DataTable.Succeeded())

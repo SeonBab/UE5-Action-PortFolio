@@ -23,8 +23,6 @@ public:
 	void AnimNotify_FrostboltSpawn();
 	UFUNCTION()
 	void AnimNotify_FrostboltShot();
-	UFUNCTION()
-	void AnimNotify_Death();
 
 protected:
 	virtual void NativeInitializeAnimation() override;

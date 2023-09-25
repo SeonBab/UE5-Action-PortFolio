@@ -34,8 +34,6 @@ public:
 	UFUNCTION()
 	void AnimNotify_EndAttack();
 	UFUNCTION()
-	void AnimNotify_Death();
-	UFUNCTION()
 	void AnimNotify_ParryOnOff();
 
 protected:

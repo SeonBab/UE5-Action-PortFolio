@@ -93,22 +93,15 @@ void UBTTask_Clone_Equip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	FVector Dir = TargetPos - CurPos;
 
-	if (600 <= Dir.Size())
+	if (EWeaponType::Bow == CurWeaponType)
 	{
-		if (EWeaponType::Bow == CurWeaponType)
-		{
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
-	else
+	else if (EWeaponType::Sword == CurWeaponType)
 	{
-		if (EWeaponType::Sword == CurWeaponType)
-		{
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
-
-	if (EWeaponType::UnArmed == CurWeaponType)
+	else if (EWeaponType::UnArmed == CurWeaponType)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 	}

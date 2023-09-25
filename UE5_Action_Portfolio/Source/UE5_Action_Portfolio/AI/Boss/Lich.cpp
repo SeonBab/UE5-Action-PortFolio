@@ -136,7 +136,13 @@ void ALich::BeginPlay()
 		return;
 	}
 
-	CurBossData = Instance->GetBossData(DataName);
+	const FBossData* CurBossData = Instance->GetBossData(DataName);
+
+	if (nullptr == CurBossData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == MonsterData"), __FUNCTION__, __LINE__);
+		return;
+	}
 
 	SetAllAnimation<BossAnimState>(CurBossData->MapAnimation);
 	SetHP(CurBossData->HP);
@@ -188,11 +194,6 @@ void ALich::Tick(float DeltaTime)
 		LostTarget();
 		BpEventCallBossInfoOff();
 	}
-}
-
-void ALich::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 void ALich::MeleeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

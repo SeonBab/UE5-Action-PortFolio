@@ -426,19 +426,6 @@ void ULichAnimInstance::AnimNotify_FrostboltShot()
 	
 }
 
-void ULichAnimInstance::AnimNotify_Death()
-{
-	ALich* Lich = Cast<ALich>(GetOwningActor());
-
-	if (false == IsValid(Lich))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	Lich->Destroy();
-}
-
 void ULichAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/Boss/BTTask_BossBase.h"
+#include "AI/BTTask/BTTask_AIBase.h"
 #include "BTTask_Boss_Teleport_Rand.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UBTTask_Boss_Teleport_Rand : public UBTTask_BossBase
+class UE5_ACTION_PORTFOLIO_API UBTTask_Boss_Teleport_Rand : public UBTTask_AIBase
 {
 	GENERATED_BODY()
 	

@@ -1,16 +1,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/Boss/BTTask_BossBase.h"
-#include "BTTask_Boss_Death.generated.h"
+#include "AI/BTTask/BTTask_AIBase.h"
+#include "BTTask_AI_TargetTracking.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API UBTTask_Boss_Death : public UBTTask_BossBase
+class UE5_ACTION_PORTFOLIO_API UBTTask_AI_TargetTracking : public UBTTask_AIBase
 {
 	GENERATED_BODY()
-
+	
 protected:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
 };

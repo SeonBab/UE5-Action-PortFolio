@@ -51,14 +51,14 @@ enum class CharacterAnimState : uint8
 };
 
 UENUM(BlueprintType)
-enum class MonsterAnimState : uint8
+enum class AIAnimState : uint8
 {
 	None,
 	Idle,
 	Walk,
-	Attack,
 	GotHit,
 	Death,
+	Attack,
 };
 
 UENUM(BlueprintType)
@@ -67,12 +67,12 @@ enum class BossAnimState : uint8
 	None,
 	Idle,
 	Walk,
-	Attack_Left,
-	Attack_Right,
-	Attack_SpawnTornado,
-	Attack_FrostboltShot,
 	GotHit,
 	Death,
 	Hide,
 	Visible,
+	Attack_Left,
+	Attack_Right,
+	Attack_SpawnTornado,
+	Attack_FrostboltShot,
 };

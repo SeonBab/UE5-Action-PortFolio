@@ -1,30 +1,31 @@
-#include "AI/Monster/Clone/AIPlayerCloneCon.h"
-#include "AI/Monster/Clone/CloneMonster.h"
+#include "AI/Monster/AIMonsterCon.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Global/GlobalAICharacter.h"
+#include "Global/Enums.h"
 
-AAIPlayerCloneCon::AAIPlayerCloneCon()
-{	
+AAIMonsterCon::AAIMonsterCon()
+{
 	GetAISenseConfigSight()->SightRadius = 2000.f;
 	GetAISenseConfigSight()->LoseSightRadius = 3500.f;
 	GetAISenseConfigSight()->PeripheralVisionAngleDegrees = 90.f;
 	GetAISenseConfigSight()->SetMaxAge(5.f);
 
-	int Team = static_cast<int>(TeamType::CloneTeam);
+	int Team = static_cast<int>(TeamType::MonsterTeam);
 	AAIController::SetGenericTeamId(FGenericTeamId(Team));
 }
 
-void AAIPlayerCloneCon::Tick(float _DeltaTime)
+void AAIMonsterCon::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 }
 
-void AAIPlayerCloneCon::OnPossess(APawn* _InPawn)
+void AAIMonsterCon::OnPossess(APawn* _InPawn)
 {
 	Super::OnPossess(_InPawn);
 }
 
-void AAIPlayerCloneCon::BeginPlay()
+void AAIMonsterCon::BeginPlay()
 {
 	Super::BeginPlay();
 }

@@ -1,10 +1,20 @@
 #include "AI/AICon.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Global/GlobalAICharacter.h"
 #include "Global/Enums.h"
 
 AAICon::AAICon()
 {
+	// 2차 배열로 팀을 구분하고, 팀별로 서로 적대적인지 친구인지 중립인지 구분한다.
+	Attitudes = {
+		{ETeamAttitude::Friendly, ETeamAttitude::Neutral, ETeamAttitude::Neutral, ETeamAttitude::Neutral, ETeamAttitude::Neutral }, // Neutral
+		{ETeamAttitude::Neutral, ETeamAttitude::Friendly, ETeamAttitude::Hostile, ETeamAttitude::Hostile, ETeamAttitude::Hostile }, // PlayerTeam
+		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Hostile, ETeamAttitude::Friendly }, // CloneTeam
+		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Friendly }, // MonsterTeam
+		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Friendly, ETeamAttitude::Friendly }, // BossTeam
+	};
+
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 
@@ -15,14 +25,9 @@ AAICon::AAICon()
 	AIPerceptionComponent->SetDominantSense(UAISenseConfig_Sight::StaticClass());
 	AIPerceptionComponent->SetDominantSense(AISenseConfigSight->GetSenseImplementation());
 
-	// 각 인덱스별로 팀을 구분하고, 팀별로 서로 적대적인지 친구인지 중립인지 구분한다.
-	Attitudes = {
-		{ETeamAttitude::Friendly, ETeamAttitude::Neutral, ETeamAttitude::Neutral, ETeamAttitude::Neutral, ETeamAttitude::Neutral }, // Neutral
-		{ETeamAttitude::Neutral, ETeamAttitude::Friendly, ETeamAttitude::Hostile, ETeamAttitude::Hostile, ETeamAttitude::Hostile }, // PlayerTeam
-		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Hostile, ETeamAttitude::Friendly }, // CloneTeam
-		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Friendly }, // MonsterTeam
-		{ETeamAttitude::Neutral, ETeamAttitude::Hostile, ETeamAttitude::Friendly, ETeamAttitude::Friendly, ETeamAttitude::Friendly }, // BossTeam
-	};
+	GetAISenseConfigSight()->DetectionByAffiliation.bDetectEnemies = true;
+	GetAISenseConfigSight()->DetectionByAffiliation.bDetectNeutrals = false;
+	GetAISenseConfigSight()->DetectionByAffiliation.bDetectFriendlies = false;
 }
 
 void AAICon::Tick(float _DeltaTime)
@@ -67,6 +72,42 @@ UAISenseConfig_Sight* AAICon::GetAISenseConfigSight()
 void AAICon::OnPossess(APawn* _InPawn)
 {
 	Super::OnPossess(_InPawn);
+
+	AGlobalAICharacter* AICharacter = Cast<AGlobalAICharacter>(_InPawn);
+
+	if (false == IsValid(AICharacter))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	UBehaviorTree* BehaviorTree = AICharacter->GetBehaviorTree();
+
+	if (false == IsValid(BehaviorTree))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
+
+	if (false == IsValid(CurBlackboardComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+
+	UBehaviorTreeComponent* CurBehaviorTreeComponent = GetBehaviorTreeComponent();
+
+	if (false == IsValid(CurBehaviorTreeComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBehaviorTreeComponent->StartTree(*BehaviorTree);
 }
 
 void AAICon::BeginPlay()

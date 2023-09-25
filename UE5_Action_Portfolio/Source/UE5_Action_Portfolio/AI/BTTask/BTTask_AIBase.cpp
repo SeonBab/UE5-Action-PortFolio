@@ -1,8 +1,7 @@
-#include "AI/BTTask_AIBase.h"
+#include "AI/BTTask/BTTask_AIBase.h"
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
-#include "Global/GlobalCharacter.h"
 
 UBTTask_AIBase::UBTTask_AIBase()
 {

@@ -1,6 +1,6 @@
-#include "AI/Boss/BTTask_Boss_Idle.h"
+#include "AI/BTTask/BTTask_AI_Idle.h"
 
-EBTNodeResult::Type UBTTask_Boss_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_AI_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -12,12 +12,12 @@ EBTNodeResult::Type UBTTask_Boss_Idle::ExecuteTask(UBehaviorTreeComponent& Owner
 		return EBTNodeResult::Failed;
 	}
 
-	Character->SetAnimState(BossAnimState::Idle);
+	Character->SetAnimState(AIAnimState::Idle);
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_Boss_Idle::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_AI_Idle::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
@@ -29,9 +29,9 @@ void UBTTask_Boss_Idle::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		return;
 	}
 
-	BossAnimState AnimState = Character->GetAnimState<BossAnimState>();
+	AIAnimState AnimState = Character->GetAnimState<AIAnimState>();
 
-	if (2.0f <= GetStateTime(OwnerComp) && BossAnimState::GotHit != AnimState)
+	if (2.0f <= GetStateTime(OwnerComp) && AIAnimState::GotHit != AnimState)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}

@@ -10,8 +10,6 @@ ASkeletonMonster::ASkeletonMonster()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    SetAnimState<MonsterAnimState>(MonsterAnimState::Idle);
-
     SetActorTypeTag(TEXT("Monster"));
     SetAttackTypeTag(TEXT("MonsterAttack"));
     Tags.Add(GetActorTypeTag());
@@ -41,8 +39,10 @@ void ASkeletonMonster::BeginPlay()
 		return;
 	}
 
+	SetAllAnimation<AIAnimState>(MonsterData->MapAnimation);
 	SetHP(MonsterData->HP);
 	SetMaxHP(GetHP());
+	SetAnimState<AIAnimState>(AIAnimState::Idle);
 
 	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
 
@@ -67,7 +67,8 @@ void ASkeletonMonster::BeginPlay()
 
 void ASkeletonMonster::Tick(float _DeltaTime)
 {
-    Super::Tick(_DeltaTime);
+	Super::Tick(_DeltaTime);
+
 }
 
 float ASkeletonMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

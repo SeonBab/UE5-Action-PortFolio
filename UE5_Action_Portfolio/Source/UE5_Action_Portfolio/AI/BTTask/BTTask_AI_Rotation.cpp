@@ -1,13 +1,13 @@
-#include "AI/Boss/BTTask_Boss_Rotation.h"
+#include "AI/BTTask/BTTask_AI_Rotation.h"
 
-EBTNodeResult::Type UBTTask_Boss_Rotation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_AI_Rotation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_Boss_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_AI_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
@@ -53,14 +53,14 @@ void UBTTask_Boss_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 	float Angle0 = Dir.Rotation().Yaw;
 	float Angle1 = OtherForward.Rotation().Yaw;
 	
-	BossAnimState AnimState = CurCharacter->GetAnimState<BossAnimState>();
+	AIAnimState AnimState = CurCharacter->GetAnimState<AIAnimState>();
 	
 	if (5.f <= FMath::Abs(Angle0 - Angle1))
 	{
 		FRotator Rot = FRotator::MakeFromEuler({ 0, 0, Cross.Z * 500.f * DeltaSeconds });
 		CurCharacter->AddActorWorldRotation(Rot);
 	}
-	else if (5.f >= FMath::Abs(Angle0 - Angle1) && BossAnimState::GotHit != AnimState)
+	else if (5.f >= FMath::Abs(Angle0 - Angle1) && AIAnimState::GotHit != AnimState)
 	{
 		FRotator Rot = Dir.Rotation();
 		CurCharacter->SetActorRotation(Rot);

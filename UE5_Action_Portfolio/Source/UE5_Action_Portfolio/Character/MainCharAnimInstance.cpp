@@ -486,19 +486,6 @@ void UMainCharAnimInstance::AnimNotify_EndAttack()
 	WeaponComponent->OverlapEnd();
 }
 
-void UMainCharAnimInstance::AnimNotify_Death()
-{
-	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
-
-	if (false == IsValid(Character))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	Character->Destroy();
-}
-
 void UMainCharAnimInstance::AnimNotify_ParryOnOff()
 {
 	AAIWeaponCharacter* Character = Cast<AAIWeaponCharacter>(GetOwningActor());
