@@ -64,6 +64,11 @@ void AGlobalAICharacter::SetAILockOnMarkOnOff(bool _Value)
     LockOnMark->SetLockOnMarkOnOff(_Value);
 }
 
+void AGlobalAICharacter::AIInit()
+{
+    // 상속된 AIChar가 오버라이드 해서 사용한다.
+}
+
 void AGlobalAICharacter::BeginPlay()
 {
     Super::BeginPlay();

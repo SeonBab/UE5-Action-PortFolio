@@ -107,6 +107,8 @@ void AAICon::OnPossess(APawn* _InPawn)
 		return;
 	}
 
+	AICharacter->AIInit();
+
 	CurBehaviorTreeComponent->StartTree(*BehaviorTree);
 }
 

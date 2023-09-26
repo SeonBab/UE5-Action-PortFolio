@@ -12,6 +12,8 @@ class UE5_ACTION_PORTFOLIO_API ASkeletonMonster : public AMonsterCharacter
 public:
 	ASkeletonMonster();
 
+	virtual void AIInit() override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;

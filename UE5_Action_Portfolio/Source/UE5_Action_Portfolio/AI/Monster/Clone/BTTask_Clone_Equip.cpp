@@ -40,7 +40,9 @@ EBTNodeResult::Type UBTTask_Clone_Equip::ExecuteTask(UBehaviorTreeComponent& Own
 
 	WeaponComponent->SetIsLockOn(true);
 
-	if (800 <= Dir.Size())
+	int RandomInt = UGlobalGameInstance::MainRandom.RandRange(1, 3);
+
+	if (800 <= Dir.Size() && 1 == RandomInt)
 	{
 		if (EWeaponType::Bow != CurWeaponType)
 		{

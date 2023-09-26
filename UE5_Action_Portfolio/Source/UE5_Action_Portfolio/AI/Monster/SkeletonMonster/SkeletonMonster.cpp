@@ -24,53 +24,11 @@ ASkeletonMonster::ASkeletonMonster()
 void ASkeletonMonster::BeginPlay()
 {
     Super::BeginPlay();
-
-	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
-
-	if (false == IsValid(Instance))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	const FMonsterData* MonsterData = Instance->GetMonsterData(DataName);
-
-	if (nullptr == MonsterData)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == MonsterData"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	SetAllAnimation<AIAnimState>(MonsterData->MapAnimation);
-	SetHP(MonsterData->HP);
-	SetMaxHP(GetHP());
-	SetAnimState<AIAnimState>(AIAnimState::Idle);
-
-	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
-
-	if (false == IsValid(CurBlackboardComponent))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	CurBlackboardComponent->SetValueAsObject(TEXT("SelfActor"), this);
-	CurBlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
-	CurBlackboardComponent->SetValueAsObject(TEXT("NavPath"), nullptr);
-	CurBlackboardComponent->SetValueAsFloat(TEXT("StateTime"), 0.f);
-	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 120.f);
-	CurBlackboardComponent->SetValueAsInt(TEXT("NavPathIndex"), 1);
-	CurBlackboardComponent->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
-	CurBlackboardComponent->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
-	CurBlackboardComponent->SetValueAsBool(TEXT("IsReturn"), false);
-	CurBlackboardComponent->SetValueAsBool(TEXT("IsDeath"), false);
-
 }
 
 void ASkeletonMonster::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
-
 }
 
 float ASkeletonMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -171,4 +129,49 @@ if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 }
 
     return FinalDamage;
+}
+
+void ASkeletonMonster::AIInit()
+{
+	Super::AIInit();
+
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (false == IsValid(Instance))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	const FMonsterData* MonsterData = Instance->GetMonsterData(DataName);
+
+	if (nullptr == MonsterData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == MonsterData"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	SetAllAnimation<AIAnimState>(MonsterData->MapAnimation);
+	SetHP(MonsterData->HP);
+	SetMaxHP(GetHP());
+	SetAnimState<AIAnimState>(AIAnimState::Idle);
+
+	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
+
+	if (false == IsValid(CurBlackboardComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	CurBlackboardComponent->SetValueAsObject(TEXT("SelfActor"), this);
+	CurBlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
+	CurBlackboardComponent->SetValueAsObject(TEXT("NavPath"), nullptr);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("StateTime"), 0.f);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 130.f);
+	CurBlackboardComponent->SetValueAsInt(TEXT("NavPathIndex"), 1);
+	CurBlackboardComponent->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
+	CurBlackboardComponent->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
+	CurBlackboardComponent->SetValueAsBool(TEXT("IsReturn"), false);
+	CurBlackboardComponent->SetValueAsBool(TEXT("IsDeath"), false);
 }

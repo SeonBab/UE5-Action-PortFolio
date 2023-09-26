@@ -13,10 +13,13 @@ class UE5_ACTION_PORTFOLIO_API ACloneMonster : public AAIWeaponCharacter
 public:
 	ACloneMonster();
 
+	virtual void AIInit() override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

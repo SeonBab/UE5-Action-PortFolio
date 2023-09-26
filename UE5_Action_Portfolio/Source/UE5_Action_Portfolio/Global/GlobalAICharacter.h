@@ -21,10 +21,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetAILockOnMarkOnOff(bool _Value);
 
+	virtual void AIInit();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (AllowPrivateAccess = "true"))

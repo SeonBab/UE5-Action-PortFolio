@@ -13,9 +13,13 @@ ACloneMonster::ACloneMonster()
 {
 	SetAnimState<CharacterAnimState>(CharacterAnimState::Idle);
 
-	SetActorTypeTag(TEXT("Monster"));
-	SetAttackTypeTag(TEXT("MonsterAttack"));
+	SetActorTypeTag(TEXT("Clone"));
+	SetAttackTypeTag(TEXT("CloneAttack"));
 	Tags.Add(GetActorTypeTag());
+
+	// 락온을 위해 추가하는 태그
+	Tags.Add(TEXT("Monster"));
+
 	SetParrybool(true);
 
 	DataName = "CloneMonster";
@@ -24,10 +28,8 @@ ACloneMonster::ACloneMonster()
 	CurCapsuleSize = CapsuleSize;
 }
 
-void ACloneMonster::BeginPlay()
+void ACloneMonster::AIInit()
 {
-	Super::BeginPlay();
-
 	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
 	if (false == IsValid(Instance))
@@ -47,7 +49,7 @@ void ACloneMonster::BeginPlay()
 	SetHP(MonsterData->HP);
 	SetMaxHP(GetHP());
 
-	UBlackboardComponent* CurBlackboardComponent =GetBlackboardComponent();
+	UBlackboardComponent* CurBlackboardComponent = GetBlackboardComponent();
 
 	if (false == IsValid(CurBlackboardComponent))
 	{
@@ -68,6 +70,11 @@ void ACloneMonster::BeginPlay()
 	CurBlackboardComponent->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
 	CurBlackboardComponent->SetValueAsBool(TEXT("IsReturn"), false);
 	CurBlackboardComponent->SetValueAsBool(TEXT("IsDeath"), false);
+}
+
+void ACloneMonster::BeginPlay()
+{
+	Super::BeginPlay();
 
 	this->bUseControllerRotationYaw = false;
 }

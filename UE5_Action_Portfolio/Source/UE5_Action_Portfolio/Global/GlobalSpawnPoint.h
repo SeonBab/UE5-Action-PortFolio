@@ -2,21 +2,33 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SpawnPoint.generated.h"
+#include "GlobalSpawnPoint.generated.h"
 
 UCLASS()
-class UE5_ACTION_PORTFOLIO_API ASpawnPoint : public AActor
+class UE5_ACTION_PORTFOLIO_API AGlobalSpawnPoint : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	ASpawnPoint();
+	AGlobalSpawnPoint();
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> SpawnActorClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
+	float SpawnTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
+	float SpawnElapsedTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
+	int MaximumSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
+	float RandomSpawnSizeX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
+	float RandomSpawnSizeY;
 
-
+	int SpawnCount;
 };
