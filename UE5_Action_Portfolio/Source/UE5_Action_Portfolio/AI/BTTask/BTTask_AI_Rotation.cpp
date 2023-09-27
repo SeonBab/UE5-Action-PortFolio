@@ -15,6 +15,7 @@ void UBTTask_AI_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	 
 	if (false == IsValid(CurCharacter))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
@@ -23,15 +24,24 @@ void UBTTask_AI_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	if (false == IsValid(Blackboard))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 	
 	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
+
+	if (nullptr == TargetActor)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		UE_LOG(LogTemp, Log, TEXT("%S(%u)> nullptr == TargetActor"), __FUNCTION__, __LINE__);
+		return;
+	}
 	
 	if (false == IsValid(TargetActor))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}	

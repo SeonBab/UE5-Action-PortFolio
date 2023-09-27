@@ -40,6 +40,7 @@ void UBTTask_AI_TargetTracking::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 
 	if (false == IsValid(Character))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
@@ -56,6 +57,7 @@ void UBTTask_AI_TargetTracking::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 
 	if (false == IsValid(Blackboard))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
@@ -63,8 +65,16 @@ void UBTTask_AI_TargetTracking::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 
+	if (nullptr == TargetActor)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		UE_LOG(LogTemp, Log, TEXT("%S(%u)> nullptr == TargetActor"), __FUNCTION__, __LINE__);
+		return;
+	}
+
 	if (false == IsValid(TargetActor))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}

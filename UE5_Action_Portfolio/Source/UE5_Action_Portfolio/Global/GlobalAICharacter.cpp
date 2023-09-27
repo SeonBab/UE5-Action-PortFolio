@@ -66,7 +66,7 @@ void AGlobalAICharacter::SetAILockOnMarkOnOff(bool _Value)
 
 void AGlobalAICharacter::AIInit()
 {
-    // 상속된 AIChar가 오버라이드 해서 사용한다.
+    // 상속된 AI가 오버라이드 해서 사용한다.
 }
 
 void AGlobalAICharacter::BeginPlay()
@@ -90,6 +90,13 @@ void AGlobalAICharacter::BeginPlay()
     }
 
     LockOnMarkWidget->SetWidgetClass(WBPLockOnMark);
+
+    AController* CurController =GetController();
+
+    if (false == IsValid(CurController))
+    {
+        SpawnDefaultController();
+    }
 }
 
 void AGlobalAICharacter::Tick(float _DeltaTime)

@@ -1,6 +1,9 @@
 #include "AI/AICon.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Global/GlobalAICharacter.h"
 #include "Global/Enums.h"
 
@@ -44,7 +47,7 @@ void AAICon::Tick(float _DeltaTime)
 		LostTimer = 0.f;
 		TargetLost = false;
 		PerceivedActor = nullptr;
-		GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), PerceivedActor);
+		GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 		GetBlackboardComponent()->SetValueAsBool(TEXT("IsReturn"), true);
 	}
 }
@@ -129,7 +132,15 @@ ETeamAttitude::Type AAICon::GetTeamAttitudeTowards(const AActor& Other) const
 		return ETeamAttitude::Neutral;
 	}
 
-	const IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController());
+	AController* OtherPawnCon = OtherPawn->GetController();
+
+	if (false == IsValid(OtherPawnCon))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return ETeamAttitude::Neutral;
+	}
+
+	const IGenericTeamAgentInterface* const TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawnCon);
 
 	if (nullptr == TeamAgent)
 	{
@@ -159,6 +170,16 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 		// 인식한 타겟이 적이라면
 		if (ETeamAttitude::Hostile == GetTeamAttitudeTowards(*_Actor))
 		{
+			// 블랙보드에 저장된 타겟 확인
+			UObject* TargetObject = GetBlackboardComponent()->GetValueAsObject(TEXT("TargetActor"));
+
+			if (false == IsValid(TargetObject))
+			{
+				LostTimer = 0.f;
+				TargetLost = false;
+				PerceivedActor = nullptr;
+			}
+
 			// 인식 했던 적이 없다면
 			if (nullptr == PerceivedActor)
 			{
@@ -173,17 +194,8 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 			// ex) 인식 범위를 나갔던 타겟이 다시 들어올 때
 			else if (nullptr != PerceivedActor)
 			{
-				UObject* TargetObject = GetBlackboardComponent()->GetValueAsObject(TEXT("TargetActor"));
-				AActor* TargetActor = Cast<AActor>(TargetObject);
-
-				if (false == IsValid(TargetActor))
-				{
-					UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-					return;
-				}
-
-				// 인식 했던 적이 타겟과 같다
-				if (_Actor == TargetActor)
+				// 인식 했던 적이 블랙보드의 타겟과 같다
+				if (_Actor == TargetObject)
 				{
 					// ex) 인식 범위를 나갔던 타겟이 다시 들어올 때
 					if (true == TargetLost)
@@ -195,6 +207,7 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 					else if (false == TargetLost)
 					{
 						TargetLost = true;
+						return;
 					}
 				}
 				// 인식 했던 적이 다르다면
@@ -203,23 +216,35 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 				{
 					APawn* CurPawn = GetPawn();
 
-					if (IsValid(CurPawn))
+					if (false == IsValid(CurPawn))
 					{
 						UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 						return;
 					}
 
 					FVector CurLocation = CurPawn->GetActorLocation();
+					FMath::Abs(CurLocation.X);
+					FMath::Abs(CurLocation.Y);
+					FMath::Abs(CurLocation.Z);
 
-					FVector PerceivedActorDis = PerceivedActor->GetActorLocation() - CurLocation;
-					FVector TargetdActorDis = _Actor->GetActorLocation() - CurLocation;
+					FVector PerActorLocation = PerceivedActor->GetActorLocation();
+					FMath::Abs(PerActorLocation.X);
+					FMath::Abs(PerActorLocation.Y);
+					FMath::Abs(PerActorLocation.Z);
+
+					FVector _ActorLocation = _Actor->GetActorLocation();
+					FMath::Abs(_ActorLocation.X);
+					FMath::Abs(_ActorLocation.Y);
+					FMath::Abs(_ActorLocation.Z);
+
+					FVector PerceivedActorDis = PerActorLocation - CurLocation;
+					FVector _ActorDis = _ActorLocation - CurLocation;
 
 					// 인식 했던 적보다 새로 인식 된 적이 가깝다면 타겟 변경
-					if (PerceivedActorDis.Size() > TargetdActorDis.Size())
+					if (PerceivedActorDis.Size() > _ActorDis.Size())
 					{
 						LostTimer = 0.f;
 						TargetLost = false;
-
 						PerceivedActor = _Actor;
 					}
 				}
@@ -230,6 +255,8 @@ void AAICon::OnTargetPerceptionUpdated(AActor* _Actor, FAIStimulus _Stimulus)
 		break;
 	case _Stimulus.SensingFailed: // 타겟 인식 실패
 		PerceivedActor = nullptr;
+		LostTimer = 0.f;
+		TargetLost = false;
 		GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), nullptr);
 		break;
 	default:

@@ -29,6 +29,9 @@ private:
 	float RandomSpawnSizeX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
 	float RandomSpawnSizeY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
+	bool SpawnCheck;
 
+	AActor* CurSpawnActor;
 	int SpawnCount;
 };

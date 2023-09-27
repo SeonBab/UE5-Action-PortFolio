@@ -17,6 +17,7 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	if (false == IsValid(CloneMonster))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
@@ -25,6 +26,7 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	if (false == IsValid(WeaponComponent))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
@@ -34,8 +36,16 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 	UObject* TargetObject = GetBlackboardComponent(OwnerComp)->GetValueAsObject(TEXT("TargetActor"));
 	AActor* TargetActor = Cast<AActor>(TargetObject);
 
+	if (nullptr == TargetActor)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		UE_LOG(LogTemp, Log, TEXT("%S(%u)> nullptr == TargetActor"), __FUNCTION__, __LINE__);
+		return;
+	}
+
 	if (false == IsValid(TargetActor))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
@@ -150,7 +160,6 @@ void UBTTask_Clone_WeaponMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 		if (MoveTime <= GetStateTime(OwnerComp))
 		{
-			ResetStateTime(OwnerComp);
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	}

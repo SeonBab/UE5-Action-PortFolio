@@ -53,10 +53,29 @@ void UBTTask_Clone_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
+	UBlackboardComponent* Blackboard = GetBlackboardComponent(OwnerComp);
+
+	if (false == IsValid(Blackboard))
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	UObject* TargetObject = Blackboard->GetValueAsObject(TEXT("TargetActor"));
+
+	if (nullptr == TargetObject)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		UE_LOG(LogTemp, Log, TEXT("%S(%u)> nullptr == TargetActor"), __FUNCTION__, __LINE__);
+		return;
+	}
+
 	ACloneMonster* CloneMonster = GetCloneMonster(OwnerComp);
 
 	if (false == IsValid(CloneMonster))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
@@ -65,6 +84,7 @@ void UBTTask_Clone_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 	if (false == IsValid(WeaponComponent))
 	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
