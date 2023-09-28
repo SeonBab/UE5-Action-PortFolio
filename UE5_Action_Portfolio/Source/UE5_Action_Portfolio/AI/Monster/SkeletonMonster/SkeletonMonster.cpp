@@ -25,7 +25,7 @@ ASkeletonMonster::ASkeletonMonster()
 	MeleeCapsuleComponent->SetupAttachment(GetMesh(), TEXT("MeleeSocket"));
 	MeleeCapsuleComponent->SetCollisionProfileName("NoCollision", true);
 	MeleeCapsuleComponent->SetCapsuleHalfHeight(40.f);
-	MeleeCapsuleComponent->SetCapsuleRadius(20.f);
+	MeleeCapsuleComponent->SetCapsuleRadius(17.f);
 }
 
 void ASkeletonMonster::BeginPlay()
@@ -189,7 +189,7 @@ void ASkeletonMonster::AIInit()
 	CurBlackboardComponent->SetValueAsObject(TEXT("TargetActor"), nullptr);
 	CurBlackboardComponent->SetValueAsObject(TEXT("NavPath"), nullptr);
 	CurBlackboardComponent->SetValueAsFloat(TEXT("StateTime"), 0.f);
-	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 130.f);
+	CurBlackboardComponent->SetValueAsFloat(TEXT("MeleeAttackRange"), 125.f);
 	CurBlackboardComponent->SetValueAsInt(TEXT("NavPathIndex"), 1);
 	CurBlackboardComponent->SetValueAsVector(TEXT("SpawnPos"), GetActorLocation());
 	CurBlackboardComponent->SetValueAsVector(TEXT("NavPathLastPos"), FVector::ZeroVector);
