@@ -25,7 +25,7 @@ ASkeletonMonster::ASkeletonMonster()
 	MeleeCapsuleComponent->SetupAttachment(GetMesh(), TEXT("MeleeSocket"));
 	MeleeCapsuleComponent->SetCollisionProfileName("NoCollision", true);
 	MeleeCapsuleComponent->SetCapsuleHalfHeight(40.f);
-	MeleeCapsuleComponent->SetCapsuleRadius(17.f);
+	MeleeCapsuleComponent->SetCapsuleRadius(20.f);
 }
 
 void ASkeletonMonster::BeginPlay()
