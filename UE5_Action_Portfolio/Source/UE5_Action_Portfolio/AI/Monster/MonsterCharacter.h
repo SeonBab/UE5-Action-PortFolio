@@ -11,6 +11,8 @@ class UE5_ACTION_PORTFOLIO_API AMonsterCharacter : public AGlobalAICharacter
 public:
 	AMonsterCharacter();
 
+	virtual UCapsuleComponent* GetMeleeCapsuleComponent();
+
 	UFUNCTION(BlueprintCallable)
 	void SetMonsterHealthBarOnOff(bool _Value);
 

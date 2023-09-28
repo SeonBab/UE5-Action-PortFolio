@@ -128,8 +128,9 @@ float AAIWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
 
-		if (nullptr == GlobalChar)
+		if (false == IsValid(GlobalChar))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 

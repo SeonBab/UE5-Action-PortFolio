@@ -22,7 +22,7 @@ ALich::ALich()
 	DarkBall = nullptr;
 	FrostboltArray.Empty();
 	
-	MeleeDamage = 15.f;
+	MeleeDamage = 25.f;
 	MaxPhase = 3;
 
 	MeleeCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));

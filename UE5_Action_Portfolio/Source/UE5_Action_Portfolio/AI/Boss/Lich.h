@@ -50,10 +50,6 @@ private:
 	void LostTarget();
 
 private:
-	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UCapsuleComponent* MeleeCapsuleComponent;
-	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UNiagaraComponent* MeleeNiagaraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FName DataName;
 
@@ -62,6 +58,10 @@ private:
 	UPROPERTY()
 	TArray<AActor*> FrostboltArray;
 	
+	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UCapsuleComponent* MeleeCapsuleComponent;
+	UPROPERTY(Category = "Melee", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UNiagaraComponent* MeleeNiagaraComponent;
 	float MeleeDamage;
 
 	int MaxPhase;

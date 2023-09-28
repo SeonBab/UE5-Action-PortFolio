@@ -19,11 +19,20 @@ ASkeletonMonster::ASkeletonMonster()
 
     DataName = "SkeletonMonster";
 
+	MeleeDamage = 10.f;
+
+	MeleeCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	MeleeCapsuleComponent->SetupAttachment(GetMesh(), TEXT("MeleeSocket"));
+	MeleeCapsuleComponent->SetCollisionProfileName("NoCollision", true);
+	MeleeCapsuleComponent->SetCapsuleHalfHeight(40.f);
+	MeleeCapsuleComponent->SetCapsuleRadius(17.f);
 }
 
 void ASkeletonMonster::BeginPlay()
 {
     Super::BeginPlay();
+
+	MeleeCapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ASkeletonMonster::MeleeBeginOverlap);
 }
 
 void ASkeletonMonster::Tick(float _DeltaTime)
@@ -129,6 +138,18 @@ if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 }
 
     return FinalDamage;
+}
+
+void ASkeletonMonster::MeleeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	FPointDamageEvent DamageEvent;
+
+	OtherActor->TakeDamage(MeleeDamage, DamageEvent, GetController(), this);
+}
+
+UCapsuleComponent* ASkeletonMonster::GetMeleeCapsuleComponent()
+{
+	return MeleeCapsuleComponent;
 }
 
 void ASkeletonMonster::AIInit()

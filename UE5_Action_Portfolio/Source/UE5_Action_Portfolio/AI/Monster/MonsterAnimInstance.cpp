@@ -1,6 +1,53 @@
 #include "AI/Monster/MonsterAnimInstance.h"
 #include "AI/Monster/MonsterCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "Global/Enums.h"
+
+void UMonsterAnimInstance::AnimNotify_MeleeStart()
+{
+	AMonsterCharacter* CurMonster = Cast<AMonsterCharacter>(GetOwningActor());
+
+	if (false == IsValid(CurMonster))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	UCapsuleComponent* CapsuleComponent = CurMonster->GetMeleeCapsuleComponent();
+
+	if (false == IsValid(CapsuleComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	// 콜리전 설정
+	FName AttackType = CurMonster->GetAttackTypeTag();
+
+	CapsuleComponent->SetCollisionProfileName(AttackType);
+}
+
+void UMonsterAnimInstance::AnimNotify_MeleeEnd()
+{
+	AMonsterCharacter* CurMonster = Cast<AMonsterCharacter>(GetOwningActor());
+
+	if (false == IsValid(CurMonster))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	UCapsuleComponent* CapsuleComponent = CurMonster->GetMeleeCapsuleComponent();
+
+	if (false == IsValid(CapsuleComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	// 콜리전 설정
+	CapsuleComponent->SetCollisionProfileName(TEXT("NoCollision"));
+}
 
 void UMonsterAnimInstance::NativeInitializeAnimation()
 {

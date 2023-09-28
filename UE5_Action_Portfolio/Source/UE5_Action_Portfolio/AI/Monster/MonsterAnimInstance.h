@@ -9,6 +9,10 @@ class UE5_ACTION_PORTFOLIO_API UMonsterAnimInstance : public UGlobalAnimInstance
 {
 	GENERATED_BODY()
 public:
+	UFUNCTION()
+	void AnimNotify_MeleeStart();
+	UFUNCTION()
+	void AnimNotify_MeleeEnd();
 
 protected:
 	virtual void NativeInitializeAnimation() override;

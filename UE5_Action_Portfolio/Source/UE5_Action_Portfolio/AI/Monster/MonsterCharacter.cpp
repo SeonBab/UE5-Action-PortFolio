@@ -19,6 +19,11 @@ AMonsterCharacter::AMonsterCharacter()
 
 }
 
+UCapsuleComponent* AMonsterCharacter::GetMeleeCapsuleComponent()
+{
+    return nullptr;
+}
+
 void AMonsterCharacter::SetMonsterHealthBarOnOff(bool _Value)
 {
     if (false == IsValid(HealthBarWidget))
