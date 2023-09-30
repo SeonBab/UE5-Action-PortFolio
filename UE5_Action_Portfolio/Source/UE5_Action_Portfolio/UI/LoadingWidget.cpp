@@ -1,21 +1,22 @@
-#include "UI/LoadingWidget.h"
+ï»¿#include "UI/LoadingWidget.h"
 #include "Global/GlobalGameInstance.h"
 
 void ULoadingWidget::NativeOnInitialized()
 {
 	Tips =
 	{
-		FString(TEXT("WASDÅ° ÀÔ·ÂÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.")),
-		FString(TEXT("ShiftÅ°·Î Á¡ÇÁ ÇÒ ¼ö ÀÖ½À´Ï´Ù.")),
-		FString(TEXT("¼ıÀÚ1, 2, 3Å°·Î ¹«±â¸¦ º¯°æ ÇÒ ¼ö ÀÖ½À´Ï´Ù.")),
-		FString(TEXT("Ä®°ú ¹æÆĞ¸¦ µç »óÅÂ¿¡¼­ EÅ°¸¦ ´©¸£¸é ÆĞ¸®¸¦ ½ÃÀüÇÕ´Ï´Ù.")),
-		FString(TEXT("ÆĞ¸µÀº ÇÃ·¹ÀÌ¾î°°ÀÌ ¹«±â¸¦ µå´Â ¸ó½ºÅÍ¸¸ °¡´ÉÇÕ´Ï´Ù."))
+		FString(TEXT("WASDí‚¤ ì…ë ¥ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.")),
+		FString(TEXT("Shiftí‚¤ë¡œ ì í”„ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.")),
+		FString(TEXT("ìˆ«ì1, 2, 3í‚¤ë¡œ ë¬´ê¸°ë¥¼ ë³€ê²½ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.")),
+		FString(TEXT("ì¹¼ê³¼ ë°©íŒ¨ë¥¼ ë“  ìƒíƒœì—ì„œ Eí‚¤ë¥¼ ëˆ„ë¥´ë©´ íŒ¨ë¦¬ë¥¼ ì‹œì „í•©ë‹ˆë‹¤.")),
+		FString(TEXT("íŒ¨ë§ì€ í”Œë ˆì´ì–´ê°™ì´ ë¬´ê¸°ë¥¼ ë“œëŠ” ëª¬ìŠ¤í„°ë§Œ ê°€ëŠ¥í•©ë‹ˆë‹¤."))
 	};
 }
 
 void ULoadingWidget::NativeConstruct()
 {
-	int RandTipsIndex = UGlobalGameInstance::MainRandom.RandRange(0, Tips.Num());
+	int RandMax = Tips.Num() - 1;
+	int RandTipsIndex = UGlobalGameInstance::MainRandom.RandRange(0, RandMax);
 
 	Tip = FText::FromString(Tips[RandTipsIndex]);
 }
