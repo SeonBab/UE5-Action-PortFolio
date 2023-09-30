@@ -13,6 +13,9 @@ FRandomStream UGlobalGameInstance::MainRandom;
 
 UGlobalGameInstance::UGlobalGameInstance()
 {
+	// 랜덤 뉴시드
+	MainRandom.GenerateNewSeed();
+
 	{
 		// 에니메이션 데이터
 		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_AnimaitionData.DT_AnimaitionData'");
