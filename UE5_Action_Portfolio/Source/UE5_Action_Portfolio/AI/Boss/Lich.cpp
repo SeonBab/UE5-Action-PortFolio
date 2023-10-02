@@ -241,7 +241,6 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			return 0.f;
 		}
 
-
 		if (0.f < GetHP() && 0.f < FinalDamage)
 		{
 			// 체력 변경

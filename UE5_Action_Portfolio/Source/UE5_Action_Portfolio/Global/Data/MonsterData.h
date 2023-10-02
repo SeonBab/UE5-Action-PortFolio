@@ -4,6 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
 #include "Global/Enums.h"
+#include "Sound/SoundCue.h"
 #include "MonsterData.generated.h"
 
 class UBehaviorTree;
@@ -20,4 +21,6 @@ struct UE5_ACTION_PORTFOLIO_API FMonsterData : public FTableRowBase
 	UBehaviorTree* AI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TMap<AIAnimState, UAnimMontage*> MapAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TMap<AIAnimState, USoundCue*> MapSoundCue;
 };

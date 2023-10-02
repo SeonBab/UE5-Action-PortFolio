@@ -6,6 +6,7 @@
 #include "Engine/DamageEvents.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Character/MainCharacter.h"
+#include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
 
 ASkeletonMonster::ASkeletonMonster()
@@ -53,6 +54,30 @@ if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 		return 0.f;
 	}
 
+	UAudioComponent* CurAudio = GetAudioComponent();
+
+	if (nullptr == CurAudio)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == Audio"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (false == IsValid(Instance))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	const FMonsterData* MonsterData = Instance->GetMonsterData(DataName);
+
+	if (nullptr == MonsterData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == MonsterData"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
 	if (0.f < GetHP() && 0.f < FinalDamage)
 	{
 		// 체력 변경
@@ -91,12 +116,34 @@ if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 		{
 			SetAnimState(AIAnimState::GotHit);
 		}
+
+		// 히트 사운드 큐 설정
+		USoundCue* CurSoundCue = MonsterData->MapSoundCue.FindRef(AIAnimState::GotHit);
+
+		if (nullptr == CurSoundCue)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		CurAudio->SetSound(CurSoundCue);
 	}
 	else if (0.f >= GetHP())
 	{
 
 		// 죽음
 		SetAnimState(AIAnimState::Death);
+
+		// 죽음 사운드 큐 설정
+		USoundCue* CurSoundCue = MonsterData->MapSoundCue.FindRef(AIAnimState::Death);
+
+		if (nullptr == CurSoundCue)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		CurAudio->SetSound(CurSoundCue);
 
 		// 블랙보드 변수 값 변경
 		UBlackboardComponent* Blackboard = GetBlackboardComponent();
@@ -133,6 +180,8 @@ if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 			}
 		}
 	}
+
+	CurAudio->Play();
 
 	return FinalDamage;
 }
