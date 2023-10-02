@@ -98,7 +98,7 @@ void UBTTask_AI_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	FVector PathPos;
 
-	PathPos = NavPath->PathPoints[NavPathIndex];
+ 	PathPos = NavPath->PathPoints[NavPathIndex];
 
 
 	ReturnPos.Z = 0.f;

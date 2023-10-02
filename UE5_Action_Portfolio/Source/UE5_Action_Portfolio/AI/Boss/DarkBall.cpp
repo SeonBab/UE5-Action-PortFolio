@@ -9,7 +9,7 @@ ADarkBall::ADarkBall()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Speed = 6000.f;
+	Speed = 4000.f;
 	DeathTime = 3.f;
 	Damage = 10.f;
 
@@ -25,7 +25,7 @@ ADarkBall::ADarkBall()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->SetUpdatedComponent(RootComponent);
 	ProjectileMovement->InitialSpeed = 0.f;
-	ProjectileMovement->MaxSpeed = 10000.f;
+	ProjectileMovement->MaxSpeed = 6000.f;
 	ProjectileMovement->ProjectileGravityScale = false;
 }
 

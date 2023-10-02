@@ -6,6 +6,7 @@
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/AudioComponent.h"
 #include "Character/MainCharacter.h"
 
 ALich::ALich()
@@ -216,6 +217,31 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			return 0.f;
 		}
 
+		UAudioComponent* CurAudio = GetAudioComponent();
+
+		if (nullptr == CurAudio)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == Audio"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+		if (false == IsValid(Instance))
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		const FBossData* CurBossData = Instance->GetBossData(DataName);
+
+		if (nullptr == CurBossData)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == MonsterData"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+
 		if (0.f < GetHP() && 0.f < FinalDamage)
 		{
 			// 체력 변경
@@ -236,8 +262,20 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			// 생존
 			if (BossAnimState::Idle == GetAnimState<BossAnimState>() || BossAnimState::Walk == GetAnimState<BossAnimState>())
 			{
+				// 애니메이션 스테이트
 				SetAnimState(BossAnimState::GotHit);
 			}
+
+			// 히트 사운드 큐 설정
+			USoundCue* CurSoundCue = CurBossData->MapSoundCue.FindRef(BossAnimState::GotHit);
+
+			if (nullptr == CurSoundCue)
+			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+				return 0.f;
+			}
+			
+			CurAudio->SetSound(CurSoundCue);
 
 			// 체력 1/3마다 페이즈 변경하기
 			float CurMaxHP = GetMaxHP();
@@ -260,6 +298,17 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 
 			// 죽음
 			SetAnimState(BossAnimState::Death);
+
+			// 죽음 사운드 큐 설정
+			USoundCue* CurSoundCue = CurBossData->MapSoundCue.FindRef(BossAnimState::Death);
+
+			if (nullptr == CurSoundCue)
+			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+				return 0.f;
+			}
+
+			CurAudio->SetSound(CurSoundCue);
 
 			// 블랙보드 변수 값 변경
 			UBlackboardComponent* Blackboard = GetBlackboardComponent();
@@ -296,6 +345,8 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 				}
 			}
 		}
+
+		CurAudio->Play();
 
 		return FinalDamage;
 	}

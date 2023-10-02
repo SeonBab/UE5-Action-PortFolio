@@ -15,6 +15,7 @@ public:
 	ABossSpellBase();
 
 	void SetDeathCheck(bool _Value);
+	UFUNCTION(BlueprintCallable)
 	bool GetDeathCheck();
 	void SetSpeed(float _Value);
 	float GetSpeed();

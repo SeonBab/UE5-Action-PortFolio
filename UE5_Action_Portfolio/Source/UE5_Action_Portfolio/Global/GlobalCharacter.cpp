@@ -1,4 +1,5 @@
 #include "Global/GlobalCharacter.h"
+#include "Components/AudioComponent.h"
 
 AGlobalCharacter::AGlobalCharacter()
 {
@@ -11,6 +12,8 @@ AGlobalCharacter::AGlobalCharacter()
 	HP = 0.f;
 	MaxHP = 0.f;
 
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(GetMesh());
 }
 
 void AGlobalCharacter::SetActorTypeTag(FName _Tag)
@@ -76,6 +79,11 @@ float AGlobalCharacter::GetMaxHP()
 void AGlobalCharacter::SetAnimState(int _AnimState)
 {
 	Animstate = _AnimState;
+}
+
+UAudioComponent* AGlobalCharacter::GetAudioComponent()
+{
+	return AudioComponent;
 }
 
 void AGlobalCharacter::BeginPlay()

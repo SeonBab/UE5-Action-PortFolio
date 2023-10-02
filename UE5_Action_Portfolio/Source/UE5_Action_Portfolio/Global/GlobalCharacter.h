@@ -86,6 +86,9 @@ public:
 		return AllAnimations[_Index];
 	}
 
+	// 오디오 컴포넌트
+	UAudioComponent* GetAudioComponent();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -102,4 +105,7 @@ private:
 	bool IsInvincibility = false;
 	float HP;
 	float MaxHP;
+
+	// 오디오 컴포넌트
+	UAudioComponent* AudioComponent;
 };
