@@ -193,6 +193,25 @@ void UWeaponComponent::IsRollMoveToFalse()
 	}
 
 	GlobalCharacter->SetIsInvincibility(false);
+
+	IsForwardWalk = false;
+	IsBackwardWalk = false;
+	IsLeftWalk = false;
+	IsRightWalk = false;
+
+	CharacterAnimState AnimState = GetAnimState();
+
+	if ((CharacterAnimState::Walk == AnimState || CharacterAnimState::LockOnForward == AnimState || CharacterAnimState::LockOnBackward == AnimState) && (false == IsLeftWalk && false == IsRightWalk))
+	{
+		if (false == IsLockOn)
+		{
+			GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+		}
+		else if (true == IsLockOn)
+		{
+			GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
+		}
+	}
 }
 
 void UWeaponComponent::ChangeWeapon(FName _Weapon)
@@ -364,33 +383,30 @@ void UWeaponComponent::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 	if (true == IsRollMove)
 	{
-		// 이렇게 if문 4개가 아닌 FVector로 할 수 있는가???
 		// 방향 돌리기
 		if ((true == IsLockOn && false == IsCameraStares) || (EWeaponType::Bow == WeaponType && CharacterAnimState::AimOrBlock == AnimState))
 		{
-			FRotator Rotation;
-			FVector Angle;
+			FRotator Rotation = FRotator::ZeroRotator;
+			FVector Angle = FVector::ZeroVector;
 
 			if (true == IsForwardWalk)
 			{
 				Angle = GlobalCharacter->GetActorForwardVector();
-				Angle.Z = 0;
 			}
-			if (true == IsBackwardWalk)
+			else if (true == IsBackwardWalk)
 			{
 				Angle = -GlobalCharacter->GetActorForwardVector();
-				Angle.Z = 0;
 			}
 			if (true == IsLeftWalk)
 			{
 				Angle += -GlobalCharacter->GetActorRightVector();
-				Angle.Z = 0;
 			}
-			if (true == IsRightWalk)
+			else if (true == IsRightWalk)
 			{
 				Angle += GlobalCharacter->GetActorRightVector();
-				Angle.Z = 0;
 			}
+			
+			Angle.Z = 0;
 
 			Rotation = Angle.Rotation();
 			GlobalCharacter->SetActorRotation(Rotation);
@@ -423,8 +439,10 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
-	case CharacterAnimState::WalkJump:
 	case CharacterAnimState::Roll:
+		return;
+		break;
+	case CharacterAnimState::WalkJump:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:
@@ -547,8 +565,10 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 	// 이동하면 안되는 상태
 	switch (AnimState)
 	{
-	case CharacterAnimState::WalkJump:
 	case CharacterAnimState::Roll:
+		return;
+		break;
+	case CharacterAnimState::WalkJump:
 	case CharacterAnimState::EquipOrDisArmBow:
 	case CharacterAnimState::EquipOrDisArmSwordAndShield:
 	case CharacterAnimState::Attack:

@@ -42,7 +42,7 @@ void AAIWeaponCharacter::Tick(float _DeltaTime)
 	bool IsFall = GetMovementComponent()->IsFalling();
 
 	// 공중에 있으면 본의 위치를 변경 하지 않는다
-	if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState) && false == IsFall)
+	if ((CharacterAnimState::WalkJump != CurState && CharacterAnimState::RunJump != CurState && CharacterAnimState::Roll != CurState) && false == IsFall)
 	{
 		FootIKOffset = FootIKComponent->GetFootIKOffset(this, _DeltaTime);
 
