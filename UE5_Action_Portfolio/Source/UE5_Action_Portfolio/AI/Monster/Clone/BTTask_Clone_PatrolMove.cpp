@@ -33,6 +33,11 @@ void UBTTask_Clone_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	TArray<FVector> PathPoint = PathFind(OwnerComp, PatrolPos);
 
+	if (PathPoint.Num() == 1)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
+
 	if (0 != PathPoint.Num())
 	{
 		PathPos = PathPoint[1];
