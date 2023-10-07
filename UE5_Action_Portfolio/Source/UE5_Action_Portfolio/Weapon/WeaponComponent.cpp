@@ -234,7 +234,7 @@ void UWeaponComponent::ChangeWeapon(FName _Weapon)
 
 	UGlobalGameInstance* Instacne = GlobalCharacter->GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
-	const struct FAnimaitionData* FindAnimationData = Instacne->GetAllAnimaitionDatas(_Weapon);
+	const struct FAnimaitionData* FindAnimationData = Instacne->GetAnimaitionDatas(_Weapon);
 
 	if (nullptr == FindAnimationData)
 	{
@@ -1046,6 +1046,16 @@ void UWeaponComponent::ParryAction()
 	GlobalCharacter->SetAnimState(CharacterAnimState::ParryorFire);
 }
 
+void UWeaponComponent::SetBlockSuccess(bool _Value)
+{
+	BlockSuccess = _Value;
+}
+
+void UWeaponComponent::SetParrySuccess(bool _Value)
+{
+	ParrySuccess = _Value;
+}
+
 bool UWeaponComponent::GetAttackCheck()
 {
 	return AttackCheck;
@@ -1069,6 +1079,16 @@ bool UWeaponComponent::GetIsBlock()
 bool UWeaponComponent::GetIsParry()
 {
 	return IsParry;
+}
+
+bool UWeaponComponent::GetBlockSuccess()
+{
+	return BlockSuccess;
+}
+
+bool UWeaponComponent::GetParrySuccess()
+{
+	return ParrySuccess;
 }
 
 bool UWeaponComponent::LockOnAfterRun()

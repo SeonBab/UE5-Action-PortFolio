@@ -40,12 +40,16 @@ public:
 	void AttackAction();
 	void AimorBlockAtion(float _Value);
 	void ParryAction();
+	void SetBlockSuccess(bool _Value);
+	void SetParrySuccess(bool _Value);
 
 	bool GetAttackCheck();
 	bool GetIsAimOn();
 	bool GetIsRollMove();
 	bool GetIsBlock();
 	bool GetIsParry();
+	bool GetBlockSuccess();
+	bool GetParrySuccess();
 	bool LockOnAfterRun();
 
 	AArrow* GetReadyArrow();
@@ -102,6 +106,8 @@ public:
 	bool ArrowReady = false;
 	bool EarlyArrowCheck = false;
 	bool IsCameraStares = false;
+	bool BlockSuccess = false;
+	bool ParrySuccess = false;
 	float PressSpacebarTime = 0.f;
 	float LockOnAfterRunTime = 0.f;
 	const float LockOnAfterRunCount = 2.f;

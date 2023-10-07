@@ -28,7 +28,7 @@ public:
 	FWeaponData* GetWeaponData(FName _Name);
 	USkeletalMesh* GetWeaponMesh(FName _Name);
 	TMap<EWeaponType, UPaperSprite*> GetWeaponDataTMap();
-	FAnimaitionData* GetAllAnimaitionDatas(FName _Name);
+	FAnimaitionData* GetAnimaitionDatas(FName _Name);
 	FMonsterData* GetMonsterData(FName _Name);
 	FBossData* GetBossData(FName _Name);
 	UNiagaraSystem* GetNiagaraAsset(FName _Name);

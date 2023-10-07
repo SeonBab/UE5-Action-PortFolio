@@ -534,7 +534,7 @@ void UMainCharAnimInstance::NativeBeginPlay()
 		return;
 	}
 
-	struct FAnimaitionData* FindAnimaitionData = Instance->GetAllAnimaitionDatas(TEXT("UnArmed"));
+	struct FAnimaitionData* FindAnimaitionData = Instance->GetAnimaitionDatas(TEXT("UnArmed"));
 
 	if (nullptr == FindAnimaitionData)
 	{

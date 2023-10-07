@@ -288,7 +288,7 @@ UMaterial* UGlobalGameInstance::GetMaterialAsset(FName _Name)
 	return FindTable->MaterialAsset;
 }
 
-FAnimaitionData* UGlobalGameInstance::GetAllAnimaitionDatas(FName _Name)
+FAnimaitionData* UGlobalGameInstance::GetAnimaitionDatas(FName _Name)
 {
 	checkf(nullptr != Animations, TEXT("%S(%u)> Check == nullptr"), __FUNCTION__, __LINE__)
 

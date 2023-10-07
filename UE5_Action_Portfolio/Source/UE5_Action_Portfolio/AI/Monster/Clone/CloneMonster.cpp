@@ -4,6 +4,7 @@
 #include "Weapon/WeaponComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/AudioComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Character/MainCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -88,19 +89,70 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (0.f >= GetHP())
+	UAudioComponent* CurAudio = GetAudioComponent();
+
+	if (nullptr == CurAudio)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == Audio"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (false == IsValid(Instance))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	const FMonsterData* MonsterData = Instance->GetMonsterData(DataName);
+
+	if (nullptr == MonsterData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == MonsterData"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	FAnimaitionData* CurAnimaitionData = Instance->GetAnimaitionDatas("UnArmed");
+
+	if (nullptr == CurAnimaitionData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == Audio"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	if (0.f < GetHP())
+	{
+		// 히트 사운드 큐 설정
+		if (false == CurWeaponComponent->GetBlockSuccess() && false == CurWeaponComponent->GetParrySuccess())
+		{
+			USoundCue* CurSoundCue = MonsterData->MapSoundCue.FindRef(AIAnimState::GotHit);
+
+			if (nullptr == CurSoundCue)
+			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+				return 0.f;
+			}
+
+			CurAudio->SetSound(CurSoundCue);
+		}
+
+		CurWeaponComponent->SetBlockSuccess(false);
+		CurWeaponComponent->SetParrySuccess(false);
+	}
+	else if (0.f >= GetHP())
 	{
 		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
 
 		if (false == IsValid(EventInstigatorPawn))
-		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-			return 0.f;
-		}
-
-		UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
-
-		if (false == IsValid(CurWeaponComponent))
 		{
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
@@ -151,8 +203,26 @@ float ACloneMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 			MainChar->LostLockedOnTargetActor();
 		}
 		
-		return FinalDamage;
+		// 죽음 사운드 큐 설정
+		USoundCue* CurSoundCue = MonsterData->MapSoundCue.FindRef(AIAnimState::Death);
+
+		if (nullptr == CurSoundCue)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		CurAudio->SetSound(CurSoundCue);
 	}
+
+	// 사운드 재생
+	if (nullptr == CurAudio->GetSound())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurAudio->GetSound()"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	CurAudio->Play();
 
 	return FinalDamage;
 }

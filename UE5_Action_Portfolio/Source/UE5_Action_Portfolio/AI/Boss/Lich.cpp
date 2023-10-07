@@ -345,6 +345,13 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			}
 		}
 
+		// 사운드 재생
+		if (nullptr == CurAudio->GetSound())
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurAudio->GetSound()"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
 		CurAudio->Play();
 
 		return FinalDamage;

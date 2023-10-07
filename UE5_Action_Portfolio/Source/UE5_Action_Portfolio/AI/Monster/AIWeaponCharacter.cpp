@@ -1,4 +1,7 @@
 #include "AI/Monster/AIWeaponCharacter.h"
+#include "Global/GlobalGameInstance.h"
+#include "Global/Data/AnimaitionData.h"
+#include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Weapon/WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -75,6 +78,30 @@ float AAIWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	UAudioComponent* CurAudio = GetAudioComponent();
+
+	if (nullptr == CurAudio)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == Audio"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (false == IsValid(Instance))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	FAnimaitionData* CurAnimaitionData = Instance->GetAnimaitionDatas("SwordAndShield");
+
+	if (nullptr == CurAnimaitionData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == Audio"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
 	// PointDamage를 전달 받았다.
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
@@ -138,8 +165,20 @@ float AAIWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 		if (160.f >= FMath::Abs(Angle0 - Angle1) && true == BlockCheck)
 		{
-			// 가드
+			// 가드 성공
 			FinalDamage *= 0.1f;
+
+			USoundCue* CurSoundCue = CurAnimaitionData->MapSoundCue.FindRef(CharacterAnimState::AimOrBlockGotHit);
+
+			if (nullptr == CurSoundCue)
+			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+				return 0.f;
+			}
+
+			CurAudio->SetSound(CurSoundCue);
+
+			CurWeaponComponent->SetBlockSuccess(true);
 		}
 		else if (true == IsInvincibilityCheck)
 		{
@@ -173,11 +212,24 @@ float AAIWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 			EnemyChar->SetAnimState(CharacterAnimState::Dizzy);
 
+			USoundCue* CurSoundCue = CurAnimaitionData->MapSoundCue.FindRef(CharacterAnimState::ParryorFire);
+
+			if (nullptr == CurSoundCue)
+			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+				return 0.f;
+			}
+
+			CurAudio->SetSound(CurSoundCue);
+
+			CurWeaponComponent->SetParrySuccess(true);
+
 			return FinalDamage;
 		}
 
 		if (0.f < GetHP() && 0.f < FinalDamage)
 		{
+			// 체력 감소
 			SetHP(GetHP() - FinalDamage);
 		}
 
@@ -188,8 +240,7 @@ float AAIWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		}
 		else if (0.f >= GetHP())
 		{
-			//죽음
-			
+			// 죽음
 			// 체력은 음수값이 되지하지 않아야한다.
 			SetHP(0.f);
 

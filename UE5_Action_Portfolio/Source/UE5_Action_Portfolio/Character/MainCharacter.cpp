@@ -1,8 +1,10 @@
 #include "Character/MainCharacter.h"
 #include "Global/GlobalAICharacter.h"
 #include "Global/GlobalGameInstance.h"
+#include "Global/Data/AnimaitionData.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PostProcessComponent.h"
+#include "Components/AudioComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/WeaponComponent.h"
@@ -235,39 +237,85 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	BpEventCallHPBar();
-	
-	if (0.f >= GetHP())
-	{	
-		APawn* EventInstigatorPawn = EventInstigator->GetPawn();
 
-		if (false == IsValid(EventInstigatorPawn))
-		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-			return 0.f;
-		}
+	UAudioComponent* CurAudio = GetAudioComponent();
 
-		UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
-
-		if (false == IsValid(CurWeaponComponent))
-		{
-			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-			return 0.f;
-		}
-
-		FVector HitDir = EventInstigatorPawn->GetActorLocation();
-		HitDir.Z = 0;
-
-		FVector CurPos = GetActorLocation();
-		CurPos.Z = 0;
-
-		FVector Dir = HitDir - CurPos;
-		Dir.Normalize();
-
-		// 플레이어 캐릭터는 죽지 않게
-		CurWeaponComponent->GotHit(Dir);
-
-		return FinalDamage;
+	if (nullptr == CurAudio)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == Audio"), __FUNCTION__, __LINE__);
+		return 0.f;
 	}
+
+	UGlobalGameInstance* Instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
+
+	if (false == IsValid(Instance))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	FAnimaitionData* CurAnimaitionData = Instance->GetAnimaitionDatas("UnArmed");
+
+	if (nullptr == CurAnimaitionData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurAnimaitionData"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	APawn* EventInstigatorPawn = EventInstigator->GetPawn();
+
+	if (false == IsValid(EventInstigatorPawn))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	FVector HitDir = EventInstigatorPawn->GetActorLocation();
+	HitDir.Z = 0;
+
+	FVector CurPos = GetActorLocation();
+	CurPos.Z = 0;
+
+	FVector Dir = HitDir - CurPos;
+	Dir.Normalize();
+
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	// 플레이어 캐릭터는 죽지 않는다
+	CurWeaponComponent->GotHit(Dir);
+
+	// 히트 사운드 큐 설정
+	if (false == CurWeaponComponent->GetBlockSuccess() && false == CurWeaponComponent->GetParrySuccess())
+	{
+		// 히트 사운드 큐 설정
+		USoundCue* CurSoundCue = CurAnimaitionData->MapSoundCue.FindRef(CharacterAnimState::GotHit);
+
+		if (nullptr == CurSoundCue)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurSoundCue"), __FUNCTION__, __LINE__);
+			return 0.f;
+		}
+
+		CurAudio->SetSound(CurSoundCue);
+	}
+	
+	// 사운드 재생
+	if (nullptr == CurAudio->GetSound())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == CurAudio->GetSound()"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	CurAudio->Play();
+
+	CurWeaponComponent->SetBlockSuccess(false);
+	CurWeaponComponent->SetParrySuccess(false);
 
 	return FinalDamage;
 }
