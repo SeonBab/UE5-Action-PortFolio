@@ -37,6 +37,10 @@ void UBTTask_Clone_PatrolMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
+	else if (PathPoint.Num() == 0)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+	}
 
 	if (0 != PathPoint.Num())
 	{
