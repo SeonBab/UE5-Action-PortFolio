@@ -9,7 +9,7 @@ UBTTask_AIBase::UBTTask_AIBase()
 	bNotifyTaskFinished = true;
 }
 
-AGlobalCharacter* UBTTask_AIBase::GetGlobalCharacter(UBehaviorTreeComponent& OwnerComp)
+AGlobalAICharacter* UBTTask_AIBase::GetGlobalAICharacter(UBehaviorTreeComponent& OwnerComp)
 {
 	AAIController* AICon = OwnerComp.GetOwner<AAIController>();
 
@@ -19,7 +19,7 @@ AGlobalCharacter* UBTTask_AIBase::GetGlobalCharacter(UBehaviorTreeComponent& Own
 		return nullptr;
 	}
 
-	AGlobalCharacter* Character = AICon->GetPawn<AGlobalCharacter>();
+	AGlobalAICharacter* Character = AICon->GetPawn<AGlobalAICharacter>();
 
 	if (false == IsValid(Character))
 	{
@@ -41,7 +41,7 @@ TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& _OwnerComp, FVe
 	UNavigationPath* PathObject = nullptr;
 
 	// 경로 시작할 위치
-	FVector StartPos = GetGlobalCharacter(_OwnerComp)->GetActorLocation();
+	FVector StartPos = GetGlobalAICharacter(_OwnerComp)->GetActorLocation();
 
 	// 경로 탐색
 	PathObject = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), StartPos, _Pos);
@@ -67,7 +67,7 @@ UNavigationPath* UBTTask_AIBase::PathFindNavPath(UBehaviorTreeComponent& _OwnerC
 {
 	UNavigationPath* PathObject = nullptr;
 
-	AGlobalCharacter* Character = GetGlobalCharacter(_OwnerComp);
+	AGlobalAICharacter* Character = GetGlobalAICharacter(_OwnerComp);
 
 	if (false == IsValid(Character))
 	{

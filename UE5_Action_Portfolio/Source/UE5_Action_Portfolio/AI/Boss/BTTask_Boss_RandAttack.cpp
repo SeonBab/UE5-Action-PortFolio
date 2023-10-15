@@ -29,7 +29,7 @@ EBTNodeResult::Type UBTTask_Boss_RandAttack::ExecuteTask(UBehaviorTreeComponent&
     }
 
     FVector TargetPos = TargetActor->GetActorLocation();
-    FVector CurPos = GetGlobalCharacter(OwnerComp)->GetActorLocation();
+    FVector CurPos = GetGlobalAICharacter(OwnerComp)->GetActorLocation();
 
     TargetPos.Z = 0.f;
     CurPos.Z = 0.f;

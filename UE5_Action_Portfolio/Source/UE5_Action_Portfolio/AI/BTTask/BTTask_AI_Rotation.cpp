@@ -11,7 +11,7 @@ void UBTTask_AI_Rotation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	AGlobalCharacter* CurCharacter = GetGlobalCharacter(OwnerComp);
+	AGlobalAICharacter* CurCharacter = GetGlobalAICharacter(OwnerComp);
 	 
 	if (false == IsValid(CurCharacter))
 	{

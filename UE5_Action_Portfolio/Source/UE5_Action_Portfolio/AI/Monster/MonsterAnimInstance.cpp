@@ -68,7 +68,7 @@ void UMonsterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 void UMonsterAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
-	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwningActor());
+	AGlobalAICharacter* Character = Cast<AGlobalAICharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{

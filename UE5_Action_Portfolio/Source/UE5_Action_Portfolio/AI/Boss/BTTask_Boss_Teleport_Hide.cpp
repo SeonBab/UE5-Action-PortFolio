@@ -4,7 +4,7 @@ EBTNodeResult::Type UBTTask_Boss_Teleport_Hide::ExecuteTask(UBehaviorTreeCompone
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
 
-    AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+    AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
     if (false == IsValid(Character))
     {
@@ -21,7 +21,7 @@ void UBTTask_Boss_Teleport_Hide::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 {
     Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-    AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+    AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
     if (false == IsValid(Character))
     {

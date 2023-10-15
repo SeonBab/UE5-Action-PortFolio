@@ -4,7 +4,7 @@ EBTNodeResult::Type UBTTask_AI_Death::ExecuteTask(UBehaviorTreeComponent& OwnerC
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
 
-    AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+    AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
     if (false == IsValid(Character))
     {

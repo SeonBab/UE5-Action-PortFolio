@@ -1,5 +1,5 @@
 #include "Global/FootIKComponent.h"
-#include "Global/GlobalCharacter.h"
+#include "Global/GlobalAICharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -26,7 +26,7 @@ void UFootIKComponent::SetTraceDis(float _TraceDis)
 	TraceDis = _TraceDis;
 }
 
-FFootIKOffset UFootIKComponent::GetFootIKOffset(AGlobalCharacter* _Character, float _DeltaTime)
+FFootIKOffset UFootIKComponent::GetFootIKOffset(AGlobalAICharacter* _Character, float _DeltaTime)
 {
 	FFootIKOffset FootIKOffset{};
 
@@ -76,7 +76,7 @@ void UFootIKComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 }
 
-TTuple<float, FVector> UFootIKComponent::FootIKLineTrace(AGlobalCharacter* _Character, UCapsuleComponent* _CapsuleComponent, FName _Socket, float _TraceDis)
+TTuple<float, FVector> UFootIKComponent::FootIKLineTrace(AGlobalAICharacter* _Character, UCapsuleComponent* _CapsuleComponent, FName _Socket, float _TraceDis)
 {
 	TTuple<float, FVector> ReturnValue;
 

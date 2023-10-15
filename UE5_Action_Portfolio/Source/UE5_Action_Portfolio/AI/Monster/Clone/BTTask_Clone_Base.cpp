@@ -10,9 +10,9 @@ UBTTask_Clone_Base::UBTTask_Clone_Base()
 
 ACloneMonster* UBTTask_Clone_Base::GetCloneMonster(UBehaviorTreeComponent& OwnerComp)
 {
-	AGlobalCharacter* GlobalCharacter = GetGlobalCharacter(OwnerComp);
+	AGlobalAICharacter* GlobalAICharacter = GetGlobalAICharacter(OwnerComp);
 
-	ACloneMonster* CloneCharacter = Cast<ACloneMonster>(GlobalCharacter);
+	ACloneMonster* CloneCharacter = Cast<ACloneMonster>(GlobalAICharacter);
 
 	if (false == IsValid(CloneCharacter))
 	{

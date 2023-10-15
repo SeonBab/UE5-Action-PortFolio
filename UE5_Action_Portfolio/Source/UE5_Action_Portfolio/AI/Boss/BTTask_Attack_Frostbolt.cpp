@@ -4,7 +4,7 @@ EBTNodeResult::Type UBTTask_Attack_Frostbolt::ExecuteTask(UBehaviorTreeComponent
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-    AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+    AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
     if (false == IsValid(Character))
     {
@@ -21,7 +21,7 @@ void UBTTask_Attack_Frostbolt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-    AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+    AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
     if (false == IsValid(Character))
     {

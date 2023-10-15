@@ -36,7 +36,7 @@ void UBTTask_AI_TargetTracking::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+	AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
 	if (false == IsValid(Character))
 	{

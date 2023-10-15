@@ -4,7 +4,7 @@ EBTNodeResult::Type UBTTask_Boss_Attack_DarkBall::ExecuteTask(UBehaviorTreeCompo
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
 
-    AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+    AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
     if (false == IsValid(Character))
     {
@@ -21,7 +21,7 @@ void UBTTask_Boss_Attack_DarkBall::TickTask(UBehaviorTreeComponent& OwnerComp, u
 {
     Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-    AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+    AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
     if (false == IsValid(Character))
     {

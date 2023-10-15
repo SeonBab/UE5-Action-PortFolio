@@ -2,7 +2,7 @@
 #include "Weapon/BowAnimInstance.h"
 #include "Weapon/Arrow.h"
 #include "Engine/DamageEvents.h"
-#include "Global/GlobalCharacter.h"
+#include "Global/GlobalAICharacter.h"
 #include "Global/GlobalAnimInstance.h"
 #include "Global/GlobalGameInstance.h"
 #include "Global/Data/WeaponData.h"
@@ -53,15 +53,15 @@ void UWeaponComponent::SetMeshAttach(USkeletalMeshComponent* _Mesh)
 
 void UWeaponComponent::ChangeCollisionAttackType()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	FName AttackType= GlobalCharacter->GetAttackTypeTag();
+	FName AttackType= GlobalAICharacter->GetAttackTypeTag();
 
 	if (TEXT("") == AttackType)
 	{
@@ -117,15 +117,15 @@ void UWeaponComponent::OverlapEnd()
 
 void UWeaponComponent::ArrowSpawn()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	FVector SpawnPos = GlobalCharacter->GetMesh()->GetSocketLocation(TEXT("RightHandSoket"));
+	FVector SpawnPos = GlobalAICharacter->GetMesh()->GetSocketLocation(TEXT("RightHandSoket"));
 	FRotator SpawnRot = { -90, 0, 0 };
 
 	FActorSpawnParameters SParam;
@@ -139,20 +139,20 @@ void UWeaponComponent::ArrowSpawn()
 		return;
 	}
 
-	ReadyArrow = GlobalCharacter->GetWorld()->UWorld::SpawnActor<AArrow>(ArrowClass, SpawnPos, SpawnRot, SParam);
+	ReadyArrow = GlobalAICharacter->GetWorld()->UWorld::SpawnActor<AArrow>(ArrowClass, SpawnPos, SpawnRot, SParam);
 }
 
 void UWeaponComponent::SetCharacterAirControl(float _Value)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	GlobalCharacter->GetCharacterMovement()->AirControl = _Value;
+	GlobalAICharacter->GetCharacterMovement()->AirControl = _Value;
 }
 
 void UWeaponComponent::SetAttackCheck(bool _Value)
@@ -184,15 +184,15 @@ void UWeaponComponent::IsRollMoveToFalse()
 {
 	IsRollMove = false;
 
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	GlobalCharacter->SetIsInvincibility(false);
+	GlobalAICharacter->SetIsInvincibility(false);
 
 	IsForwardWalk = false;
 	IsBackwardWalk = false;
@@ -205,26 +205,26 @@ void UWeaponComponent::IsRollMoveToFalse()
 	{
 		if (false == IsLockOn)
 		{
-			GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::Idle);
 		}
 		else if (true == IsLockOn)
 		{
-			GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnIdle);
 		}
 	}
 }
 
 void UWeaponComponent::ChangeWeapon(FName _Weapon)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	UGlobalAnimInstance* Ptr = Cast<UGlobalAnimInstance>(GlobalCharacter->GetMesh()->GetAnimInstance());
+	UGlobalAnimInstance* Ptr = Cast<UGlobalAnimInstance>(GlobalAICharacter->GetMesh()->GetAnimInstance());
 
 	if (false == IsValid(Ptr))
 	{
@@ -232,7 +232,7 @@ void UWeaponComponent::ChangeWeapon(FName _Weapon)
 		return;
 	}
 
-	UGlobalGameInstance* Instacne = GlobalCharacter->GetWorld()->GetGameInstance<UGlobalGameInstance>();
+	UGlobalGameInstance* Instacne = GlobalAICharacter->GetWorld()->GetGameInstance<UGlobalGameInstance>();
 
 	const struct FAnimaitionData* FindAnimationData = Instacne->GetAnimaitionDatas(_Weapon);
 
@@ -247,9 +247,9 @@ void UWeaponComponent::ChangeWeapon(FName _Weapon)
 
 void UWeaponComponent::ChangeSetUnArmed()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -264,7 +264,7 @@ void UWeaponComponent::ChangeSetUnArmed()
 	}
 
 	// 역재생을 위한 AnimInstance
-	UGlobalAnimInstance* Ptr = Cast<UGlobalAnimInstance>(GlobalCharacter->GetMesh()->GetAnimInstance());
+	UGlobalAnimInstance* Ptr = Cast<UGlobalAnimInstance>(GlobalAICharacter->GetMesh()->GetAnimInstance());
 
 	if (false == IsValid(Ptr))
 	{
@@ -276,13 +276,13 @@ void UWeaponComponent::ChangeSetUnArmed()
 	if (EWeaponType::Bow == WeaponType)
 	{
 		Ptr->AnimSpeed = -1.f;
-		GlobalCharacter->SetAnimState(CharacterAnimState::EquipOrDisArmBow);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::EquipOrDisArmBow);
 	}
 	// 착용하고 있던 장비가 칼일 때
 	else if (EWeaponType::Sword == WeaponType)
 	{
 		Ptr->AnimSpeed = -1.f;
-		GlobalCharacter->SetAnimState(CharacterAnimState::EquipOrDisArmSwordAndShield);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::EquipOrDisArmSwordAndShield);
 	}
 
 	ChangeWeapon(TEXT("UnArmed"));
@@ -290,9 +290,9 @@ void UWeaponComponent::ChangeSetUnArmed()
 
 void UWeaponComponent::ChangeSetBow()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -320,16 +320,16 @@ void UWeaponComponent::ChangeSetBow()
 		return;
 	}
 
-	GlobalCharacter->SetAnimState(CharacterAnimState::EquipOrDisArmBow);
+	GlobalAICharacter->SetAnimState(CharacterAnimState::EquipOrDisArmBow);
 
 	ChangeWeapon(TEXT("Bow"));
 }
 
 void UWeaponComponent::ChangeSetSwordAndSheiled()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -357,7 +357,7 @@ void UWeaponComponent::ChangeSetSwordAndSheiled()
 		return;
 	}
 
-	GlobalCharacter->SetAnimState(CharacterAnimState::EquipOrDisArmSwordAndShield);
+	GlobalAICharacter->SetAnimState(CharacterAnimState::EquipOrDisArmSwordAndShield);
 
 	ChangeWeapon(TEXT("SwordAndShield"));
 
@@ -365,9 +365,9 @@ void UWeaponComponent::ChangeSetSwordAndSheiled()
 
 void UWeaponComponent::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -391,44 +391,44 @@ void UWeaponComponent::PressSpaceBarCkeckAndRoll(float _DeltaTime)
 
 			if (true == IsForwardWalk)
 			{
-				Angle = GlobalCharacter->GetActorForwardVector();
+				Angle = GlobalAICharacter->GetActorForwardVector();
 			}
 			else if (true == IsBackwardWalk)
 			{
-				Angle = -GlobalCharacter->GetActorForwardVector();
+				Angle = -GlobalAICharacter->GetActorForwardVector();
 			}
 			if (true == IsLeftWalk)
 			{
-				Angle += -GlobalCharacter->GetActorRightVector();
+				Angle += -GlobalAICharacter->GetActorRightVector();
 			}
 			else if (true == IsRightWalk)
 			{
-				Angle += GlobalCharacter->GetActorRightVector();
+				Angle += GlobalAICharacter->GetActorRightVector();
 			}
 			
 			Angle.Z = 0;
 
 			Rotation = Angle.Rotation();
-			GlobalCharacter->SetActorRotation(Rotation);
+			GlobalAICharacter->SetActorRotation(Rotation);
 		}
 
 		// 움직이기
-		FVector DeltaLocation = GlobalCharacter->GetActorRotation().Vector();
+		FVector DeltaLocation = GlobalAICharacter->GetActorRotation().Vector();
 
 		DeltaLocation.X = 500 * _DeltaTime;
 		DeltaLocation.Y = 0;
 
-		GlobalCharacter->AddActorLocalOffset(DeltaLocation, true);
+		GlobalAICharacter->AddActorLocalOffset(DeltaLocation, true);
 
-		GlobalCharacter->SetIsInvincibility(true);
+		GlobalAICharacter->SetIsInvincibility(true);
 	}
 }
 
 void UWeaponComponent::WAndSButtonAction(float _Value)
 {
- 	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+ 	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -467,15 +467,15 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 	}
 
 	// 이동한다
-	if (nullptr != GlobalCharacter->Controller && 0.f != _Value)
+	if (nullptr != GlobalAICharacter->Controller && 0.f != _Value)
 	{
 		switch (AnimState)
 		{
 		case CharacterAnimState::Idle:
-			GlobalCharacter->SetAnimState(CharacterAnimState::Walk);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::Walk);
 			break;
 		case CharacterAnimState::Walk:
-			GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+			GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 			break;
 		case CharacterAnimState::Run:
 			break;
@@ -486,23 +486,23 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 		case CharacterAnimState::LockOnRight:
 			if (false == IsLockOn && false == IsAimOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::Walk);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::Walk);
 			}
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			else if (true == IsCameraStares)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnForward);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;
 			}
 			else if (-1.f == _Value)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnBackward);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnBackward);
 			}
 			else if (1.f == _Value)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnForward);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnForward);
 			}
-			GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
+			GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
 		case CharacterAnimState::LockOnForwardRun:
 			break;
@@ -520,11 +520,11 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 			IsBackwardWalk = false;
 		}
 
-		const FRotator Rotation = GlobalCharacter->Controller->GetControlRotation();
+		const FRotator Rotation = GlobalAICharacter->Controller->GetControlRotation();
 
 		const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
 
-		GlobalCharacter->AddMovementInput(Direction, _Value);
+		GlobalAICharacter->AddMovementInput(Direction, _Value);
 
 	}
 	else
@@ -540,11 +540,11 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 		{
 			if (false == IsLockOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::Idle);
 			}
 			else if (true == IsLockOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 		}
 	}
@@ -552,9 +552,9 @@ void UWeaponComponent::WAndSButtonAction(float _Value)
 
 void UWeaponComponent::DAndAButtonAction(float _Value)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -593,15 +593,15 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 	}
 
 	// 이동한다
-	if (nullptr != GlobalCharacter->Controller && 0.f != _Value)
+	if (nullptr != GlobalAICharacter->Controller && 0.f != _Value)
 	{
 		switch (AnimState)
 		{
 		case CharacterAnimState::Idle:
-			GlobalCharacter->SetAnimState(CharacterAnimState::Walk);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::Walk);
 			break;
 		case CharacterAnimState::Walk:
-			GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+			GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 			break;
 		case CharacterAnimState::Run:
 			break;
@@ -612,23 +612,23 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 		case CharacterAnimState::LockOnRight:
 			if (false == IsLockOn && false == IsAimOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::Walk);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::Walk);
 			}
 			// 락온 중 달리고 난 후에는 정면으로만 걷는다.
 			else if (true == IsCameraStares)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnForward);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnForward);
 				LockOnAfterRunTime = 0.f;
 			}
 			else if (-1.f == _Value)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnLeft);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnLeft);
 			}
 			else if (1.f == _Value)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnRight);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnRight);
 			}
-			GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
+			GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = LockOnSpeed;
 			break;
 		case CharacterAnimState::LockOnForwardRun:
 			break;
@@ -645,11 +645,11 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 			IsRightWalk = true;
 		}
 
-		const FRotator Rotation = GlobalCharacter->Controller->GetControlRotation();
+		const FRotator Rotation = GlobalAICharacter->Controller->GetControlRotation();
 
 		const FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
 
-		GlobalCharacter->AddMovementInput(Direction, _Value);
+		GlobalAICharacter->AddMovementInput(Direction, _Value);
 	}
 	else
 	{
@@ -664,11 +664,11 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 		{
 			if (false == IsLockOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::Idle);
 			}
 			else if (true == IsLockOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 		}
 	}
@@ -676,9 +676,9 @@ void UWeaponComponent::DAndAButtonAction(float _Value)
 
 void UWeaponComponent::RollorRunAction(float _Value)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -692,16 +692,16 @@ void UWeaponComponent::RollorRunAction(float _Value)
 		{
 			if (true == IsLockOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 			else if (false == IsLockOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::Idle);
 			}
 		}
 
 		// 짧게 입력이 들어왔는지 확인
-		if (nullptr != GlobalCharacter->Controller && (0 != PressSpacebarTime && PressSpacebarTime <= RunCount))
+		if (nullptr != GlobalAICharacter->Controller && (0 != PressSpacebarTime && PressSpacebarTime <= RunCount))
 		{
 			// 구르면 안되는 상태
 			switch (AnimState)
@@ -724,7 +724,7 @@ void UWeaponComponent::RollorRunAction(float _Value)
 
 			// 구른다
 			IsRollMove = true;
-			GlobalCharacter->SetAnimState(CharacterAnimState::Roll);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::Roll);
 		}
 
 		// 입력이 멈추면 누른 시간 0
@@ -772,11 +772,11 @@ void UWeaponComponent::RollorRunAction(float _Value)
 			{
 				IsCameraStares = false;
 				LockOnAfterRunTime = 0.f;
-				GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnIdle);
 			}
 			else if (false == IsLockOn)
 			{
-				GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+				GlobalAICharacter->SetAnimState(CharacterAnimState::Idle);
 			}
 		}
 
@@ -792,28 +792,28 @@ void UWeaponComponent::RollorRunAction(float _Value)
 		return;
 	}
 
-	if (nullptr != GlobalCharacter->Controller && PressSpacebarTime >= RunCount)
+	if (nullptr != GlobalAICharacter->Controller && PressSpacebarTime >= RunCount)
 	{
 		// 달린다
 		if (true == IsLockOn)
 		{
 			IsCameraStares = true;
 			LockOnAfterRunTime = 0.f;
-			GlobalCharacter->bUseControllerRotationYaw = false;
-			GlobalCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+			GlobalAICharacter->bUseControllerRotationYaw = false;
+			GlobalAICharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 		}
 
-		GlobalCharacter->SetAnimState(CharacterAnimState::Run);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::Run);
 
-		GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+		GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 	}
 }
 
 void UWeaponComponent::ShiftButtonAction()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -842,15 +842,15 @@ void UWeaponComponent::ShiftButtonAction()
 	// 달릴 때 점프
 	if (CharacterAnimState::Run == AnimState)
 	{
-		GlobalCharacter->SetAnimState(CharacterAnimState::RunJump);
-		GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
-		GlobalCharacter->Jump();
+		GlobalAICharacter->SetAnimState(CharacterAnimState::RunJump);
+		GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+		GlobalAICharacter->Jump();
 	}
 	// 걸을 때, 가만히 있을 때 점프
 	else
 	{
-		GlobalCharacter->SetAnimState(CharacterAnimState::WalkJump);
-		GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+		GlobalAICharacter->SetAnimState(CharacterAnimState::WalkJump);
+		GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 
 	if (true == IsCameraStares)
@@ -858,14 +858,14 @@ void UWeaponComponent::ShiftButtonAction()
 		LockOnAfterRunTime = 0.f;
 	}
 
-	GlobalCharacter->GetCharacterMovement()->AirControl = 0.5f;
+	GlobalAICharacter->GetCharacterMovement()->AirControl = 0.5f;
 }
 
 void UWeaponComponent::AttackAction()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -892,14 +892,14 @@ void UWeaponComponent::AttackAction()
 
 	if (EWeaponType::UnArmed == WeaponType)
 	{
-		GlobalCharacter->SetAnimState(CharacterAnimState::Attack);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::Attack);
 	}
 	else if (EWeaponType::Bow == WeaponType)
 	{
 		// 조준 중이며 화살이 준비 된 상태
 		if (CharacterAnimState::AimOrBlock == AnimState && true == ArrowReady)
 		{
-			GlobalCharacter->SetAnimState(CharacterAnimState::ParryorFire);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::ParryorFire);
 			ArrowReady = false;
 		}
 		// 조준 중이며 화살이 준비 안된 상태
@@ -910,7 +910,7 @@ void UWeaponComponent::AttackAction()
 		// 조준이 아닌 일반 공격인 상태
 		else if (CharacterAnimState::AimOrBlock != AnimState && false == ArrowReady)
 		{
-			GlobalCharacter->SetAnimState(CharacterAnimState::Attack);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::Attack);
 		}
 	}
 	else if (EWeaponType::Sword == WeaponType)
@@ -920,15 +920,15 @@ void UWeaponComponent::AttackAction()
 			AttackCheck = true;
 		}
 
-		GlobalCharacter->SetAnimState(CharacterAnimState::Attack);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::Attack);
 	}
 }
 
 void UWeaponComponent::AimorBlockAtion(float _Value)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -943,9 +943,9 @@ void UWeaponComponent::AimorBlockAtion(float _Value)
 
 		if (CharacterAnimState::AimOrBlock == AnimState)
 		{
-			GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+			GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
-			GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::Idle);
 		}
 
 		if (EWeaponType::Bow == WeaponType && CharacterAnimState::Attack == AnimState)
@@ -998,12 +998,12 @@ void UWeaponComponent::AimorBlockAtion(float _Value)
 	}
 	else if (EWeaponType::Sword == WeaponType)
 	{
-		GlobalCharacter->SetAnimState(CharacterAnimState::AimOrBlock);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::AimOrBlock);
 	}
 	else if (EWeaponType::Bow == WeaponType)
 	{
-		GlobalCharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
-		GlobalCharacter->SetAnimState(CharacterAnimState::AimOrBlock);
+		GlobalAICharacter->GetCharacterMovement()->MaxWalkSpeed = AimorBlockSpeed;
+		GlobalAICharacter->SetAnimState(CharacterAnimState::AimOrBlock);
 
 		IsAimOn = true;
 	}
@@ -1011,9 +1011,9 @@ void UWeaponComponent::AimorBlockAtion(float _Value)
 
 void UWeaponComponent::ParryAction()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -1043,7 +1043,7 @@ void UWeaponComponent::ParryAction()
 		return;
 	}
 
-	GlobalCharacter->SetAnimState(CharacterAnimState::ParryorFire);
+	GlobalAICharacter->SetAnimState(CharacterAnimState::ParryorFire);
 }
 
 void UWeaponComponent::SetBlockSuccess(bool _Value)
@@ -1093,9 +1093,9 @@ bool UWeaponComponent::GetParrySuccess()
 
 bool UWeaponComponent::LockOnAfterRun()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return false;
@@ -1163,9 +1163,9 @@ bool UWeaponComponent::GetIsMove()
 {
 	bool IsMove = false;
 
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return IsMove;
@@ -1202,9 +1202,9 @@ void UWeaponComponent::SetIsCameraStares(bool _Value)
 
 void UWeaponComponent::GotHit(FVector _Value)
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
@@ -1221,19 +1221,19 @@ void UWeaponComponent::GotHit(FVector _Value)
 	case CharacterAnimState::LockOnForward:
 	case CharacterAnimState::LockOnLeft:
 	case CharacterAnimState::LockOnRight:
-		GlobalCharacter->SetAnimState(CharacterAnimState::GotHit);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::GotHit);
 
 		if (true == IsLockOn)
 		{
 			break;
 		}
 
-		GlobalCharacter->SetActorRotation(_Value.ToOrientationQuat());
+		GlobalAICharacter->SetActorRotation(_Value.ToOrientationQuat());
 		break;
 	case CharacterAnimState::AimOrBlock:
 		if (EWeaponType::Bow == WeaponType)
 		{
-			GlobalCharacter->SetAnimState(CharacterAnimState::AimOrBlockGotHit);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::AimOrBlockGotHit);
 
 			UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
 
@@ -1255,7 +1255,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 		}
 		else if (EWeaponType::Sword == WeaponType)
 		{
-			GlobalCharacter->SetAnimState(CharacterAnimState::AimOrBlockGotHit);
+			GlobalAICharacter->SetAnimState(CharacterAnimState::AimOrBlockGotHit);
 		}
 		break;
 	default:
@@ -1265,15 +1265,15 @@ void UWeaponComponent::GotHit(FVector _Value)
 
 void UWeaponComponent::Death()
 {
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	GlobalCharacter->SetAnimState(CharacterAnimState::Death);
+	GlobalAICharacter->SetAnimState(CharacterAnimState::Death);
 
 	if (EWeaponType::Bow == WeaponType)
 	{
@@ -1346,9 +1346,9 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		BowChordMove();
 	}
 
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		return;
 	}
@@ -1357,11 +1357,11 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if ((true == IsLockOn || true == IsAimOn) && (CharacterAnimState::Idle == AnimState || CharacterAnimState::Walk == AnimState))
 	{
-		GlobalCharacter->SetAnimState(CharacterAnimState::LockOnIdle);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::LockOnIdle);
 	}
 	else if ((false == IsLockOn && false == IsAimOn) && CharacterAnimState::LockOnIdle == AnimState)
 	{
-		GlobalCharacter->SetAnimState(CharacterAnimState::Idle);
+		GlobalAICharacter->SetAnimState(CharacterAnimState::Idle);
 	}
 
 	// 락온시 달리고 난 후 다시 회전할 때까지의 시간
@@ -1381,7 +1381,7 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	{
 		FVector JointPos = GetBowJointLocation();
 
-		ReadyArrow->ArrowReRoad(GlobalCharacter, JointPos, DeltaTime);
+		ReadyArrow->ArrowReRoad(GlobalAICharacter, JointPos, DeltaTime);
 	}
 }
 
@@ -1470,14 +1470,14 @@ CharacterAnimState UWeaponComponent::GetAnimState()
 {
 	CharacterAnimState AnimState = CharacterAnimState::None;
 
-	AGlobalCharacter* GlobalCharacter = Cast<AGlobalCharacter>(GetOwner());
+	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
-	if (false == IsValid(GlobalCharacter))
+	if (false == IsValid(GlobalAICharacter))
 	{
 		return AnimState;
 	}
 
-	AnimState = static_cast<CharacterAnimState>(GlobalCharacter->GetAnimState());
+	AnimState = static_cast<CharacterAnimState>(GlobalAICharacter->GetAnimState());
 
 	return AnimState;
 }

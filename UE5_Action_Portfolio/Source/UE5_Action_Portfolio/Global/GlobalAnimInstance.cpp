@@ -1,5 +1,5 @@
 #include "Global/GlobalAnimInstance.h"
-#include "Global/GlobalCharacter.h"
+#include "Global/GlobalAICharacter.h"
 
 void UGlobalAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
@@ -8,7 +8,7 @@ void UGlobalAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 void UGlobalAnimInstance::AnimNotify_Death()
 {
-	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwningActor());
+	AGlobalAICharacter* Character = Cast<AGlobalAICharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{
@@ -55,7 +55,7 @@ void UGlobalAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		return;
 	}
 
-	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwningActor());
+	AGlobalAICharacter* Character = Cast<AGlobalAICharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{

@@ -153,7 +153,7 @@ float AAIWeaponCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		bool ParryCheck = CurWeaponComponent->GetIsParry();
 		bool IsInvincibilityCheck = GetIsInvincibility();
 
-		AGlobalCharacter* GlobalChar = Cast<AGlobalCharacter>(EventInstigatorPawn);
+		AGlobalAICharacter* GlobalChar = Cast<AGlobalAICharacter>(EventInstigatorPawn);
 
 		if (false == IsValid(GlobalChar))
 		{

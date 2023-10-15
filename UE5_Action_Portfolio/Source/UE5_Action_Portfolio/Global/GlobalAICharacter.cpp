@@ -3,11 +3,23 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/AudioComponent.h"
 #include "UI/PlayUI/LockOnMark.h"
 #include "AI/AICon.h"
 
 AGlobalAICharacter::AGlobalAICharacter()
 {
+    Animstate = 0;
+    ActorTypeTag = TEXT("");
+    AttackTypeTag = TEXT("");
+    Parrybool = false;
+    IsInvincibility = false;
+    HP = 0.f;
+    MaxHP = 0.f;
+
+    AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+    AudioComponent->SetupAttachment(GetMesh());
+
     LockOnMarkWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOnMarkWidget"));
     LockOnMarkWidget->SetupAttachment(GetCapsuleComponent());
     LockOnMarkWidget->SetWorldLocation({ 0.f, 0.f, 35.f});
@@ -69,9 +81,82 @@ void AGlobalAICharacter::AIInit()
     // 상속된 AI가 오버라이드 해서 사용한다.
 }
 
+void AGlobalAICharacter::SetActorTypeTag(FName _Tag)
+{
+    ActorTypeTag = _Tag;
+}
+
+FName AGlobalAICharacter::GetActorTypeTag()
+{
+    return ActorTypeTag;
+}
+
+void AGlobalAICharacter::SetAttackTypeTag(FName _Tag)
+{
+    AttackTypeTag = _Tag;
+}
+
+FName AGlobalAICharacter::GetAttackTypeTag()
+{
+    return AttackTypeTag;
+}
+
+bool AGlobalAICharacter::GetParrybool()
+{
+    return Parrybool;
+}
+
+void AGlobalAICharacter::SetParrybool(bool _Value)
+{
+    Parrybool = _Value;
+}
+
+bool AGlobalAICharacter::GetIsInvincibility()
+{
+    return IsInvincibility;
+}
+
+void AGlobalAICharacter::SetIsInvincibility(bool _Value)
+{
+    IsInvincibility = _Value;
+}
+
+void AGlobalAICharacter::SetHP(float _HP)
+{
+    HP = _HP;
+}
+
+float AGlobalAICharacter::GetHP()
+{
+    return HP;
+}
+
+void AGlobalAICharacter::SetMaxHP(float _MaxHP)
+{
+    MaxHP = _MaxHP;
+}
+
+float AGlobalAICharacter::GetMaxHP()
+{
+    return MaxHP;
+}
+
+void AGlobalAICharacter::SetAnimState(int _AnimState)
+{
+    Animstate = _AnimState;
+}
+
+UAudioComponent* AGlobalAICharacter::GetAudioComponent()
+{
+    return AudioComponent;
+}
+
 void AGlobalAICharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+    Tags.Add(ActorTypeTag);
+    Tags.Add(AttackTypeTag);
 
     UGlobalGameInstance* Instance = GetGameInstance<UGlobalGameInstance>();
 

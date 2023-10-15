@@ -244,7 +244,7 @@ void ULichAnimInstance::AnimNotify_CreateTornado()
 
 	// 타겟의 위치로
 	AActor* TargetActor = Lich->GetTargetActor();
-	AGlobalCharacter* TargetCharacter = Cast<AGlobalCharacter>(TargetActor);
+	AGlobalAICharacter* TargetCharacter = Cast<AGlobalAICharacter>(TargetActor);
 
 	if (false == IsValid(TargetCharacter))
 	{
@@ -445,7 +445,7 @@ void ULichAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 void ULichAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 {
-	AGlobalCharacter* Character = Cast<AGlobalCharacter>(GetOwningActor());
+	AGlobalAICharacter* Character = Cast<AGlobalAICharacter>(GetOwningActor());
 
 	if (false == IsValid(Character))
 	{

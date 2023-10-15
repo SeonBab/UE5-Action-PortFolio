@@ -4,7 +4,7 @@ EBTNodeResult::Type UBTTask_AI_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+	AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
 	if (false == IsValid(Character))
 	{
@@ -21,7 +21,7 @@ void UBTTask_AI_Idle::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+	AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
 	if (false == IsValid(Character))
 	{

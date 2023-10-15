@@ -27,7 +27,7 @@ void UBTTask_AI_Return::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	AGlobalCharacter* Character = GetGlobalCharacter(OwnerComp);
+	AGlobalAICharacter* Character = GetGlobalAICharacter(OwnerComp);
 
 	if (false == IsValid(Character))
 	{
