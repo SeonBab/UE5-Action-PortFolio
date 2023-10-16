@@ -147,7 +147,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AArrow> ArrowClass;
 	UPROPERTY()
-	AArrow* ReadyArrow = nullptr;
+	AArrow* ReadyArrow;
 
 	TArray<AActor*> OverlapArray;
 };

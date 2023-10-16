@@ -13,6 +13,8 @@ UWeaponComponent::UWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	ReadyArrow = nullptr;
+
 	UnArmedWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("UnArmedMesh"));
 	BowWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BowMesh"));
 	SwordWeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SwordMesh"));
@@ -25,8 +27,6 @@ UWeaponComponent::UWeaponComponent()
 	UnArmedWeaponMesh->SetGenerateOverlapEvents(true);
 	BowWeaponMesh->SetGenerateOverlapEvents(true);
 	SwordWeaponMesh->SetGenerateOverlapEvents(true);
-
-
 }
 
 void UWeaponComponent::SetMeshAttach(USkeletalMeshComponent* _Mesh)
@@ -1239,6 +1239,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 
 			if (false == IsValid(BowAnim))
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return;
 			}
 
@@ -1246,6 +1247,7 @@ void UWeaponComponent::GotHit(FVector _Value)
 
 			if (false == IsValid(ReadyArrow))
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return;
 			}
 
@@ -1308,6 +1310,7 @@ void UWeaponComponent::BeginPlay()
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1315,6 +1318,7 @@ void UWeaponComponent::BeginPlay()
 
 	if (false == IsValid(Instance))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1341,15 +1345,11 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	PressSpaceBarCkeckAndRoll(DeltaTime);
 
-	if (EWeaponType::Bow == WeaponType)
-	{
-		BowChordMove();
-	}
-
 	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
 	if (false == IsValid(GlobalAICharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1383,6 +1383,12 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 		ReadyArrow->ArrowReRoad(GlobalAICharacter, JointPos, DeltaTime);
 	}
+
+	if (EWeaponType::Bow == WeaponType)
+	{
+		BowChordMove();
+	}
+
 }
 
 void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -1404,6 +1410,7 @@ void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 	if (false == IsValid(Instance))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1427,10 +1434,9 @@ void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
-
-	
 
 	OtherActor->TakeDamage(CurWeaponDamage, DamageEvent, Character->GetController(), Character);
 }
@@ -1441,6 +1447,7 @@ void UWeaponComponent::BowChordMove()
 
 	if (nullptr == BowAnim)
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == BowAnim"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -1450,6 +1457,7 @@ void UWeaponComponent::BowChordMove()
 
 		if (false == IsValid(Character))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 
@@ -1457,6 +1465,7 @@ void UWeaponComponent::BowChordMove()
 
 		if (nullptr == SkeletalMeshComponent)
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == SkeletalMeshComponent"), __FUNCTION__, __LINE__);
 			return;
 		}
 
@@ -1474,6 +1483,7 @@ CharacterAnimState UWeaponComponent::GetAnimState()
 
 	if (false == IsValid(GlobalAICharacter))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return AnimState;
 	}
 

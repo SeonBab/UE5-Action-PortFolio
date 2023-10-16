@@ -111,6 +111,7 @@ void UMainCharAnimInstance::MontageBlendingOut(UAnimMontage* Anim, bool Inter)
 
 			if (false == IsValid(Montage))
 			{
+				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return;
 			}
 
@@ -133,6 +134,7 @@ void UMainCharAnimInstance::AnimNotify_RollStop()
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -140,6 +142,7 @@ void UMainCharAnimInstance::AnimNotify_RollStop()
 
 	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -152,6 +155,7 @@ void UMainCharAnimInstance::AnimNotify_JumpStart()
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -164,6 +168,7 @@ void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -171,6 +176,7 @@ void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 
 	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -181,6 +187,7 @@ void UMainCharAnimInstance::AnimNotify_ChangeWeapon()
 
 	if (false == IsValid(Instance))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -230,6 +237,7 @@ void UMainCharAnimInstance::AnimNotify_AttackCheck()
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -239,6 +247,7 @@ void UMainCharAnimInstance::AnimNotify_AttackCheck()
 
 	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -271,6 +280,7 @@ void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 
 	if (false == IsValid(Character))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -285,6 +295,7 @@ void UMainCharAnimInstance::AnimNotify_AimorBlockCheck()
 
 		if (false == IsValid(Montage))
 		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return;
 		}
 
@@ -308,6 +319,7 @@ void UMainCharAnimInstance::AnimNotify_ArrowReadyCheck()
 
 	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -341,6 +353,7 @@ void UMainCharAnimInstance::AnimNotify_ChordToHand()
 
 	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -348,6 +361,7 @@ void UMainCharAnimInstance::AnimNotify_ChordToHand()
 
 	if (false == IsValid(BowAnim))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -368,6 +382,7 @@ void UMainCharAnimInstance::AnimNotify_ReRoad()
 
 	if (false == IsValid(WeaponComponent))
 	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 		return;
 	}
 
