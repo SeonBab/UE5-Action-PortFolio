@@ -487,6 +487,7 @@ void AMainCharacter::LockOnTarget()
 		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType; // 히트 가능한 오브젝트 유형
 		ObjectType.Emplace(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
 		ObjectType.Emplace(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel5));
+		ObjectType.Emplace(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel7));
 
 		TArray<AActor*> NotTargeting; // 무시할 액터들
 		NotTargeting.Emplace(this);
