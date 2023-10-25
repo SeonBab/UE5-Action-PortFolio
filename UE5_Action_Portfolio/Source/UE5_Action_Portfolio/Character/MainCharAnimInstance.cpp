@@ -605,14 +605,26 @@ void UMainCharAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		// 무기가 있는 상태에서 없는 상태로 갈 땐 역재생
 		if (EWeaponType::UnArmed == WeaponComponent->GetWeaponType() && (CharacterAnimState::EquipOrDisArmBow == AnimState || CharacterAnimState::EquipOrDisArmSwordAndShield == AnimState))
 		{
-			UE_LOG(LogTemp, Log, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, Character->GetAnimState());
 			Montage_Play(Montage, AnimSpeed, EMontagePlayReturnType::MontageLength, 1.f);
+
+			bool PlayerCheck = Character->ActorHasTag(TEXT("Player"));
+			
+			if (true == PlayerCheck)
+			{
+				UE_LOG(LogTemp, Log, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, Character->GetAnimState());
+			}
 		}
 		// 나머지 일반적인 애니메이션 재생
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, Character->GetAnimState());
 			Montage_Play(Montage, AnimSpeed);
+
+			bool PlayerCheck = Character->ActorHasTag(TEXT("Player"));
+
+			if (true == PlayerCheck)
+			{
+				UE_LOG(LogTemp, Log, TEXT("%S(%u)> %d"), __FUNCTION__, __LINE__, Character->GetAnimState());
+			}
 		}
 	}
 }

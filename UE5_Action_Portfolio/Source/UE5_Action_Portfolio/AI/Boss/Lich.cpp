@@ -247,9 +247,9 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 			SetHP(GetHP() - FinalDamage);
 
 			// 체력은 음수값이 되지하지 않아야한다.
-			if (0.f >= GetHP())
+			if (0.f > GetHP())
 			{
-			SetHP(0.f);
+				SetHP(0.f);
 			}
 
 			// Info 표시
