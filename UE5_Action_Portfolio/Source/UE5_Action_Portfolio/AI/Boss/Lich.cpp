@@ -335,13 +335,15 @@ float ALich::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 
 			if (true == PlayerCheck)
 			{
-				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigator->GetPawn());
+				AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigator);
 
-				if (nullptr == MainChar || false == MainChar->IsValidLowLevel())
+				if (false == IsValid(MainChar))
 				{
 					UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 					return 0.f;
 				}
+
+				MainChar->LostLockedOnTargetActor();
 			}
 		}
 

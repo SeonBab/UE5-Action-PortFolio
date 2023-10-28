@@ -161,23 +161,25 @@ if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 		GetMesh()->SetCollisionProfileName(TEXT("NoCollision"), true);
 
 		// 플레이어의 락온 해제
-		if (false == IsValid(EventInstigator))
+		if (false == IsValid(EventInstigatorPawn))
 		{
 			UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 			return 0.f;
 		}
 
-		bool PlayerCheck = EventInstigator->GetPawn()->ActorHasTag("Player");
+		bool PlayerCheck = EventInstigatorPawn->ActorHasTag("Player");
 
 		if (true == PlayerCheck)
 		{
-			AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigator->GetPawn());
+			AMainCharacter* MainChar = Cast<AMainCharacter>(EventInstigatorPawn);
 
-			if (nullptr == MainChar || false == MainChar->IsValidLowLevel())
+			if (false == IsValid(MainChar))
 			{
 				UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
 				return 0.f;
 			}
+
+			MainChar->LostLockedOnTargetActor();
 		}
 	}
 
