@@ -6,8 +6,8 @@
 
 AAIMonsterCon::AAIMonsterCon()
 {
-	GetAISenseConfigSight()->SightRadius = 1500.f;
-	GetAISenseConfigSight()->LoseSightRadius = 2000.f;
+	GetAISenseConfigSight()->SightRadius = 4500.f;
+	GetAISenseConfigSight()->LoseSightRadius = 5000.f;
 	GetAISenseConfigSight()->PeripheralVisionAngleDegrees = 90.f;
 	GetAISenseConfigSight()->SetMaxAge(5.f);
 

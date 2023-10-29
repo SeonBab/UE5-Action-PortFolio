@@ -45,7 +45,7 @@ AMainCharacter::AMainCharacter()
 	MainCameraSpringArmComponent->TargetArmLength = 500.f;
 	MainCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	MainCameraComponent->SetupAttachment(MainCameraSpringArmComponent, USpringArmComponent::SocketName);
-	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 55.f, 0.f));
+	MainCameraComponent->SetRelativeLocation(FVector(0.0f, 35.f, 0.f));
 	
 	FOVUpdateDelegate.BindUFunction(this, FName("AimZoomTimelineUpdate"));
 	AimScreenUpdateDelegate.BindUFunction(this, FName("AimScreenTimelineUpdate"));
