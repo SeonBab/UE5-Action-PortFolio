@@ -46,7 +46,7 @@ EBTNodeResult::Type UBTTask_Clone_Base::ExecuteTask(UBehaviorTreeComponent& Owne
 	WeaponComponent->WAndSButtonAction(0);
 	WeaponComponent->DAndAButtonAction(0);
 	WeaponComponent->RollorRunAction(0);
-	WeaponComponent->AimorBlockAtion(0);
+	WeaponComponent->AimorBlockAction(0);
 
 	return EBTNodeResult::InProgress;
 }

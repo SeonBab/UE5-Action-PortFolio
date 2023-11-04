@@ -65,12 +65,4 @@ private:
 	float MeleeDamage;
 
 	int MaxPhase;
-
-	// 천천히 변하게 하는 disintegrate 효과
-	// 머티리얼을 변경 할 방법 2가지
-	// 데이터 테이블에 머리티얼을 저장해서 직접 스켈레탈 메쉬컴포넌트에 SetMaterial을 사용
-	//USkeletalMeshComponent* PTr = nullptr;
-	//PTr->SetMaterial(0, )
-	// 머티리얼을 블루프린트에서 변수로 저장해 Array에서 하나씩 불러와 사용
-	//TArray<UMat>
 };

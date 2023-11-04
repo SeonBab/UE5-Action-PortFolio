@@ -924,7 +924,7 @@ void UWeaponComponent::AttackAction()
 	}
 }
 
-void UWeaponComponent::AimorBlockAtion(float _Value)
+void UWeaponComponent::AimorBlockAction(float _Value)
 {
 	AGlobalAICharacter* GlobalAICharacter = Cast<AGlobalAICharacter>(GetOwner());
 
@@ -1444,7 +1444,7 @@ void UWeaponComponent::WeaponBeginOverlap(UPrimitiveComponent* OverlappedCompone
 void UWeaponComponent::BowChordMove()
 {
 	UBowAnimInstance* BowAnim = Cast<UBowAnimInstance>(BowWeaponMesh->GetAnimInstance());
-
+	
 	if (nullptr == BowAnim)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> nullptr == BowAnim"), __FUNCTION__, __LINE__);

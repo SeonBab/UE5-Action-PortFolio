@@ -18,7 +18,7 @@ UGlobalGameInstance::UGlobalGameInstance()
 
 	{
 		// 에니메이션 데이터
-		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_AnimaitionData.DT_AnimaitionData'");
+		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/BluePrint/Global/DT_PlayerCharAnimData.DT_PlayerCharAnimData'");
 		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
 
 		if (DataTable.Succeeded())

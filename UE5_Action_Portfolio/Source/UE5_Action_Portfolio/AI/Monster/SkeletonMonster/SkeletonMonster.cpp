@@ -25,7 +25,7 @@ ASkeletonMonster::ASkeletonMonster()
 	MeleeCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	MeleeCapsuleComponent->SetupAttachment(GetMesh(), TEXT("MeleeSocket"));
 	MeleeCapsuleComponent->SetCollisionProfileName("NoCollision", true);
-	MeleeCapsuleComponent->SetCapsuleHalfHeight(40.f);
+	MeleeCapsuleComponent->SetCapsuleHalfHeight(50.f);
 	MeleeCapsuleComponent->SetCapsuleRadius(20.f);
 }
 

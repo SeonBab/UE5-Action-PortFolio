@@ -236,6 +236,21 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
+
+	if (false == IsValid(CurWeaponComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
+		return 0.f;
+	}
+
+	bool IsRoll = CurWeaponComponent->GetIsRollMove();
+
+	if (true == IsRoll)
+	{
+		return 0.f;
+	}
+
 	BpEventCallHPBar();
 
 	UAudioComponent* CurAudio = GetAudioComponent();
@@ -278,14 +293,6 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 	FVector Dir = HitDir - CurPos;
 	Dir.Normalize();
-
-	UWeaponComponent* CurWeaponComponent = GetWeaponComponent();
-
-	if (false == IsValid(CurWeaponComponent))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> false == IsValid"), __FUNCTION__, __LINE__);
-		return 0.f;
-	}
 
 	// 플레이어 캐릭터는 죽지 않는다
 	CurWeaponComponent->GotHit(Dir);
@@ -463,7 +470,7 @@ void AMainCharacter::AimorBlock(float _Value)
 		return;
 	}
 
-	GetWeaponComponent()->AimorBlockAtion(_Value);
+	GetWeaponComponent()->AimorBlockAction(_Value);
 }
 
 void AMainCharacter::LockOnTarget()

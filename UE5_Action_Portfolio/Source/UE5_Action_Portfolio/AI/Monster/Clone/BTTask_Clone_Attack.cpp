@@ -94,12 +94,12 @@ void UBTTask_Clone_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 	
 	if (0.f < BlockTime)
 	{
-		WeaponComponent->AimorBlockAtion(1);
+		WeaponComponent->AimorBlockAction(1);
 		BlockTime -= DeltaSeconds;
 	}
 	else if (true == AttackOrBlock && 0.f > BlockTime)
 	{
-		WeaponComponent->AimorBlockAtion(0);
+		WeaponComponent->AimorBlockAction(0);
 	}
 	else if (0 < MeleeAtackCount && false == AttackCheck)
 	{

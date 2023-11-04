@@ -38,7 +38,8 @@ public:
 	void RollorRunAction(float _Value);
 	void ShiftButtonAction();
 	void AttackAction();
-	void AimorBlockAtion(float _Value);
+	UFUNCTION(BlueprintCallable)
+	void AimorBlockAction(float _Value);
 	void ParryAction();
 	void SetBlockSuccess(bool _Value);
 	void SetParrySuccess(bool _Value);
